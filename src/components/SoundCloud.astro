@@ -1,0 +1,58 @@
+---
+// DSGVO-safe two-click SoundCloud embed.
+// Renders a local facade; loads the SoundCloud player only after the user clicks.
+interface Props {
+  url: string;        // SoundCloud playlist/track URL (e.g. https://soundcloud.com/andreasroet/sets/spotlight)
+  label?: string;     // small mono label
+  title?: string;     // big display title
+  height?: number;    // player height once loaded
+}
+const { url, label = 'SoundCloud · Featured', title = 'Spotlight', height = 400 } = Astro.props;
+const embedSrc = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23DE4D53&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false`;
+---
+<div class="sc-facade imgbox" data-sc-src={embedSrc} data-sc-height={height} style="position:relative; background:var(--bone-2); cursor:pointer; min-height:200px;">
+  <div class="placeholder" style="position:absolute; inset:0;">
+    <span class="mono" style="font-size:11px;">{label}</span>
+  </div>
+  <div class="sc-inner">
+    <div class="eyebrow" style="margin-bottom:12px;">{label}</div>
+    <div class="sc-title">{title}</div>
+    <button type="button" class="sc-play" aria-label={`Play: ${title}`}>▶ PLAY</button>
+    <p class="sc-hint mono">Loads from soundcloud.com on play. SoundCloud's privacy policy applies.</p>
+  </div>
+</div>
+
+<style>
+  .sc-facade { display:flex; align-items:flex-end; }
+  .sc-inner { position:relative; z-index:2; padding:28px; width:100%; }
+  .sc-title {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(28px, 4vw, 44px); line-height: 0.95; margin-bottom: 20px;
+  }
+  .sc-play {
+    background: var(--accent); color: var(--accent-ink);
+    border: 0; cursor: pointer; padding: 14px 28px;
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+  }
+  .sc-play:hover { background: var(--ink); color: var(--bone); }
+  .sc-play:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .sc-hint { font-size: 10px; color: var(--ink-mute); margin: 14px 0 0; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.sc-facade').forEach((el) => {
+    el.addEventListener('click', () => {
+      const src = el.dataset.scSrc;
+      const h = el.dataset.scHeight || '400';
+      if (!src) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.width = '100%';
+      iframe.height = h;
+      iframe.allow = 'autoplay';
+      iframe.style.cssText = 'border:0; display:block;';
+      iframe.setAttribute('scrolling', 'no');
+      el.replaceWith(iframe);
+    }, { once: true });
+  });
+</script>

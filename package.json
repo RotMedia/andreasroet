@@ -1,0 +1,22 @@
+{
+  "name": "andreasroet",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "sync": "node scripts/sync-gumroad.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource/bbh-bartle": "^5.2.1",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "astro": "^7.0.6"
+  },
+  "type": "module"
+}

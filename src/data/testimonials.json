@@ -1,0 +1,12 @@
+{
+  "_note": "Testimonials für Shop/Produkt/Homepage. Aus Gumroad-Reviews. Regeln: Name nur Vorname + Initiale (z.B. 'Marcus K.'), KEINE Fotos, Zitat knackig kürzen. rating 1-5. product = Produktname (ermöglicht Filtern auf Produktseite). featured: true = darf auf Homepage/Shop-Übersicht erscheinen.",
+  "reviews": [
+    {
+      "quote": "Beispiel — durch echten Gumroad-Review ersetzen.",
+      "name": "Vorname I.",
+      "product": "Pack-Name",
+      "rating": 5,
+      "featured": true
+    }
+  ]
+}

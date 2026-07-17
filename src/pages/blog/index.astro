@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const tutorials = posts.filter((p) => p.data.category === 'tutorial');
+const articles = posts.filter((p) => p.data.category === 'article');
+
+const blogLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Andreas Roet — Tutorials & Blog',
+  url: 'https://andreasroet.de/blog',
+  description: 'Dub techno production tutorials and studio notes.',
+  author: { '@id': 'https://andreasroet.de/#person' },
+};
+---
+<Base
+  title="Tutorials & Blog — Dub Techno Production | Andreas Roet"
+  description="Dub techno production tutorials: sound design, mixing, hardware workflow with Octatrack and Rytm. Plus studio notes and long-form articles."
+  activeNav="blog"
+  jsonLd={blogLd}
+>
+  <div class="page app">
+    <section style="padding: 40px 0 24px;">
+      <div class="eyebrow" style="margin-bottom: 16px;">Tutorials & Blog</div>
+      <h1 style="max-width: 14ch; margin-bottom: 24px;">Notes from<br />the studio.</h1>
+      <p style="max-width: 520px; color: var(--ink-soft); font-size: 17px;">
+        Production tutorials and studio notes. Producer to producer —
+        no recipes, no hype.
+      </p>
+    </section>
+
+    <section class="section" id="tutorials">
+      <div class="eyebrow" style="margin-bottom: 24px;">Tutorials</div>
+      {tutorials.length === 0 && <p class="mono" style="color:var(--ink-mute);">FIRST TUTORIALS INCOMING.</p>}
+      {tutorials.map((post, i) => (
+        <a href={`/blog/${post.id}`} class="post-row" style="display:grid; grid-template-columns:40px 1fr 160px 100px 120px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+          <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
+          <span style="font-family:var(--font-display); font-weight:800; font-size:24px; letter-spacing:-0.02em; line-height:1.05;">{post.data.title}</span>
+          <span class="mono">{post.data.topic ?? ''}</span>
+          <span class="mono">{post.data.duration ?? ''}</span>
+          <span class="mono" style="text-align:right;">{post.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })} →</span>
+        </a>
+      ))}
+    </section>
+
+    <section class="section" id="articles">
+      <div class="eyebrow" style="margin-bottom: 24px;">Articles</div>
+      {articles.length === 0 && <p class="mono" style="color:var(--ink-mute);">FIRST ARTICLES INCOMING.</p>}
+      {articles.map((post, i) => (
+        <a href={`/blog/${post.id}`} class="post-row" style="display:grid; grid-template-columns:40px 1fr 160px 120px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+          <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
+          <span style="font-family:var(--font-display); font-weight:800; font-size:24px; letter-spacing:-0.02em; line-height:1.05;">{post.data.title}</span>
+          <span class="mono">{post.data.topic ?? ''}</span>
+          <span class="mono" style="text-align:right;">{post.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })} →</span>
+        </a>
+      ))}
+    </section>
+  </div>
+
+  <style>
+    @media (max-width: 760px) {
+      .post-row { grid-template-columns: 1fr !important; gap: 6px !important; }
+      .post-row > :first-child { display: none; }
+    }
+  </style>
+</Base>

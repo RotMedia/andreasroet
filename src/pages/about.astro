@@ -1,0 +1,167 @@
+---
+import Base from '../layouts/Base.astro';
+
+const gear = [
+  { group: 'Elektron core', items: 'Octatrack MK2 · Analog Four MK2 · Analog Rytm MK1 · Syntakt' },
+  { group: 'Synths & drums', items: 'Access Virus TI · DSI Pro 2 · Korg opsix · Dreadbox Erebus V3 · Moog DFAM · Nord Drum 1 · Roland TR-8S' },
+  { group: 'Delay & reverb', items: 'Empress Echosystem · Source Audio Ventris Dual Reverb · Chase Bliss Mood · Bastl Thyme+ · DOD Rubberneck · Boss RV-1 · Zoom MS-70CDR+' },
+  { group: 'Colour & dirt', items: 'OTO BOUM · Ibanez TS9 Tube Screamer · ProCo RAT 2 · JPTR FX Roygbiv · an old VHS recorder' },
+  { group: 'Desk & capture', items: 'Allen & Heath ZED-14 · Zoom H6 field recorder' },
+  { group: 'Monitoring & DAW', items: 'Neumann KH 120 A + KH 750 DSP sub · RME Fireface UC · Studio One (Ableton coming)' },
+];
+
+const aboutLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    '@id': 'https://andreasroet.de/#person',
+    name: 'Andreas Roet',
+    jobTitle: 'Dub Techno Producer & Sound Designer',
+    description: 'Dub techno producer working fully on hardware — Elektron boxes, synths and a wall of pedals. Releases on Dreiton and Deeptakt. Runs TechnoSupps.',
+  },
+};
+---
+<Base
+  title="About — Andreas Roet | Dub Techno Producer"
+  description="Andreas Roet makes dub techno on hardware — Elektron boxes, synths and a wall of pedals. Releases on Dreiton and Deeptakt. Sample packs, presets and tutorials via TechnoSupps."
+  activeNav="about"
+  mode="dark"
+  jsonLd={aboutLd}
+>
+  <div class="page app">
+
+    <!-- Hero + short version -->
+    <section style="padding: 48px 0 24px; max-width: 760px;">
+      <div class="eyebrow" style="margin-bottom: 20px;">About</div>
+      <h1 style="margin-bottom: 32px;">Built dense,<br />mixed dry.</h1>
+
+      <div class="about-lead">
+        <p>I've been making music since 1997 — starting with beats on a friend's MPC and my keyboard, then Fruity Loops. A little later I tried a Roland MC-303 and knew right away: hardware was my way in.</p>
+        <p>I was deep in techno, breakbeats, jungle and hardcore, soaking up how raw and gritty those styles were. While everyone else listened to whatever the radio played, I was the kid spinning acid techno on his Discman in the school bus.</p>
+        <p>Techno was always the base. Around 2016 I found the Elektron ecosystem and dub techno at the same time — the depth, the sound design, the fact that a genre built for dancefloors could sound like <em>that</em>. The deeper I went, the more it shaped how I hear sound.</p>
+        <p>When the pandemic pushed my studio into a spare room, I built everything around Elektron boxes and started making live sets and dawless jams. I learned so much in that stretch that I started sharing it on YouTube — and TechnoSupps, a boutique sample pack shop, followed in 2022.</p>
+        <p>Since then: releases on Deeptakt and Dreiton (both labels reached out), and a YouTube channel growing into a learning hub for thousands of producers.</p>
+      </div>
+
+      <div class="about-benefit">
+        <p><strong>What this means for you:</strong> the samples and presets I sell, I built for myself — raw material for my own tracks and live sets. Finished enough that you're not fixing basics for an hour. Raw enough that there's still room to make it yours.</p>
+      </div>
+
+      <!-- Three benefit links -->
+      <div class="about-links">
+        <a href="/music" class="about-link">
+          <span class="al-label">Listen</span>
+          <span class="al-sub mono">Music →</span>
+        </a>
+        <a href="/blog" class="about-link">
+          <span class="al-label">Learn</span>
+          <span class="al-sub mono">Tutorials →</span>
+        </a>
+        <a href="/shop" class="about-link">
+          <span class="al-label">Producer tools</span>
+          <span class="al-sub mono">Shop →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Expandable: Origin story -->
+    <section class="section" style="max-width: 760px;">
+      <details class="about-details">
+        <summary>
+          <span class="sum-title">My origin story</span>
+          <span class="sum-icon" aria-hidden="true">+</span>
+        </summary>
+        <div class="about-prose">
+          <p>I've been making music since 1997 — at least that's where my first tracks are dated. A friend introduced me to Fruity Loops and we made hip hop beats, drum and bass, techno, breakbeats, jungle and hardcore. The influences were rough-edged, and I loved them for it. I was the kid on the school bus with a Discman playing acid techno instead of whatever was in the charts.</p>
+          <p>At some point I wanted a synth and got a Virus B — a crazy upgrade soundwise back then — and a Korg Z1 alongside it. But my real passion was always techno and minimal.</p>
+          <p>Around 2008 I sold everything to focus on my studies. I'm a mechatronics design engineer by day, and for a while music went quiet.</p>
+          <p>Then the first paycheck hit, and with it the urge to make music came back — this time fully hardware. A Nord Lead 2 first, then pedals, a Jomox XBase 888, an Allen & Heath desk.</p>
+          <p>Around 2016 two things happened at once: I discovered the Elektron ecosystem, and I found dub techno. The Elektron workflow just clicked — off the DAW, but with a sequencer fast enough to keep up with your hands. And dub techno pulled me in completely: the depth, the character, those big noisy chord stabs. Even next to the pounding techno I'd come from, it was something else. Techno stayed the foundation. Dub techno became the obsession.</p>
+          <p>When the pandemic turned my studio into a shared office, I moved the essentials — an Analog Four MK2 and an Octatrack MK2 — into a spare room and started writing jams and live sets. That drove me deep into the Elektron workflow, deeper than anything before. It was also when I started YouTube and social media, to get more ears on the music.</p>
+          <p>The tutorials grew out of that. TechnoSupps followed in 2022 — I had tons of sounds on my drive anyway, so a boutique sample pack shop made sense. It started with a single free pack that's now been downloaded over 12,000 times.</p>
+          <p>Since then, the labels came to me. Deeptakt got in touch and we put out <em>Terratones</em>, plus a track on the <em>Hall of Dub</em> compilation. Frank Hellmond — DJ and co-founder of Dreiton — messaged me on Instagram, and we released the <em>Feedback</em> EP. The releases are dawless, the computer nothing but a recorder — raw, and closer to where dub techno started.</p>
+          <p>But the core is always the same: music made with hardware. I love knobs and faders, feeling <em>in</em> the sound instead of behind a screen. That doesn't mean I avoid the DAW — I do plenty of mouse work — but it mostly starts with samples and hardware.</p>
+          <p>Right now I want to release more music and play live more often.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- Expandable: Meet the gear -->
+    <section class="section" style="max-width: 760px;">
+      <details class="about-details">
+        <summary>
+          <span class="sum-title">Meet the gear</span>
+          <span class="sum-icon" aria-hidden="true">+</span>
+        </summary>
+        <div class="gear-list">
+          {gear.map((g) => (
+            <div class="gear-row">
+              <div class="gear-group mono">{g.group}</div>
+              <div class="gear-items">{g.items}</div>
+            </div>
+          ))}
+        </div>
+      </details>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact" style="max-width: 760px;">
+      <div class="eyebrow" style="margin-bottom: 20px;">Contact</div>
+      <p style="font-size: 18px; color: var(--ink-soft); max-width: 480px; margin-bottom: 20px;">
+        Bookings, collaborations, or a question about the shop — write me directly.
+      </p>
+      <a class="btn accent" id="mail-link" href="#" style="display: inline-flex;">
+        <span id="mail-text">Show email</span> <span class="arrow">→</span>
+      </a>
+      <script>
+        (() => {
+          const p = ['in', 'fo', String.fromCharCode(64), 'andreas', 'roet', '.', 'de'];
+          const addr = p[0]+p[1]+p[2]+p[3]+p[4]+p[5]+p[6];
+          const link = document.getElementById('mail-link');
+          const text = document.getElementById('mail-text');
+          if (link && text) { link.setAttribute('href', 'mail'+'to:'+addr); text.textContent = addr; }
+        })();
+      </script>
+    </section>
+
+  </div>
+
+  <style>
+    .about-lead p { font-size: 18px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 18px; }
+    .about-benefit { margin: 32px 0 40px; padding: 24px; border-left: 3px solid var(--accent); }
+    .about-benefit p { font-size: 18px; line-height: 1.6; margin: 0; }
+
+    .about-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .about-link {
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 20px; border: 1px solid var(--rule);
+      text-decoration: none; color: inherit; transition: border-color .15s, background .15s;
+    }
+    .about-link:hover { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 8%, transparent); }
+    .al-label { font-family: var(--font-display); font-size: 22px; line-height: 1; }
+    .al-sub { color: var(--ink-mute); font-size: 12px; }
+
+    .about-details { border-top: 1px solid var(--rule-strong); }
+    .about-details summary {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 0; cursor: pointer; list-style: none;
+    }
+    .about-details summary::-webkit-details-marker { display: none; }
+    .sum-title { font-family: var(--font-display); font-size: clamp(22px, 3vw, 30px); }
+    .sum-icon { font-family: var(--font-mono); font-size: 24px; color: var(--accent); transition: transform .2s; }
+    .about-details[open] .sum-icon { transform: rotate(45deg); }
+    .about-prose p { font-size: 17px; line-height: 1.65; color: var(--ink-soft); margin: 0 0 18px; max-width: 680px; }
+    .about-prose { padding-bottom: 24px; }
+
+    .gear-list { padding-bottom: 24px; }
+    .gear-row { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
+    .gear-group { color: var(--ink-mute); font-size: 12px; padding-top: 3px; }
+    .gear-items { font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
+
+    @media (max-width: 700px) {
+      .about-links { grid-template-columns: 1fr; }
+      .gear-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+  </style>
+</Base>

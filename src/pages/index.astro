@@ -1,0 +1,106 @@
+---
+import Base from '../layouts/Base.astro';
+import SoundCloud from '../components/SoundCloud.astro';
+import { getCollection } from 'astro:content';
+import productsData from '../data/products.json';
+
+const SC_SPOTLIGHT = 'https://soundcloud.com/andreas-roet-nbg/sets/webpage-showcase/s-Z66zBTgHbNF';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const products = productsData.products.slice(0, 3);
+---
+<Base
+  title="Andreas Roet — Dub Techno · Studio · Shop"
+  description="Dub techno producer and sound designer. Sample packs, presets, hardware live sets and production tutorials — built dense, mixed dry."
+  activeNav="home"
+  mode="dark"
+>
+  <div class="page app">
+    <!-- Hero -->
+    <section style="padding: 64px 0 48px;">
+      <div class="eyebrow" style="margin-bottom: 20px;">Dub Techno · Producer · Sound Designer</div>
+      <h1 style="max-width: 12ch;">Andreas Roet.</h1>
+      <div class="row" style="gap: 40px; flex-wrap: wrap; margin-top: 32px;">
+        <p style="max-width: 520px; color: var(--ink-soft); font-size: 17px;">
+          Records, hardware live sets and production tools. Sample packs and presets
+          recorded with the same chains I use on my own tracks — no filler, no hype.
+        </p>
+        <div class="mono" style="display:grid; grid-template-columns:auto auto; gap:4px 24px;">
+          <span style="color:var(--ink-mute)">SETUP</span><span>Octatrack MK2 · Rytm MK1</span>
+          <span style="color:var(--ink-mute)">GENRE</span><span>Dub Techno</span>
+          <span style="color:var(--ink-mute)">SHOP</span><span>Gumroad</span>
+        </div>
+      </div>
+      <div class="row" style="gap: 12px; margin-top: 40px;">
+        <a class="btn accent" href="/shop">Browse the shop <span class="arrow">→</span></a>
+        <a class="btn ghost" href="/blog">Tutorials <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- SoundCloud spotlight -->
+    <section class="section">
+      <SoundCloud
+        url={SC_SPOTLIGHT}
+        label="SoundCloud · Spotlight"
+        title="Now playing"
+        height={400}
+      />
+    </section>
+
+    <!-- Shop teaser -->
+    <section class="section">
+      <div class="row middle" style="margin-bottom: 28px;">
+        <div class="eyebrow">Shop · Sample Packs & Presets</div>
+        <span class="grow"></span>
+        <a class="mono" href="/shop" style="color:var(--ink); text-decoration:none;">ALL PACKS →</a>
+      </div>
+      <div class="teaser-grid">
+        {products.map((p) => (
+          <a href={p.url} rel="noopener" style="text-decoration:none; color:inherit;">
+            <div class="imgbox cover" style="aspect-ratio:1/1; position:relative;">
+              {p.cover
+                ? <img src={p.cover} alt={`${p.title} — cover`} loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" />
+                : <div class="placeholder" style="position:absolute; inset:0;"><span style="font-size:12px;">{p.cat}</span></div>}
+            </div>
+            <div style="padding-top: 14px;">
+              <div class="mono" style="margin-bottom: 6px;">{p.cat}</div>
+              <div style="font-family:var(--font-display); font-weight:800; font-size:24px; letter-spacing:-0.022em; line-height:1;">{p.title}</div>
+              <div style="margin-top:6px; font-size:13px; color:var(--ink-soft);">{p.sub} · {p.price}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Tutorials teaser -->
+    <section class="section">
+      <div class="row middle" style="margin-bottom: 28px;">
+        <div class="eyebrow">Latest · Tutorials & Blog</div>
+        <span class="grow"></span>
+        <a class="mono" href="/blog" style="color:var(--ink); text-decoration:none;">ALL POSTS →</a>
+      </div>
+      {posts.length === 0 && (
+        <p class="mono" style="color:var(--ink-mute);">FIRST POSTS INCOMING.</p>
+      )}
+      {posts.map((post, i) => (
+        <a href={`/blog/${post.id}`} class="post-row" style="display:grid; grid-template-columns:40px 1fr 160px 120px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+          <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
+          <span style="font-family:var(--font-display); font-weight:800; font-size:22px; letter-spacing:-0.02em;">{post.data.title}</span>
+          <span class="mono">{post.data.topic ?? post.data.category.toUpperCase()}</span>
+          <span class="mono" style="text-align:right;">{post.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })} →</span>
+        </a>
+      ))}
+    </section>
+  </div>
+
+  <style>
+    .teaser-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px 24px; }
+    @media (max-width: 900px) { .teaser-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 700px) {
+      .post-row { grid-template-columns: 1fr !important; gap: 6px !important; }
+    }
+  </style>
+</Base>

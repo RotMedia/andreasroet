@@ -1,0 +1,31 @@
+{
+  "_note": "Music page data. label = label releases, self = self-published. Cover: filename in /public/covers/ or full URL; null = styled placeholder.",
+  "label": [
+    {
+      "title": "Feedback (DN67)",
+      "kind": "EP",
+      "year": "2025",
+      "label": "Dreiton",
+      "url": "https://dreiton.bandcamp.com/album/andreas-roet-feedback-dn67",
+      "cover": null
+    },
+    {
+      "title": "Terratones",
+      "kind": "EP",
+      "year": "2024",
+      "label": "Deeptakt Records",
+      "url": "https://deeptakt.bandcamp.com/album/terratones",
+      "cover": null
+    },
+    {
+      "title": "Dawn Vibes",
+      "kind": "Track · Hall of Dub Vol. 3",
+      "year": "2024",
+      "label": "Deeptakt Records",
+      "url": "https://deeptakt.bandcamp.com/track/dawn-vibes",
+      "cover": null
+    }
+  ],
+  "self": [],
+  "soundcloud": []
+}

@@ -1,0 +1,142 @@
+---
+import '@fontsource/bbh-bartle/400.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  activeNav?: string;
+  mode?: 'light' | 'dark';
+  jsonLd?: object | object[];
+}
+
+const { title, description, activeNav = '', jsonLd, mode = 'light' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const NAV = [
+  { href: '/', id: 'home', label: 'Index' },
+  { href: '/music', id: 'music', label: 'Music' },
+  { href: '/blog', id: 'blog', label: 'Tutorials & Blog' },
+  { href: '/about', id: 'about', label: 'About' },
+];
+
+const siteLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://andreasroet.de/#person',
+      name: 'Andreas Roet',
+      url: 'https://andreasroet.de',
+      jobTitle: 'Dub Techno Producer & Sound Designer',
+      knowsAbout: ['Dub Techno', 'Music Production', 'Sound Design', 'Hardware Live Sets', 'Elektron Octatrack', 'Analog Rytm'],
+      sameAs: [
+        'https://technosupps.gumroad.com',
+        'https://www.youtube.com/@technosupps'
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://andreasroet.de/#website',
+      url: 'https://andreasroet.de',
+      name: 'Andreas Roet',
+      description: 'Dub techno producer. Sample packs, presets, tutorials and records.',
+      publisher: { '@id': 'https://andreasroet.de/#person' },
+      inLanguage: 'en',
+    },
+  ],
+};
+
+const pageLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+<!doctype html>
+<html lang="en" data-mode={mode}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Andreas Roet" />
+    <meta name="theme-color" content="#e4e2dd" />
+    <script type="application/ld+json" set:html={JSON.stringify(siteLd)} />
+    {pageLd.map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="/">
+          <span class="brand-mark">AR</span>
+          <span>Andreas Roet</span>
+        </a>
+        <nav class="nav" aria-label="Main">
+          {NAV.map((item) => (
+            <a href={item.href} class={activeNav === item.id ? 'active' : ''}>{item.label}</a>
+          ))}
+          <a class="nav-cta" href="/shop">Shop ↗</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="app">
+        <h2 class="topline">Built dense.<br />Mixed dry.</h2>
+
+        <div class="grid">
+          <div>
+            <h5>Andreas Roet</h5>
+            <p style="font-size:14px; opacity:.7; max-width:320px;">
+              Dub techno producer & sound designer. Tools, records, tutorials.
+            </p>
+          </div>
+          <div>
+            <h5>Site</h5>
+            <ul>
+              <li><a href="/music">Music</a></li>
+              <li><a href="/shop">Shop</a></li>
+              <li><a href="/blog">Tutorials & Blog</a></li>
+              <li><a href="/about">About</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5>Listen</h5>
+            <ul>
+              <li><a href="https://technosupps.gumroad.com" rel="noopener">Gumroad</a></li>
+              <li><a href="https://www.youtube.com/@technosupps" rel="noopener">YouTube</a></li>
+              <li><a href="https://soundcloud.com" rel="noopener">SoundCloud</a></li>
+              <li><a href="https://bandcamp.com" rel="noopener">Bandcamp</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5>Legal</h5>
+            <ul>
+              <li><a href="/imprint">Imprint</a></li>
+              <li><a href="/privacy">Privacy</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="legal">
+          <span>© {new Date().getFullYear()} Andreas Roet</span>
+          <span>No cookies. No trackers.</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import SoundCloud from '../components/SoundCloud.astro';
+import music from '../data/music.json';
+
+// TODO: replace with your real SoundCloud "spotlight" playlist URL.
+const SC_SPOTLIGHT = 'https://soundcloud.com/andreas-roet-nbg/sets/webpage-showcase/s-Z66zBTgHbNF';
+
+const sections = [
+  { key: 'label', title: 'Label Releases', items: music.label },
+  { key: 'self', title: 'Self-Published · Bandcamp', items: music.self },
+].filter((s) => s.items.length > 0);
+
+const musicLd = {
+  '@context': 'https://schema.org',
+  '@type': 'MusicGroup',
+  '@id': 'https://andreasroet.de/music#artist',
+  name: 'Andreas Roet',
+  genre: 'Dub Techno',
+  url: 'https://andreasroet.de/music',
+  album: [...music.label, ...music.self].map((r) => ({
+    '@type': 'MusicAlbum',
+    name: r.title,
+    datePublished: r.year,
+    ...(r.url && r.url !== 'https://' ? { url: r.url } : {}),
+  })),
+};
+---
+<Base
+  title="Music — Releases & Live Sets | Andreas Roet"
+  description="Dub techno releases by Andreas Roet: label records, self-published Bandcamp releases, and hardware live sets on SoundCloud."
+  activeNav="music"
+  mode="dark"
+  jsonLd={musicLd}
+>
+  <div class="page app">
+    <section style="padding: 40px 0 24px;">
+      <div class="eyebrow" style="margin-bottom: 16px;">Music</div>
+      <h1 style="max-width: 12ch; margin-bottom: 24px;">Records &<br />live sets.</h1>
+      <p style="max-width: 480px; color: var(--ink-soft); font-size: 17px;">
+        Label releases, self-published records on Bandcamp, and hardware live sets
+        recorded on Octatrack MK2 and Rytm MK1.
+      </p>
+    </section>
+
+    <section class="section">
+      <SoundCloud
+        url={SC_SPOTLIGHT}
+        label="SoundCloud · Spotlight"
+        title="Live sets & sketches"
+        height={450}
+      />
+    </section>
+
+    {sections.map((section) => (
+      <section class="section">
+        <div class="eyebrow" style="margin-bottom: 24px;">{section.title}</div>
+        {section.items.map((r, i) => (
+          <a href={r.url} rel="noopener" class="release-row" style="display:grid; grid-template-columns:40px 100px 1fr 160px 100px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+            <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
+            <div class="imgbox" style="position:relative;">
+              {r.cover
+                ? <img src={r.cover} alt={`${r.title} — cover`} loading="lazy" style="aspect-ratio:1/1; width:100%; object-fit:cover;" />
+                : <div class="placeholder" style="aspect-ratio:1/1; width:100%;"><span style="font-size:9px;">{r.kind}</span></div>}
+            </div>
+            <div>
+              <div class="mono" style="margin-bottom:6px;">{r.kind} · {r.year}</div>
+              <div style="font-family:var(--font-display); font-weight:800; font-size:28px; letter-spacing:-0.022em; line-height:1;">{r.title}</div>
+            </div>
+            <span class="mono">{r.label}</span>
+            <span class="mono" style="text-align:right;">LISTEN →</span>
+          </a>
+        ))}
+      </section>
+    ))}
+  </div>
+
+  <style>
+    @media (max-width: 800px) {
+      .release-row { grid-template-columns: 60px 1fr !important; gap: 12px !important; }
+      .release-row > :first-child, .release-row > :nth-child(4), .release-row > :nth-child(5) { display: none; }
+    }
+  </style>
+</Base>
