@@ -21,6 +21,7 @@ const NAV = [
   { href: '/', id: 'home', label: 'Index' },
   { href: '/music', id: 'music', label: 'Music' },
   { href: '/blog', id: 'blog', label: 'Tutorials & Blog' },
+  { href: '/tools', id: 'tools', label: 'Tools' },
   { href: '/about', id: 'about', label: 'About' },
 ];
 
@@ -96,7 +97,7 @@ const pageLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
     <footer class="footer">
       <div class="app">
-        <h2 class="topline">Built dense.<br />Mixed dry.</h2>
+        <h2 class="topline">Built dense. Mixed dry.</h2>
 
         <div class="grid">
           <div>
@@ -111,16 +112,18 @@ const pageLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
               <li><a href="/music">Music</a></li>
               <li><a href="/shop">Shop</a></li>
               <li><a href="/blog">Tutorials & Blog</a></li>
+              <li><a href="/tools">Tools</a></li>
               <li><a href="/about">About</a></li>
             </ul>
           </div>
           <div>
-            <h5>Listen</h5>
+            <h5>Listen & follow</h5>
             <ul>
-              <li><a href="https://technosupps.gumroad.com" rel="noopener">Gumroad</a></li>
-              <li><a href="https://www.youtube.com/@technosupps" rel="noopener">YouTube</a></li>
-              <li><a href="https://soundcloud.com" rel="noopener">SoundCloud</a></li>
-              <li><a href="https://bandcamp.com" rel="noopener">Bandcamp</a></li>
+              <li><a href="https://technosupps.gumroad.com" target="_blank" rel="noopener">Gumroad</a></li>
+              <li><a href="https://www.youtube.com/@technosupps" target="_blank" rel="noopener">YouTube</a></li>
+              <li><a href="https://soundcloud.com/andreas-roet-nbg" target="_blank" rel="noopener">SoundCloud</a></li>
+              <li><a href="https://dreiton.bandcamp.com" target="_blank" rel="noopener">Bandcamp</a></li>
+              <li><a href="/community">Discord</a></li>
             </ul>
           </div>
           <div>

@@ -1,12 +1,103 @@
 {
-  "_note": "Testimonials für Shop/Produkt/Homepage. Aus Gumroad-Reviews. Regeln: Name nur Vorname + Initiale (z.B. 'Marcus K.'), KEINE Fotos, Zitat knackig kürzen. rating 1-5. product = Produktname (ermöglicht Filtern auf Produktseite). featured: true = darf auf Homepage/Shop-Übersicht erscheinen.",
+  "_note": "Gumroad-Reviews. name = Vorname + Initiale/Nachname wie vom Kunden angegeben. product muss zur products.json id-Betitelung passen (title). featured=true → Homepage/Shop-Übersicht.",
   "reviews": [
     {
-      "quote": "Beispiel — durch echten Gumroad-Review ersetzen.",
-      "name": "Vorname I.",
-      "product": "Pack-Name",
+      "quote": "As a producer always on the lookout for fresh, authentic sounds, I'm thoroughly impressed by the quality. Totally recommend.",
+      "name": "Douglas Fugazi",
+      "product": "Dub Techno 01 for Serum 2 — Samples Only",
       "rating": 5,
       "featured": true
+    },
+    {
+      "quote": "Great sounds, super pleased. Totally worth it if you like Basic Channel type stuff.",
+      "name": "Eric Yealland",
+      "product": "Dub Techno 01 for Serum 2",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "quote": "The sounds these presets generate are genuinely amazing. I've been having a blast turning them into new ideas — thank you!",
+      "name": "Andrew Freeman",
+      "product": "Dub Techno 01 for Serum 2",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "quote": "New to dub techno and this kit has really helped me get moving. Great sounds, super usable.",
+      "name": "Andrew Freeman",
+      "product": "Dub Techno Kits Vol. 01",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "quote": "Very well thought out pack, well worth the price considering the quality.",
+      "name": "Justin Robinson",
+      "product": "Dub Techno Kits Vol. 01",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "quote": "Great package! Especially the Serum 2 presets in combination with an excellent tutorial on YT.",
+      "name": "Herwig Claeys",
+      "product": "Dub Techno Kits Vol. 01",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "quote": "Beautiful. I bought an Analog Four just so I could use these sounds.",
+      "name": "Anonymous",
+      "product": "Analog Dub Techno Vol. 01",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "quote": "Simply awesome! One of the best preset packs I have ever purchased. Highly recommended if you play or produce dub techno.",
+      "name": "Jean-Philippe Schwaab",
+      "product": "Analog Dub Techno Vol. 01",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "quote": "Excellent pack, giving some insight into a style I'm trying to learn about.",
+      "name": "John E",
+      "product": "Analog Dub Techno Vol. 01",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "quote": "You can learn a lot from these patterns for the Syntakt. Dub techno at its best!",
+      "name": "Star Maze",
+      "product": "Dub Techno Project 01 for Syntakt",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "quote": "Tasty. Very very tasty.",
+      "name": "Minos T. Gordy",
+      "product": "Dub Techno Project 01 for Syntakt",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "quote": "All you need to start some dub techno projects is this great sample pack!",
+      "name": "Star Maze",
+      "product": "Dub Techno Chords Vol. 01",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "quote": "Thank you Mister 3 Klang.",
+      "name": "Marcel Klang",
+      "product": "Dub Techno Chords Vol. 01",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "quote": "Excellent!",
+      "name": "Ed J. Draper",
+      "product": "Dub Techno Chords Vol. 01",
+      "rating": 5,
+      "featured": false
     }
   ]
 }

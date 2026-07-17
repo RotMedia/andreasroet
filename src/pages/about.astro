@@ -45,7 +45,7 @@ const aboutLd = {
       </div>
 
       <div class="about-benefit">
-        <p><strong>What this means for you:</strong> the samples and presets I sell, I built for myself — raw material for my own tracks and live sets. Finished enough that you're not fixing basics for an hour. Raw enough that there's still room to make it yours.</p>
+        <p><strong>What this means for you:</strong> the samples and presets I sell, I built for myself — raw material for my own tracks and live sets.<br /><br />Finished enough that you're not fixing basics for an hour.<br /><br />Raw enough that there's still room to make it yours.</p>
       </div>
 
       <!-- Three benefit links -->
@@ -66,7 +66,7 @@ const aboutLd = {
     </section>
 
     <!-- Expandable: Origin story -->
-    <section class="section" style="max-width: 760px;">
+    <section class="section" style="max-width: 760px; border-top: 0; padding-top: 0;">
       <details class="about-details">
         <summary>
           <span class="sum-title">My origin story</span>
@@ -82,19 +82,24 @@ const aboutLd = {
           <p>The tutorials grew out of that. TechnoSupps followed in 2022 — I had tons of sounds on my drive anyway, so a boutique sample pack shop made sense. It started with a single free pack that's now been downloaded over 12,000 times.</p>
           <p>Since then, the labels came to me. Deeptakt got in touch and we put out <em>Terratones</em>, plus a track on the <em>Hall of Dub</em> compilation. Frank Hellmond — DJ and co-founder of Dreiton — messaged me on Instagram, and we released the <em>Feedback</em> EP. The releases are dawless, the computer nothing but a recorder — raw, and closer to where dub techno started.</p>
           <p>But the core is always the same: music made with hardware. I love knobs and faders, feeling <em>in</em> the sound instead of behind a screen. That doesn't mean I avoid the DAW — I do plenty of mouse work — but it mostly starts with samples and hardware.</p>
-          <p>Right now I want to release more music and play live more often.</p>
+          <p>Right now I want to release more music and play live more often — and make TechnoSupps the #1 resource for dub techno production.</p>
         </div>
       </details>
     </section>
 
     <!-- Expandable: Meet the gear -->
-    <section class="section" style="max-width: 760px;">
+    <section class="section" style="max-width: 760px; border-top: 0; padding-top: 0;">
       <details class="about-details">
         <summary>
           <span class="sum-title">Meet the gear</span>
           <span class="sum-icon" aria-hidden="true">+</span>
         </summary>
         <div class="gear-list">
+          <div class="studio-shots">
+            <div class="studio-shot placeholder"><span class="mono">STUDIO</span></div>
+            <div class="studio-shot placeholder"><span class="mono">RIG</span></div>
+            <div class="studio-shot placeholder"><span class="mono">DESK</span></div>
+          </div>
           {gear.map((g) => (
             <div class="gear-row">
               <div class="gear-group mono">{g.group}</div>
@@ -155,6 +160,9 @@ const aboutLd = {
     .about-prose { padding-bottom: 24px; }
 
     .gear-list { padding-bottom: 24px; }
+    .studio-shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+    .studio-shot { aspect-ratio: 4/3; position: relative; overflow: hidden; }
+    .studio-shot img { width: 100%; height: 100%; object-fit: cover; }
     .gear-row { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
     .gear-group { color: var(--ink-mute); font-size: 12px; padding-top: 3px; }
     .gear-items { font-size: 15px; line-height: 1.5; color: var(--ink-soft); }

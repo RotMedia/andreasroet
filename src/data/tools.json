@@ -1,0 +1,32 @@
+{
+  "_note": "Tools-Seite. status: free | freemium | paid | coming-soon. Bei coming-soon: waitlist-Mail statt Link.",
+  "tools": [
+    {
+      "id": "geosonic",
+      "name": "GeoSonic",
+      "tagline": "Turn sacred geometry into MIDI.",
+      "sub": "Creative & workflow tool",
+      "status": "free",
+      "url": "https://andreasroet.de/geosonic",
+      "cover": null
+    },
+    {
+      "id": "live-set-planner",
+      "name": "Live Set Planner",
+      "tagline": "Plan and structure your hardware live sets.",
+      "sub": "Creative & workflow tool",
+      "status": "free",
+      "url": "#",
+      "cover": null
+    },
+    {
+      "id": "mandoline",
+      "name": "Mandoline",
+      "tagline": "A new way to work with loops and texture.",
+      "sub": "Creative & workflow tool",
+      "status": "coming-soon",
+      "waitlistSubject": "Mandoline Waitlist",
+      "cover": null
+    }
+  ]
+}

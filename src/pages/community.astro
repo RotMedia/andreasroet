@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+const DISCORD = 'https://discord.gg/vXDSCJwPN';
+---
+<Base
+  title="Join the Dub Techno Outpost — Community | Andreas Roet"
+  description="The Dub Techno Outpost — an open community for open and like-minded producers. Home for TechnoSupps product owners. We share knowledge through challenges, not consume-and-forget."
+  activeNav=""
+  mode="dark"
+>
+  <div class="page app">
+    <section style="padding: 64px 0 32px; max-width: 760px;">
+      <div class="eyebrow" style="margin-bottom: 20px;">Community · Discord</div>
+      <h1 style="margin-bottom: 32px;">Join the Dub<br />Techno Outpost.</h1>
+
+      <p style="font-size: 20px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 28px; max-width: 620px;">
+        An open community for open and like-minded producers.
+      </p>
+
+      <div class="about-benefit" style="margin: 0 0 36px;">
+        <p style="font-size: 17px; line-height: 1.6; margin: 0;">
+          Home for TechnoSupplements product owners. We share knowledge through
+          challenges instead of consume-and-forget — building skills together, not
+          just collecting tutorials.
+        </p>
+      </div>
+
+      <a class="btn accent" href={DISCORD} target="_blank" rel="noopener" style="display:inline-flex;">
+        Join the Dub Techno Outpost — free <span class="arrow">→</span>
+      </a>
+    </section>
+  </div>
+</Base>
