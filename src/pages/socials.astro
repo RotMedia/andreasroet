@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+const links = [
+  { label: 'YouTube', handle: '@technosupps', url: 'https://www.youtube.com/@technosupps', note: 'Tutorials, walkthroughs, live sets' },
+  { label: 'Gumroad', handle: 'technosupps', url: 'https://technosupps.gumroad.com', note: 'Sample packs, presets, projects' },
+  { label: 'SoundCloud', handle: 'andreas-roet-nbg', url: 'https://soundcloud.com/andreas-roet-nbg', note: 'Live sets & sketches' },
+  { label: 'Bandcamp', handle: 'Dreiton / Deeptakt', url: 'https://dreiton.bandcamp.com', note: 'Label releases' },
+  { label: 'Discord', handle: 'Dub Techno Outpost', url: '/community', note: 'The community — open to all producers' },
+];
+---
+<Base
+  title="Socials & Links | Andreas Roet"
+  description="All channels in one place — YouTube, Gumroad, SoundCloud, Bandcamp and the Dub Techno Outpost Discord community."
+  activeNav=""
+  mode="dark"
+>
+  <div class="page app">
+    <section style="padding: 48px 0 24px; max-width: 760px;">
+      <div class="eyebrow" style="margin-bottom: 16px;">Socials & Links</div>
+      <h1 style="margin-bottom: 24px;">Find me here.</h1>
+      <p style="max-width: 480px; color: var(--ink-soft); font-size: 17px;">
+        Everything in one place — music, tutorials, sounds and the community.
+      </p>
+    </section>
+
+    <section class="section" style="max-width: 760px; border-top:0; padding-top:0;">
+      {links.map((l) => (
+        <a href={l.url}
+           target={l.url.startsWith('http') ? '_blank' : undefined}
+           rel={l.url.startsWith('http') ? 'noopener' : undefined}
+           class="social-row">
+          <div>
+            <div style="font-family:var(--font-display); font-size:26px; line-height:1;">{l.label}</div>
+            <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">{l.note}</div>
+          </div>
+          <div class="mono" style="color:var(--ink-mute); font-size:12px; text-align:right;">
+            {l.handle}<br /><span style="color:var(--accent);">OPEN →</span>
+          </div>
+        </a>
+      ))}
+    </section>
+  </div>
+
+  <style>
+    .social-row {
+      display:flex; justify-content:space-between; align-items:center; gap:24px;
+      padding:22px 0; border-bottom:1px solid var(--rule);
+      text-decoration:none; color:inherit; transition:padding-left .15s;
+    }
+    .social-row:hover { padding-left:8px; }
+  </style>
+</Base>
