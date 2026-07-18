@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE LIVE SET PLANNER</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Megrim&family=Turret+Road:wght@700;800&family=Climate+Crisis&family=Doto:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0a0a;
+    --paper:#ffffff;
+    --accent:#ff4d1c;
+    --gray:#8a8a8a;
+    --line:#e2e2e2;
+    --head:"Archivo Black","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --mono:"Space Mono","Courier New",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  input,textarea,select,button{color:var(--ink);}
+  body.dark select option{background:#111;}
+  body{
+    font-family:var(--mono);
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.field label,.col-head h2,.toolbar button,.calc-result{font-family:var(--head);}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 24px 80px;}
+
+  /* ---------- HEADER ---------- */
+  header{border:3px solid var(--ink);padding:28px 32px;margin-bottom:0;position:relative;}
+  header h1{font-size:clamp(32px,5.6vw,66px);font-weight:900;letter-spacing:-0.02em;text-transform:uppercase;line-height:1;white-space:nowrap;}
+  header h1 span{color:var(--accent);}
+  header p{margin-top:12px;font-size:18px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);}
+  .gig-strip{
+    display:grid;grid-template-columns:1.2fr 1.2fr 1.2fr 0.9fr;gap:0;
+    border:3px solid var(--ink);border-top:none;margin-bottom:24px;
+  }
+  .gig-field{padding:14px 20px;border-right:3px solid var(--ink);}
+  .gig-field:last-child{border-right:none;}
+  .gig-field label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--gray);margin-bottom:4px;font-family:var(--head);}
+  .gig-field input{
+    width:100%;border:none;background:transparent;font-family:var(--head);
+    font-size:17px;text-transform:uppercase;padding:2px 0;
+  }
+  .gig-field input:focus{outline:none;color:var(--accent);}
+  .gig-date{font-family:var(--head);font-size:17px;text-transform:uppercase;display:block;padding:2px 0;}
+  @media(max-width:820px){.gig-strip{grid-template-columns:1fr;}.gig-field{border-right:none;border-bottom:3px solid var(--ink);}.gig-field:last-child{border-bottom:none;}}
+  .toolbar{display:flex;gap:0;margin-bottom:24px;flex-wrap:wrap;border:3px solid var(--ink);}
+  .toolbar button{
+    flex:1;min-width:140px;
+    background:var(--paper);border:none;border-right:3px solid var(--ink);
+    padding:14px 12px;font-family:inherit;font-weight:800;font-size:13px;
+    text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;color:var(--ink);
+  }
+  .toolbar button:last-child{border-right:none;}
+  .toolbar button:hover{background:var(--ink);color:var(--paper);}
+  .toolbar button.accent{background:var(--accent);color:var(--ink);}
+  .toolbar button.accent:hover{background:var(--ink);color:var(--accent);}
+  .toolbar button.share-cta{background:var(--ink);color:var(--paper);}
+  .toolbar button.share-cta:hover{background:var(--accent);color:var(--ink);}
+  .sb-group{display:inline-flex;gap:6px;}
+  .sw,.fw{
+    width:28px;height:28px;border:2px solid var(--ink);cursor:pointer;padding:0;
+    display:inline-flex;align-items:center;justify-content:center;background:var(--paper);
+  }
+  .sw.active,.fw.active{outline:3px solid var(--accent);outline-offset:1px;}
+  .fw{font-size:10px;font-weight:900;color:var(--ink);}
+  .fw:hover,.sw:hover{transform:translateY(-1px);}
+
+  /* ---------- COLUMNS ---------- */
+  .cols{display:grid;grid-template-columns:1fr 6px 1fr;gap:0;border:3px solid var(--ink);}
+  .divider{background:var(--ink);}
+  .col{padding:28px;}
+  .col-head{margin-bottom:22px;}
+  .col-head h2{font-size:clamp(26px,3.9vw,46px);font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;white-space:nowrap;}
+  .col-head .tag{display:inline-block;margin-top:8px;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:var(--paper);background:var(--ink);padding:4px 10px;}
+  .col-head.vision .tag{background:var(--accent);color:var(--ink);}
+
+  .field{margin-bottom:22px;}
+  .field label{display:block;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px;}
+  .field .hint{font-size:11.5px;color:var(--gray);margin-bottom:6px;letter-spacing:0.02em;}
+  .field textarea, .field input[type=text]{
+    width:100%;border:none;border-bottom:2px solid var(--ink);
+    font-family:inherit;font-size:15px;padding:6px 2px;background:transparent;resize:vertical;
+    min-height:34px;line-height:1.5;
+  }
+  .field textarea:focus, .field input:focus{outline:none;border-bottom-color:var(--accent);}
+  .vision .field textarea{min-height:64px;}
+
+  /* ---------- GEAR SECTION ---------- */
+  section.block{border:3px solid var(--ink);margin-top:24px;padding:28px;}
+  section.block > h2{font-size:22px;font-weight:900;text-transform:uppercase;margin-bottom:4px;}
+  section.block > .sub{font-size:12px;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:20px;}
+
+  .gear-form{display:grid;grid-template-columns:1.8fr 1.3fr 1fr 0.8fr 0.8fr 1fr 1.1fr auto;gap:10px;align-items:end;margin-bottom:18px;}
+  .gear-form .gf label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;color:var(--gray);}
+  .gear-form input,.gear-form select{
+    width:100%;border:2px solid var(--ink);padding:8px;font-family:inherit;font-size:13px;background:var(--paper);
+  }
+  .gear-form input:focus,.gear-form select:focus{outline:none;border-color:var(--accent);}
+  .gear-form button{
+    border:2px solid var(--ink);background:var(--ink);color:var(--paper);
+    padding:9px 18px;font-family:inherit;font-weight:800;text-transform:uppercase;font-size:12px;cursor:pointer;letter-spacing:0.06em;
+  }
+  .gear-form button:hover{background:var(--accent);border-color:var(--accent);color:var(--ink);}
+
+  table.gear{width:100%;border-collapse:collapse;font-size:13px;}
+  table.gear th{
+    text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;
+    border-bottom:3px solid var(--ink);padding:6px 8px;
+  }
+  table.gear td{border-bottom:1px solid var(--line);padding:8px;}
+  table.gear tr.inset{background:#fafafa;}
+  .chk{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;}
+  .del{background:none;border:none;color:var(--gray);cursor:pointer;font-size:15px;font-weight:900;}
+  .del:hover{color:var(--accent);}
+  .role-pill{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;border:1.5px solid var(--ink);padding:2px 6px;}
+  .empty{color:var(--gray);font-size:13px;padding:14px 0;}
+  .role-edit{
+    width:100%;min-width:90px;border:none;border-bottom:1.5px dashed var(--gray);
+    font-family:inherit;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;
+    background:transparent;padding:3px 2px;
+  }
+  .role-edit:focus{outline:none;border-bottom:1.5px solid var(--accent);}
+  .stepper{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+  .step{
+    border:1.5px solid var(--ink);background:var(--paper);width:20px;height:20px;line-height:1;
+    font-weight:900;cursor:pointer;font-size:12px;padding:0;font-family:var(--mono);
+    display:inline-flex;align-items:center;justify-content:center;border-radius:0;appearance:none;-webkit-appearance:none;
+  }
+  .step:hover{background:var(--accent);border-color:var(--accent);}
+  .stepper .stepval{min-width:16px;text-align:center;}
+  .stepper .clockval{min-width:56px;text-align:center;font-size:12px;}
+  .calc-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;}
+  .calc-item{display:inline-flex;align-items:center;gap:6px;}
+  .calc-item em{font-style:normal;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray);}
+  .calc-item input[type=number]{
+    width:64px;border:2px solid var(--ink);padding:6px;font-family:inherit;font-size:16px;font-weight:800;text-align:center;background:var(--paper);
+  }
+  .custom-add input{background:var(--paper);}
+  .hwrap{display:inline-flex;align-items:center;border:2px solid var(--ink);background:var(--paper);flex:0 0 auto;}
+  .hwrap input{border:none !important;background:transparent !important;width:52px;text-align:center;font-family:inherit;font-size:13px;padding:8px 0 8px 6px;}
+  .hwrap input:focus{outline:none;}
+  .hwrap em{font-style:normal;font-weight:800;padding-right:8px;color:var(--gray);font-size:12px;}
+  .improv-slider{display:flex;align-items:center;gap:12px;margin:8px 0 6px;}
+  .isl-label{font-size:10px;letter-spacing:0.08em;color:var(--gray);white-space:nowrap;font-family:var(--head);}
+  .isl-label b{color:var(--accent);font-size:13px;}
+  input[type=range]#improvRange{
+    flex:1;appearance:none;-webkit-appearance:none;height:2px;background:var(--ink);outline:none;
+  }
+  input[type=range]#improvRange::-webkit-slider-thumb{
+    appearance:none;-webkit-appearance:none;width:16px;height:16px;background:var(--accent);
+    border:2px solid var(--ink);cursor:pointer;border-radius:0;
+  }
+  input[type=range]#improvRange::-moz-range-thumb{
+    width:14px;height:14px;background:var(--accent);border:2px solid var(--ink);cursor:pointer;border-radius:0;
+  }
+  .pdf-opt{display:flex;align-items:center;gap:10px;font-size:13px;padding:8px 10px;border:2px solid var(--ink);cursor:pointer;}
+  .pdf-opt input{width:16px;height:16px;accent-color:var(--accent);}
+  @media print{
+    body.pdf-no-worksheet .cols,body.pdf-no-worksheet .gig-strip{display:none !important;}
+    body.pdf-no-gear .sec-gear{display:none !important;}
+    body.pdf-no-setlist .sec-setlist{display:none !important;}
+    body.pdf-no-todo .sec-todo{display:none !important;}
+    body.pdf-no-pack .sec-pack{display:none !important;}
+    /* every printed page gets its own closed frame */
+    /* worksheet: one sheet, two sides - compact so it never breaks */
+    .cols{display:block;border:none;}
+    .divider{display:none;}
+    .col{border:3pt solid var(--ink);padding:12pt;}
+    .col.vision{margin-top:10pt;page-break-after:always;break-after:page;page-break-inside:avoid;}
+    .col.tech{page-break-after:always;break-after:page;page-break-inside:avoid;}
+    .col-head h2{font-size:18pt;}
+    .col-head .tag{font-size:7pt;padding:2pt 5pt;margin-top:3pt;}
+    .field{margin-bottom:9pt;}
+    .field label{font-size:10pt !important;}
+    .field .hint{font-size:7pt;margin-bottom:2pt;}
+    .field textarea,.field input[type=text]{font-size:10.5pt !important;font-weight:700;border-bottom:1pt solid var(--ink) !important;padding:2pt 1pt;min-height:0;}
+    .vision .field textarea{min-height:0;}
+    .calc-row{gap:6pt;margin-top:4pt;}
+    .calc-item input[type=number]{font-size:10pt;padding:2pt;width:40pt;border-width:1pt;}
+    .calc-op{font-size:11pt;}
+    .calc-result{font-size:11pt;padding:2pt 7pt;}
+    .calc-item em,.isl-label{font-size:6.5pt;}
+    .improv-slider{margin:3pt 0;}
+    .slot-row{padding:2pt 0;font-size:8.5pt;}
+    .budget{font-size:9pt !important;margin-top:5pt;}
+    .stepper .stepval,.stepper .clockval{font-size:9pt;}
+    header{padding:8pt 14pt;border-width:3pt;}
+    header h1{font-size:16pt;}
+    header p{font-size:7pt;margin-top:2pt;}
+    .gig-strip{border-width:3pt;grid-template-columns:1fr 1fr;}
+    .gig-field{padding:4pt 12pt;border-right-width:3pt;border-bottom:3pt solid var(--ink);}
+    .gig-field:nth-child(2n){border-right:none;}
+    .gig-field:nth-child(n+3){border-bottom:none;}
+    .gig-field input,.gig-date{font-size:11pt !important;font-weight:800;}
+    .gig-field label{font-size:6.5pt;margin-bottom:1pt;}
+    .sec-gear{page-break-after:always;break-after:page;page-break-inside:avoid;}
+    .sec-setlist{page-break-after:always;break-after:page;}
+    .sec-todo{page-break-after:always;break-after:page;page-break-inside:avoid;}
+    .sec-pack{page-break-inside:avoid;}
+    tr.pdf-split{page-break-after:always;}
+    body.pdf-chunked .sec-setlist{border:none !important;padding:0 !important;}
+    body.pdf-chunked .sec-setlist>h2,body.pdf-chunked .sec-setlist>.sub{margin-left:4pt;}
+    .chunk-box{border:4pt solid var(--ink);padding:14pt;page-break-after:always;break-after:page;page-break-inside:avoid;}
+    .chunk-box:last-child{page-break-after:auto;break-after:auto;}
+    .printonly.chunk-label{display:block !important;font-family:var(--head);font-size:11pt;letter-spacing:0.1em;margin:0 0 8pt;color:#8a8a8a;}
+    body.pdf-shrink-setlist .sec-setlist table.matrix{font-size:11pt;}
+    body.pdf-shrink-setlist .sec-setlist input.cell{font-size:13pt;}
+    body.pdf-shrink-setlist .sec-setlist input.tname-in{font-size:11pt;}
+    body.pdf-shrink-setlist .sec-setlist textarea.cellnote{font-size:8pt;}
+  }
+  @media screen{
+    .printonly{display:none;}
+    .chunk-box{border:none;padding:0;}
+    .print-footer{display:none;}
+  }
+  @media print{
+    @page{margin:10mm 10mm 16mm 10mm;}
+    .print-footer{
+      display:flex;position:fixed;bottom:0;left:0;right:0;height:30pt;
+      background:#ffffff;align-items:center;justify-content:center;gap:10pt;
+      border-top:0.75pt solid #dddddd;
+    }
+    .print-watermark{
+      display:block;font-family:"Space Mono",monospace;font-size:7.5pt;
+      letter-spacing:0.12em;color:#9a9a9a;
+    }
+    .print-qr{display:block;width:24pt;height:24pt;opacity:0.9;}
+  }
+  /* ---------- SHARE MODAL ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal{background:var(--paper);border:3px solid var(--ink);max-width:720px;width:100%;max-height:92vh;overflow:auto;}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--ink);padding:14px 20px;}
+  .modal-head h3{font-family:var(--head);font-size:20px;}
+  .modal-close{background:none;border:none;font-size:26px;font-weight:900;cursor:pointer;color:var(--ink);line-height:1;}
+  .modal-close:hover{color:var(--accent);}
+  .modal-body{display:block;padding:20px;}
+  .preview-row{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:16px;}
+  .preview-wrap{border:2px solid var(--ink);line-height:0;}
+  #cardPreview{display:block;width:auto;max-width:100%;max-height:46vh;cursor:grab;touch-action:none;}
+  .zoom-col{display:none;flex-direction:column;align-items:center;gap:8px;width:30px;flex:0 0 auto;}
+  .zoom-col.on{display:flex;}
+  .zoom-label{font-family:var(--head);font-size:8px;letter-spacing:0.1em;color:var(--gray);writing-mode:vertical-lr;}
+  .vzoom{writing-mode:vertical-lr;direction:rtl;appearance:none;-webkit-appearance:none;width:20px;height:min(300px,38vh);background:transparent;}
+  .vzoom::-webkit-slider-runnable-track{width:2px;background:var(--ink);margin:0 auto;}
+  .vzoom::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:16px;height:16px;background:var(--accent);border:2px solid var(--ink);border-radius:0;margin-left:-7px;}
+  .vzoom::-moz-range-track{width:2px;background:var(--ink);}
+  .vzoom::-moz-range-thumb{width:14px;height:14px;background:var(--accent);border:2px solid var(--ink);border-radius:0;}
+  .chip-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex:0 0 auto;max-height:46vh;overflow-y:auto;}
+  .chip-stack{display:flex;flex-direction:column;gap:9px;}
+  .chip-div{height:2px;width:20px;background:var(--ink);}
+  .chip-col .sw,.chip-col .fw{width:26px;height:26px;}
+  #cardPreview:active{cursor:grabbing;}
+  .modal-controls{display:flex;flex-direction:column;gap:14px;}
+  .mc-label{font-family:var(--head);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;}
+  .bg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .bg-btn{
+    border:2px solid var(--ink);background:var(--paper);font-family:var(--mono);font-weight:700;
+    font-size:12px;padding:10px;cursor:pointer;text-transform:uppercase;color:var(--ink);
+  }
+  .bg-btn:hover,.bg-btn.active{background:var(--ink);color:var(--paper);}
+  .generate-btn{
+    border:2px solid var(--ink);background:var(--accent);font-family:var(--head);
+    font-size:14px;padding:14px;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;color:#0a0a0a;margin-top:auto;
+  }
+  .generate-btn:hover{background:var(--ink);color:var(--accent);}
+  .mc-hint{font-size:11px;color:var(--gray);line-height:1.5;}
+  .quick-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+  .chip{
+    border:1.5px solid var(--ink);background:var(--paper);font-family:var(--mono);font-size:11px;
+    padding:5px 10px;cursor:pointer;color:var(--ink);
+  }
+  .chip:hover{background:var(--ink);color:var(--paper);}
+  .chip.added{background:var(--accent);border-color:var(--accent);color:#0a0a0a;}
+  @media(max-width:900px),(orientation:portrait){
+    .modal{max-height:96vh;}
+  }
+  .calc-item input[type=number]:focus{outline:none;border-color:var(--accent);}
+  .calc-op{font-weight:900;font-size:18px;}
+  .calc-result{
+    font-weight:900;font-size:22px;color:var(--paper);background:var(--ink);padding:4px 14px;
+  }
+  .calc-result.hot{background:var(--accent);color:var(--ink);}
+  .content-toggle{
+    display:inline-block;border:1.5px solid var(--ink);background:var(--paper);font-family:var(--head);font-size:9px;
+    text-transform:uppercase;padding:3px 6px;letter-spacing:0.05em;color:var(--gray);
+    min-width:70px;text-align:center;
+  }
+  .content-toggle.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  #gigDate,#slotDate{border:2px solid var(--ink);padding:6px;font-family:inherit;font-size:13px;background:var(--paper);}
+  .slot-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:6px 0;font-size:13px;}
+  .slot-row b{font-weight:800;}
+  .slot-row .pp{color:var(--accent);font-weight:900;font-size:12px;}
+  .budget{margin-top:12px;font-weight:900;font-size:15px;}
+  .budget .warn{color:var(--accent);}
+  ul.todo{list-style:none;}
+  ul.todo li{display:flex;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;}
+  ul.todo li.done label{text-decoration:line-through;color:var(--gray);}
+  ul.todo li label{flex:1;cursor:pointer;}
+  ul.todo li .due{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray);white-space:nowrap;}
+  ul.todo li .prog{white-space:nowrap;}
+  ul.todo li input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex:0 0 auto;position:relative;top:3px;}
+  table.matrix{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;}
+  table.matrix th{
+    font-family:var(--head);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;
+    border-bottom:3px solid var(--ink);padding:6px;text-align:left;
+  }
+  table.matrix th.num{width:44px;}
+  table.matrix th.tname{width:22%;}
+  table.matrix td{border-bottom:1px solid var(--line);padding:5px 6px;vertical-align:top;}
+  table.matrix .rownum{font-family:var(--head);font-size:14px;padding-top:9px;}
+  table.matrix tr.safety .rownum{color:var(--accent);}
+  table.matrix input.cell,table.matrix input.tname-in{
+    width:100%;border:none;border-bottom:1.5px dashed var(--line);background:transparent;
+    font-family:var(--mono);font-size:13px;padding:4px 2px;
+  }
+  table.matrix input.cell{font-weight:700;text-transform:uppercase;}
+  table.matrix input.cell:focus,table.matrix input.tname-in:focus,table.matrix textarea.cellnote:focus{outline:none;border-color:var(--accent);}
+  table.matrix .notebtn{
+    background:none;border:none;cursor:pointer;font-size:11px;color:var(--gray);padding:2px 0 0;font-family:var(--mono);
+  }
+  table.matrix .notebtn.has{color:var(--accent);font-weight:700;}
+  table.matrix textarea.cellnote{
+    width:100%;border:1.5px solid var(--line);background:#fafafa;font-family:var(--mono);
+    font-size:11.5px;padding:5px;margin-top:4px;resize:vertical;min-height:44px;display:none;line-height:1.45;
+  }
+  table.matrix textarea.cellnote.open{display:block;}
+  table.matrix th.grab,table.matrix td.grab{width:30px;text-align:center;}
+  table.matrix td.grab{cursor:grab;color:var(--gray);font-size:14px;padding-top:9px;}
+  table.matrix td.grab:active{cursor:grabbing;}
+  table.matrix tr[draggable]{transition:background 0.1s;}
+  table.matrix tr[draggable]:hover td.grab{color:var(--accent);}
+  .rowmove{display:inline-flex;flex-direction:column;gap:2px;}
+  .rowmove .step{width:20px;height:20px;}
+  .rot{display:inline-block;transform:rotate(90deg);}
+  .matrix-bar{display:flex;justify-content:flex-end;margin-bottom:10px;min-height:0;}
+  .reorder-btn{
+    border:2px solid var(--ink);background:var(--paper);font-family:var(--head);font-size:11px;
+    text-transform:uppercase;letter-spacing:0.06em;padding:7px 14px;cursor:pointer;
+  }
+  .reorder-btn:hover{background:var(--accent);border-color:var(--accent);}
+  @media(max-width:820px){
+    .wrap{padding:14px 8px 60px;}
+    header{padding:18px 16px;}
+    .col{padding:16px 12px;}
+    section.block{padding:16px 10px;margin-top:16px;}
+    header,section.block,.cols,.toolbar,.gig-strip{border-width:2px;}
+    .table-scroll,#matrixWrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    table.gear{min-width:640px;font-size:12px;}
+    table.gear td,table.gear th{padding:6px 5px;}
+    table.matrix{min-width:560px;}
+    .gear-form{grid-template-columns:1fr 1fr;}
+  }
+  /* ---------- TOOLTIPS ---------- */
+  .info{
+    display:inline-block;margin-left:6px;width:15px;height:15px;line-height:14px;text-align:center;
+    border:1.5px solid var(--gray);font-size:10px;color:var(--gray);cursor:help;position:relative;
+    font-family:var(--mono);font-weight:400;text-transform:none;vertical-align:middle;letter-spacing:0;
+  }
+  .info:hover,.info:focus{border-color:var(--accent);color:var(--accent);outline:none;}
+  .tipbox{
+    display:none;position:absolute;z-index:60;left:0;top:22px;width:270px;
+    background:var(--ink);color:var(--paper);padding:10px 12px;font-size:11.5px;line-height:1.55;
+    text-transform:none;letter-spacing:0;font-weight:400;text-align:left;font-family:var(--mono);
+  }
+  .info:hover .tipbox,.info:focus .tipbox{display:block;}
+  .tipbox b{color:var(--accent);}
+  .tipbox .tiprow{display:block;margin-bottom:7px;}
+  .tipbox .tiprow:last-child{margin-bottom:0;}
+  /* ---------- DARK MODE ---------- */
+  body.dark{--ink:#ededed;--paper:#111111;--gray:#8a8a8a;--line:#2e2e2e;}
+  body.dark table.matrix textarea.cellnote{background:#1a1a1a;}
+  body.dark table.gear tr.inset{background:#1a1a1a;}
+  body,header,.toolbar button,.gear-form input,.gear-form select,.custom-add input,#gigDate,#slotDate,.step,.content-toggle,.reorder-btn{transition:background 0.2s,color 0.2s,border-color 0.2s;}
+
+  /* ---------- PACK LIST ---------- */
+  .pack-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  .pack-grid h3{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;border-bottom:3px solid var(--ink);padding-bottom:6px;margin-bottom:10px;}
+  ul.pack{list-style:none;}
+  ul.pack li{padding:7px 0;border-bottom:1px solid var(--line);font-size:14px;display:flex;justify-content:space-between;}
+  ul.pack li b{font-weight:800;}
+  ul.pack li .qty{color:var(--accent);font-weight:900;}
+  .custom-add{display:flex;gap:8px;margin-top:12px;}
+  .custom-add input{flex:1;border:2px solid var(--ink);padding:8px;font-family:inherit;font-size:13px;}
+  .custom-add button{border:2px solid var(--ink);background:var(--paper);padding:8px 14px;font-weight:800;font-family:inherit;cursor:pointer;text-transform:uppercase;font-size:11px;}
+  .custom-add button:hover{background:var(--ink);color:var(--paper);}
+
+  footer{margin-top:28px;text-align:center;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);}
+
+  @media(max-width:820px){
+    .cols{grid-template-columns:1fr;}
+    .divider{height:6px;}
+    .gear-form{grid-template-columns:1fr 1fr;}
+    .pack-grid{grid-template-columns:1fr;}
+  }
+
+  /* ---------- PRINT / PDF: CLUB MODE ---------- */
+  @media print{
+    body{--ink:#0a0a0a;--paper:#ffffff;--gray:#8a8a8a;--line:#e2e2e2;margin-bottom:34pt;}
+    .modal-overlay{display:none !important;}
+    .info{display:none !important;}
+    .toolbar,.gear-form,.custom-add,.del,.chk-col,.noprint,.step{display:none !important;}
+    .role-edit{border:none;font-size:12pt;font-weight:700;}
+    ul.todo li.done{display:none;}
+    ul.todo li{font-size:14pt;}
+    .budget{font-size:16pt;}
+    #gigDate{border:none;font-size:14pt;font-weight:800;}
+    table.matrix{font-size:12pt;page-break-inside:auto;}
+    table.matrix td{padding:var(--print-row-pad,7pt) 6pt;}
+    table.matrix input.cell{border:none;font-size:14pt;font-weight:800;}
+    table.matrix input.tname-in{border:none;font-size:12pt;}
+    table.matrix textarea.cellnote{display:block;border:none;background:none;font-size:10pt;min-height:0;height:auto;padding:0;margin-top:2pt;}
+    table.matrix textarea.cellnote:placeholder-shown{display:none;}
+    table.matrix tr{page-break-inside:avoid;}
+    body{font-size:14pt;}
+    .wrap{max-width:none;padding:0;}
+    header{border-width:4pt;}
+    header h1{font-size:34pt;}
+    .gig-strip{border-width:4pt;border-top:none;}
+    .gig-field{border-right-width:4pt;}
+    .gig-field input{font-size:20pt;font-weight:800;}
+    .gig-field label{font-size:10pt;}
+    .cols{border-width:4pt;}
+    textarea{height:auto !important;overflow:visible;}
+    tr.notinset{display:none !important;}
+    section.block{border-width:3pt;margin-top:0;padding:14pt;}
+    section.block>h2{font-size:18pt;}
+    section.block>.sub{font-size:7pt;margin-bottom:10pt;}
+    table.gear{font-size:9.5pt;}
+    table.gear th{font-size:7pt;padding:3pt 5pt;}
+    table.gear td{padding:4pt 5pt;}
+    .role-edit{font-size:9pt !important;}
+    ul.todo li{font-size:10.5pt !important;padding:5pt 0;}
+    ul.todo li .due{font-size:7.5pt;}
+    ul.pack li{font-size:10.5pt !important;padding:4pt 0;}
+    .pack-grid h3,#packCustom~*{font-size:9pt;}
+    .budget{font-size:9pt;}
+    footer{font-size:7pt;margin-top:10pt;}
+    table.gear{font-size:13pt;}
+    ul.pack li{font-size:14pt;padding:5pt 0;}
+    a{text-decoration:none;color:inherit;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>THE LIVE SET <span>PLANNER</span></h1>
+    <p>One sheet. Two sides. Your heart and your head.</p>
+  </header>
+
+  <div class="gig-strip">
+    <div class="gig-field">
+      <label>Artist</label>
+      <input type="text" data-k="artist" placeholder="Your artist name">
+    </div>
+    <div class="gig-field">
+      <label>Event</label>
+      <input type="text" data-k="eventName" placeholder="Event / night / series">
+    </div>
+    <div class="gig-field">
+      <label>Venue</label>
+      <input type="text" data-k="venue" placeholder="Club / venue / open air">
+    </div>
+    <div class="gig-field">
+      <label>Date</label>
+      <span id="gigStripDate" class="gig-date">—</span>
+    </div>
+  </div>
+
+  <div class="toolbar noprint">
+    <button onclick="saveFile()">Save Live Set .TXT</button>
+    <button onclick="document.getElementById('fileInput').click()">Load Live Set .TXT</button>
+    <button class="accent" onclick="openPdfModal()">Export PDF · Club Mode</button>
+    <button class="share-cta" onclick="shareCard()"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style="vertical-align:-2px;margin-right:7px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6L8.6 10.5" stroke="currentColor" stroke-width="2.2"/></svg>Share Your Gig</button>
+    <button onclick="toggleDark()" id="darkBtn">Dark Mode</button>
+    <button onclick="resetAll()">Reset</button>
+    <input type="file" id="fileInput" accept=".txt,.json" style="display:none" onchange="loadFile(event)">
+  </div>
+
+  <!-- ============ WORKSHEET ============ -->
+  <div class="cols">
+    <div class="col vision">
+      <div class="col-head vision">
+        <h2>Creative Vision</h2>
+        <span class="tag">your heart / intuitive</span>
+      </div>
+      <div class="field">
+        <label>One Sentence<span class="info" tabindex="0">i<span class="tipbox"><span class="tiprow">Your set as a single sentence. If you can't say it, you can't play it. Everything below should serve this line. No pressure — nothing on this sheet is mandatory.</span><span class="tiprow"><b>Pro tip:</b> the field grows, your sentence shouldn't. If you need more than three lines, your vision isn't clear enough yet. Make it snappy!</span></span></span></label>
+        <div class="hint">This set in a single sentence. If you can't say it, you can't play it.</div>
+        <textarea data-k="oneSentence" rows="1"></textarea>
+      </div>
+      <div class="field">
+        <label>Style &amp; Genre<span class="info" tabindex="0">i<span class="tipbox">Describe the sound you envision for this set. Subgenre, texture, character — "dub techno, hypnotic, tape-saturated" beats "techno".</span></span></label>
+        <div class="hint">The sound, subgenre, texture</div>
+        <textarea data-k="style"></textarea>
+      </div>
+      <div class="field">
+        <label>Set &amp; Setting<span class="info" tabindex="0">i<span class="tipbox">It's about the mood and vibe of your set — like "beach event with good friends", even if you play it from your studio.</span></span></label>
+        <div class="hint">Where is this set meant to live? Mood, crowd, season — not where you record it</div>
+        <textarea data-k="setting"></textarea>
+      </div>
+      <div class="field">
+        <label>Mood &amp; Atmosphere<span class="info" tabindex="0">i<span class="tipbox">What should people feel? Chilled, energized, motivated, focus, rave, road trip…</span></span></label>
+        <div class="hint">What should people feel?</div>
+        <textarea data-k="mood"></textarea>
+      </div>
+      <div class="field">
+        <label>BPM<span class="info" tabindex="0">i<span class="tipbox">What tempo do you play? Fixed BPM, or different from track to track?</span></span></label>
+        <div class="hint">Tempo or range</div>
+        <input type="text" data-k="bpm">
+      </div>
+      <div class="field">
+        <label>Inspiration<span class="info" tabindex="0">i<span class="tipbox">Artists, tracks, movies, TV shows, events — what reference pops into your mind?</span></span></label>
+        <div class="hint">Artists, tracks, moments that pull you here</div>
+        <textarea data-k="inspiration"></textarea>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="col tech">
+      <div class="col-head">
+        <h2>Technical Details</h2>
+        <span class="tag">your head / structured</span>
+      </div>
+      <div class="field calc">
+        <label>Set Length &amp; Playlist<span class="info" tabindex="0">i<span class="tipbox" style="width:300px;">
+          <span class="tiprow"><b>Set length:</b> your booked slot in minutes.</span>
+          <span class="tiprow"><b>Track length:</b> average minutes per track. 4 min is a solid techno default — longer for hypnotic, shorter for peak time.</span>
+          <span class="tiprow">The result is the number of tracks you need to produce.</span>
+        </span></span></label>
+        <div class="hint">Set length ÷ track length = tracks you need to produce</div>
+        <div class="calc-row">
+          <span class="calc-item">
+            <input type="number" min="0" id="setLen" data-k="length" placeholder="60" oninput="calcTracks()"> <em>min set</em>
+          </span>
+          <span class="calc-op">÷</span>
+          <span class="calc-item">
+            <span class="stepper">
+              <button class="step" onclick="stepTrackLen(-1)">−</button><b class="stepval" id="trackLenVal">4</b><button class="step" onclick="stepTrackLen(1)">+</button>
+            </span> <em>min / track</em>
+          </span>
+          <span class="calc-op">=</span>
+          <span class="calc-result" id="trackCountOut">—</span>
+        </div>
+      </div>
+      <div class="field"><label>Improv vs. Planned<span class="info" tabindex="0">i<span class="tipbox"><span class="tiprow">How much is scripted vs. jammed? 70/30 means 70% planned. Be honest — improv needs more rehearsal, not less.</span><span class="tiprow"><b>Pro tip:</b> for your first sets, plan more. Sets become more improvised as you get fluent with your instruments AND playing live.</span></span></span></label>
+        <div class="improv-slider">
+          <span class="isl-label">PLANNED <b id="islPlan">70</b>%</span>
+          <input type="range" id="improvRange" min="0" max="100" step="5" value="70" oninput="setImprov(this.value)">
+          <span class="isl-label"><b id="islImprov">30</b>% IMPROV</span>
+        </div>
+        <div class="hint">Notes, e.g. which sections are jammed</div><textarea data-k="improv" rows="1"></textarea></div>
+      <div class="field"><label>Material to Prepare<span class="info" tabindex="0">i<span class="tipbox">Archive digging or fresh production? Write "archive" and the to-do list picks it up.</span></span></label><div class="hint">Archive vs. new</div><textarea data-k="material"></textarea></div>
+      <div class="field calc">
+        <label>Gig Date &amp; Sessions<span class="info" tabindex="0">i<span class="tipbox" style="width:320px;">
+          <span class="tiprow"><b>Gig date:</b> the deadline everything counts back from — milestones generate automatically.</span>
+          <span class="tiprow"><b>Safety patterns:</b> extras beyond set length for encores, dead crowds, or a transition that dies.</span>
+          <span class="tiprow"><b>Sessions:</b> when do you actually have studio time? Be honest with your schedule and plan conservatively — better to have all tracks ready with time left over than to spend the night before the gig digging samples.</span>
+        </span></span></label>
+        <div class="hint">When is the gig, and when do you actually have time?</div>
+        <div class="calc-row" style="margin-bottom:10px;">
+          <span class="calc-item"><input type="date" id="gigDate" onchange="setGig(this.value)"> <em>gig date</em></span>
+          <span class="calc-item">
+            <span class="stepper">
+              <button class="step" onclick="stepSafety(-1)">−</button><b class="stepval" id="safetyVal">1</b><button class="step" onclick="stepSafety(1)">+</button>
+            </span> <em>safety patterns</em>
+          </span>
+        </div>
+        <div id="slotList"></div>
+        <div class="custom-add noprint" style="margin-top:8px;">
+          <input type="date" id="slotDate" style="flex:0 0 150px;">
+          <span class="hwrap"><input type="number" id="slotHours" min="0.5" step="0.5" placeholder="3"><em>h</em></span>
+          <button onclick="addSlot()">+ Session</button>
+        </div>
+        <div id="budgetOut" class="budget"></div>
+      </div>
+      <div class="field"><label>Transitions<span class="info" tabindex="0">i<span class="tipbox">How do you go from track to track? DJ-style continuous mixing, hard cuts, FX wash? Decide before the club decides for you.</span></span></label><div class="hint">How do sections hand over? Filter, mute, tempo, silence?</div><textarea data-k="transitions"></textarea></div>
+      <div class="field"><label>Fallback / Panic Plan<span class="info" tabindex="0">i<span class="tipbox">A machine dies, a transition collapses — what's your move? Written down = no panic.</span></span></label><div class="hint">If a machine dies or a transition fails — what happens?</div><textarea data-k="panic"></textarea></div>
+      <div class="field"><label>Recording<span class="info" tabindex="0">i<span class="tipbox"><span class="tiprow">Capturing the set? Write down with what. Fans who can't come will love you for a recording — and it's great for people who just discovered your music.</span><span class="tiprow"><b>Pro tip:</b> you are your own biggest critic. Push through the cringe; wisdom awaits on the other side.</span></span></span></label><div class="hint">Capture the set? With what?</div><input type="text" data-k="recording"></div>
+    </div>
+  </div>
+
+  <!-- ============ GEAR LIBRARY ============ -->
+  <section class="block sec-gear">
+    <h2>Gear Library<span class="info" tabindex="0">i<span class="tipbox" style="width:340px;">
+      <span class="tiprow"><b>Device:</b> your machines — enter once, reuse forever.</span>
+      <span class="tiprow"><b>Role:</b> what it does tonight. The same box can be drums today and mixer next gig — editable per plan.</span>
+      <span class="tiprow"><b>Power:</b> PSU brick, IEC cable, USB or battery — feeds the pack list.</span>
+      <span class="tiprow"><b>Audio / MIDI cables:</b> counted into the pack list. Watch out: TRS type A and B are not the same!</span>
+      <span class="tiprow"><b>Clock ‹›:</b> master sends the tempo, slaves follow. Exactly one master per set — the app warns if the math is off.</span>
+      <span class="tiprow"><b>Content ‹›:</b> PATTERNS = sequenced on this box, counts into your production budget. PRESETS = sounds you select and play — set list column, no pattern workload. NO = mixer, FX, utility.</span>
+      <span class="tiprow"><b>Checkbox:</b> is this device playing this gig? Unchecked gear stays in your library but out of the plan.</span>
+    </span></span></h2>
+    <div class="sub">Your full arsenal. Check what plays this set — cables aggregate into the pack list.</div>
+
+    <div class="gear-form noprint">
+      <div class="gf" style="grid-column:span 1;">
+        <label>Device</label>
+        <input type="text" id="gName" placeholder="Octatrack MKII" list="gearDbList" oninput="autofillGear(this.value)">
+        <datalist id="gearDbList"></datalist>
+      </div>
+      <div class="gf">
+        <label>Role in this set</label>
+        <input type="text" id="gRole" placeholder="Mixer / Drums / FX…">
+      </div>
+      <div class="gf">
+        <label>Power</label>
+        <select id="gPower">
+          <option value="psu">PSU / Netzteil</option>
+          <option value="iec">IEC / Kaltgerät</option>
+          <option value="usb">USB Power</option>
+          <option value="battery">Battery</option>
+          <option value="none">None</option>
+        </select>
+      </div>
+      <div class="gf">
+        <label>Audio cables</label>
+        <input type="number" id="gAudio" min="0" value="2">
+      </div>
+      <div class="gf">
+        <label>MIDI cables</label>
+        <input type="number" id="gMidi" min="0" value="1">
+      </div>
+      <div class="gf">
+        <label>MIDI role</label>
+        <select id="gClock">
+          <option value="master">Clock Master</option>
+          <option value="slave" selected>Clock Slave</option>
+          <option value="none">No MIDI</option>
+        </select>
+      </div>
+      <div class="gf">
+        <label>Content</label>
+        <select id="gContent">
+          <option value="patterns" selected>Patterns (sequenced)</option>
+          <option value="presets">Presets (played)</option>
+          <option value="none">No content</option>
+        </select>
+      </div>
+      <div class="gf">
+        <label>&nbsp;</label>
+        <button onclick="addGear()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="table-scroll"><table class="gear">
+      <thead>
+        <tr>
+          <th class="chk-col" style="width:44px;">Set</th>
+          <th>Device</th>
+          <th>Role</th>
+          <th>Power</th>
+          <th>Audio</th>
+          <th>MIDI</th>
+          <th>Clock</th>
+          <th>Patterns</th>
+          <th class="chk-col" style="width:36px;"></th>
+        </tr>
+      </thead>
+      <tbody id="gearBody"></tbody>
+    </table></div>
+    <div id="gearEmpty" class="empty">No gear yet. Add your machines above — you only do this once.</div>
+    <div id="clockWarn" class="empty" style="color:var(--accent);font-weight:800;display:none;"></div>
+  </section>
+
+  <!-- ============ SET LIST ============ -->
+  <section class="block sec-setlist">
+    <h2>Set List <span style="color:var(--accent)">// Pattern Matrix</span><span class="info" tabindex="0">i<span class="tipbox" style="width:340px;">
+      <span class="tiprow"><b>Rows</b> come from your playlist calculator — one per track, plus your safety net (SN).</span>
+      <span class="tiprow"><b>Track name:</b> working title. Even "the dubby one" beats staring at numbers in a dark club.</span>
+      <span class="tiprow"><b>Cells:</b> pattern or preset slot on that machine — A5, B12, P03. Keep it short, it prints big.</span>
+      <span class="tiprow"><b>≡ note:</b> details behind the code — track assignments, macro settings, patch notes. Orange ≡ means a note exists.</span>
+      <span class="tiprow"><b>Reorder:</b> drag the ⠿ handle or use the arrows — name, patterns and notes travel together.</span>
+      <span class="tiprow"><b>Re-Order Tracks:</b> makes the current order the new official numbering. Do it once after jamming, before you export.</span>
+    </span></span></h2>
+    <div class="sub">One row per track, one column per machine. Which pattern lives where — and what's inside it.</div>
+    <div id="matrixWrap"></div>
+  </section>
+
+  <!-- ============ GENERATED TO-DO ============ -->
+  <section class="block sec-todo">
+    <h2>To-Do <span style="color:var(--accent)">// Generated</span><span class="info" tabindex="0">i<span class="tipbox">Built automatically from your plan: pattern counts per machine, setup checks, milestones counted back from your gig date. The extra-task field below is for anything the generator can't know — "fix the loose jack on the Rytm".</span></span></h2>
+    <div class="sub">Built from your inputs. Change the plan above — the list follows.</div>
+    <ul class="todo" id="todoList"></ul>
+    <div class="custom-add noprint" style="margin-top:14px;">
+      <input type="text" id="customTodo" placeholder="Extra task…" onkeydown="if(event.key==='Enter')addTodo()">
+      <button onclick="addTodo()">Add</button>
+    </div>
+  </section>
+
+  <!-- ============ PACK LIST ============ -->
+  <section class="block sec-pack">
+    <h2>Pack List<span class="info" tabindex="0">i<span class="tipbox">Machines and cables aggregate automatically from your selected gear. Extras below is for the stuff that isn't gear but ruins your night when missing — headphones, USB stick, earplugs, Club-Mate.</span></span></h2>
+    <div class="sub">Auto-built from your selected gear. Add anything else below.</div>
+    <div class="pack-grid">
+      <div>
+        <h3>Machines</h3>
+        <ul class="pack" id="packGear"></ul>
+      </div>
+      <div>
+        <h3>Cables &amp; Power</h3>
+        <ul class="pack" id="packCables"></ul>
+      </div>
+    </div>
+    <div style="margin-top:24px;">
+      <h3 style="font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;border-bottom:3px solid var(--ink);padding-bottom:6px;margin-bottom:10px;">Extras</h3>
+      <ul class="pack" id="packCustom"></ul>
+      <div class="quick-chips noprint">
+        <button class="chip" onclick="quickAdd('Headphones')">Headphones</button>
+        <button class="chip" onclick="quickAdd('USB stick')">USB stick</button>
+        <button class="chip" onclick="quickAdd('Earplugs')">Earplugs</button>
+        <button class="chip" onclick="quickAdd('Gaffer tape')">Gaffer tape</button>
+        <button class="chip" onclick="quickAdd('Spare cables')">Spare cables</button>
+        <button class="chip" onclick="quickAdd('Phone charger')">Phone charger</button>
+        <button class="chip" onclick="quickAdd('Club-Mate')">Club-Mate</button>
+        <button class="chip" onclick="quickAdd('Merch')">Merch</button>
+      </div>
+      <div class="custom-add noprint">
+        <input type="text" id="customItem" placeholder="Anything else…" onkeydown="if(event.key==='Enter')addCustom()">
+        <button onclick="addCustom()">Add</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    The vision tells you what to build. The plan tells you how to get there. Start anywhere. Refine everything.
+  </footer>
+</div>
+
+<div class="print-footer"><span id="printWatermark" class="print-watermark"></span><svg class="print-qr" viewBox="0 0 33 33" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><path d="M0 0h7v1h-7zM9 0h1v1h-1zM11 0h4v1h-4zM16 0h1v1h-1zM18 0h5v1h-5zM24 0h1v1h-1zM26 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM11 1h1v1h-1zM17 1h1v1h-1zM19 1h1v1h-1zM21 1h1v1h-1zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h1v1h-1zM14 2h3v1h-3zM19 2h1v1h-1zM21 2h1v1h-1zM24 2h1v1h-1zM26 2h1v1h-1zM28 2h3v1h-3zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h3v1h-3zM13 3h7v1h-7zM21 3h4v1h-4zM26 3h1v1h-1zM28 3h3v1h-3zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h4v1h-4zM13 4h2v1h-2zM21 4h1v1h-1zM23 4h2v1h-2zM26 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM13 5h1v1h-1zM15 5h1v1h-1zM19 5h1v1h-1zM22 5h1v1h-1zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h7v1h-7zM9 7h1v1h-1zM11 7h1v1h-1zM13 7h1v1h-1zM17 7h1v1h-1zM19 7h2v1h-2zM2 8h1v1h-1zM5 8h10v1h-10zM16 8h2v1h-2zM19 8h2v1h-2zM23 8h1v1h-1zM25 8h1v1h-1zM27 8h5v1h-5zM0 9h1v1h-1zM2 9h2v1h-2zM5 9h1v1h-1zM9 9h1v1h-1zM12 9h3v1h-3zM16 9h3v1h-3zM20 9h2v1h-2zM23 9h5v1h-5zM29 9h1v1h-1zM32 9h1v1h-1zM0 10h1v1h-1zM2 10h1v1h-1zM4 10h3v1h-3zM8 10h1v1h-1zM10 10h1v1h-1zM18 10h2v1h-2zM23 10h1v1h-1zM25 10h4v1h-4zM30 10h1v1h-1zM32 10h1v1h-1zM0 11h1v1h-1zM3 11h2v1h-2zM7 11h1v1h-1zM10 11h1v1h-1zM21 11h1v1h-1zM23 11h2v1h-2zM26 11h2v1h-2zM29 11h1v1h-1zM31 11h1v1h-1zM2 12h8v1h-8zM21 12h1v1h-1zM26 12h3v1h-3zM31 12h2v1h-2zM1 13h2v1h-2zM4 13h1v1h-1zM9 13h2v1h-2zM21 13h1v1h-1zM23 13h2v1h-2zM26 13h5v1h-5zM32 13h1v1h-1zM1 14h1v1h-1zM3 14h2v1h-2zM6 14h1v1h-1zM9 14h1v1h-1zM23 14h1v1h-1zM26 14h2v1h-2zM29 14h2v1h-2zM32 14h1v1h-1zM0 15h2v1h-2zM3 15h1v1h-1zM5 15h1v1h-1zM7 15h1v1h-1zM9 15h2v1h-2zM22 15h1v1h-1zM27 15h3v1h-3zM1 16h3v1h-3zM6 16h5v1h-5zM22 16h2v1h-2zM26 16h2v1h-2zM0 17h2v1h-2zM5 17h1v1h-1zM7 17h3v1h-3zM23 17h1v1h-1zM26 17h2v1h-2zM30 17h1v1h-1zM32 17h1v1h-1zM0 18h1v1h-1zM2 18h2v1h-2zM6 18h2v1h-2zM9 18h1v1h-1zM22 18h2v1h-2zM25 18h3v1h-3zM29 18h2v1h-2zM32 18h1v1h-1zM1 19h2v1h-2zM5 19h1v1h-1zM7 19h1v1h-1zM23 19h1v1h-1zM25 19h1v1h-1zM27 19h3v1h-3zM31 19h2v1h-2zM0 20h4v1h-4zM6 20h2v1h-2zM9 20h2v1h-2zM23 20h4v1h-4zM3 21h2v1h-2zM8 21h5v1h-5zM14 21h1v1h-1zM21 21h1v1h-1zM24 21h2v1h-2zM27 21h1v1h-1zM29 21h2v1h-2zM32 21h1v1h-1zM0 22h7v1h-7zM8 22h7v1h-7zM16 22h1v1h-1zM18 22h3v1h-3zM24 22h6v1h-6zM32 22h1v1h-1zM2 23h1v1h-1zM8 23h4v1h-4zM14 23h2v1h-2zM18 23h3v1h-3zM22 23h3v1h-3zM27 23h1v1h-1zM29 23h1v1h-1zM31 23h2v1h-2zM0 24h9v1h-9zM10 24h1v1h-1zM12 24h2v1h-2zM17 24h1v1h-1zM24 24h6v1h-6zM8 25h1v1h-1zM10 25h1v1h-1zM12 25h2v1h-2zM15 25h1v1h-1zM18 25h1v1h-1zM24 25h1v1h-1zM28 25h2v1h-2zM32 25h1v1h-1zM0 26h7v1h-7zM8 26h1v1h-1zM11 26h2v1h-2zM15 26h2v1h-2zM20 26h3v1h-3zM24 26h1v1h-1zM26 26h1v1h-1zM28 26h3v1h-3zM32 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h1v1h-1zM10 27h2v1h-2zM13 27h1v1h-1zM18 27h1v1h-1zM22 27h1v1h-1zM24 27h1v1h-1zM28 27h1v1h-1zM31 27h2v1h-2zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h1v1h-1zM10 28h3v1h-3zM14 28h6v1h-6zM21 28h9v1h-9zM0 29h1v1h-1zM2 29h3v1h-3zM6 29h1v1h-1zM11 29h1v1h-1zM13 29h3v1h-3zM18 29h1v1h-1zM21 29h3v1h-3zM25 29h1v1h-1zM27 29h2v1h-2zM31 29h1v1h-1zM0 30h1v1h-1zM2 30h3v1h-3zM6 30h1v1h-1zM8 30h2v1h-2zM12 30h6v1h-6zM19 30h1v1h-1zM22 30h1v1h-1zM24 30h1v1h-1zM28 30h1v1h-1zM31 30h2v1h-2zM0 31h1v1h-1zM6 31h1v1h-1zM9 31h6v1h-6zM16 31h1v1h-1zM22 31h1v1h-1zM24 31h2v1h-2zM0 32h7v1h-7zM9 32h1v1h-1zM12 32h1v1h-1zM15 32h6v1h-6zM24 32h1v1h-1zM26 32h1v1h-1zM28 32h3v1h-3zM32 32h1v1h-1z" fill="#0a0a0a"/><rect x="11.3" y="11.3" width="9.4" height="9.4" fill="#0a0a0a"/><text x="16.5" y="17.65" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="4.2" fill="#ffffff">LSP</text></svg></div>
+
+<!-- ============ PDF EXPORT MODAL ============ -->
+<div id="pdfModal" class="modal-overlay" style="display:none;">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-head">
+      <h3>EXPORT PDF · CLUB MODE</h3>
+      <button class="modal-close" onclick="document.getElementById('pdfModal').style.display='none'">×</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:6px;">
+      <div class="mc-label" style="margin-bottom:6px;">Pages to include</div>
+      <label class="pdf-opt"><input type="checkbox" id="pdfWorksheet" checked> Worksheet (Vision + Technical)</label>
+      <label class="pdf-opt"><input type="checkbox" id="pdfGear" checked> Gear Library</label>
+      <label class="pdf-opt"><input type="checkbox" id="pdfSetlist" checked> Set List <span style="color:var(--gray);font-size:11px;">(own sheet, splits when long)</span></label>
+      <label class="pdf-opt"><input type="checkbox" id="pdfTodo" checked> To-Do</label>
+      <label class="pdf-opt"><input type="checkbox" id="pdfPack" checked> Pack List</label>
+      <button class="generate-btn" style="margin-top:14px;" onclick="runPdfExport()">Export PDF</button>
+      <div class="mc-hint">Choose "Save as PDF" as printer in the dialog.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ POST-EXPORT SHARE NUDGE ============ -->
+<div id="shareNudge" class="modal-overlay" style="display:none;">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-head">
+      <h3>PLAN LOCKED IN?</h3>
+      <button class="modal-close" onclick="document.getElementById('shareNudge').style.display='none'">×</button>
+    </div>
+    <div style="padding:28px;text-align:center;">
+      <div style="font-size:13px;line-height:1.6;margin-bottom:20px;">Your set is planned. Let the world know it's coming.</div>
+      <button class="generate-btn" style="width:100%;" onclick="document.getElementById('shareNudge').style.display='none';shareCard();">Share Your Gig</button>
+      <button style="background:none;border:none;font-family:var(--mono);font-size:11px;color:var(--gray);margin-top:12px;cursor:pointer;text-decoration:underline;" onclick="document.getElementById('shareNudge').style.display='none';">not now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SHARE CARD MODAL ============ -->
+<div id="cardModal" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>SHARE YOUR GIG</h3>
+      <button class="modal-close" onclick="closeShareModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="preview-row">
+        <div class="zoom-col" id="imgControls" title="Zoom (drag preview to move)">
+          <input type="range" id="bgZoom" class="vzoom" min="100" max="300" value="100" oninput="setBGZoom(this.value)">
+          <span class="zoom-label">ZOOM</span>
+        </div>
+        <div class="preview-wrap">
+          <canvas id="cardPreview" width="1080" height="1350"></canvas>
+        </div>
+        <div class="chip-col">
+          <span class="chip-stack" id="colorSwatches"></span>
+          <span class="chip-div"></span>
+          <span class="chip-stack" id="fontSwatches"></span>
+        </div>
+      </div>
+      <div class="modal-controls">
+        <div class="mc-label">Background</div>
+        <div class="bg-grid">
+          <button class="bg-btn" onclick="setBG(0)">Ring</button>
+          <button class="bg-btn" onclick="setBG(1)">Minimal</button>
+          <button class="bg-btn" onclick="setBG(2)">Halftone</button>
+          <button class="bg-btn" onclick="setBG(3)">Stripes</button>
+          <button class="bg-btn" onclick="setBG(4)">Grid</button>
+          <button class="bg-btn" onclick="document.getElementById('bgUpload').click()">Custom…</button>
+        </div>
+        <div class="mc-label">Badge</div>
+        <div class="bg-grid" id="badgeGrid" style="grid-template-columns:1fr 1fr;">
+          <button class="bg-btn badge-btn" onclick="setBadge('LIVE')">Live</button>
+          <button class="bg-btn badge-btn" onclick="setBadge('STREAM')">Stream</button>
+          <button class="bg-btn badge-btn" onclick="setBadge('STUDIO')">Studio</button>
+          <button class="bg-btn badge-btn" onclick="setBadge('OPEN AIR')">Open Air</button>
+        </div>
+        <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="loadBGImage(event)">
+        <button class="generate-btn" onclick="generateCard()">Generate &amp; Share</button>
+        <div class="mc-hint">Caption with your link gets copied automatically — paste it into your post.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GEAR_DB=[["Elektron Octatrack MKII","psu",2,1,"master","patterns"],["Elektron Digitakt II","psu",2,1,"master","patterns"],["Elektron Digitone II","psu",2,1,"slave","patterns"],["Elektron Syntakt","psu",2,1,"slave","patterns"],["Elektron Analog Rytm MKII","psu",2,1,"slave","patterns"],["Elektron Analog Rytm MKI","psu",2,1,"slave","patterns"],["Elektron Analog Four MKII","psu",2,1,"slave","patterns"],["Elektron Analog Keys","psu",2,1,"slave","patterns"],["Elektron Tonverk","psu",2,1,"master","patterns"],["Elektron Model:Samples","usb",2,1,"slave","patterns"],["Elektron Model:Cycles","usb",2,1,"slave","patterns"],["Behringer RD-6","psu",2,1,"slave","patterns"],["Behringer RD-8 MKII","iec",2,1,"slave","patterns"],["Behringer RD-9","iec",2,1,"slave","patterns"],["Behringer TD-3","psu",2,1,"slave","patterns"],["Behringer TD-3-MO","psu",2,1,"slave","patterns"],["Behringer LM Drum","psu",2,1,"slave","patterns"],["Behringer BMX","psu",2,1,"slave","patterns"],["Roland TR-8S","psu",2,1,"master","patterns"],["Roland TR-6S","usb",2,1,"slave","patterns"],["Roland TR-08 Boutique","usb",2,1,"slave","patterns"],["Roland TR-09 Boutique","usb",2,1,"slave","patterns"],["Korg Volca Beats","battery",1,1,"slave","patterns"],["Korg Volca Drum","battery",1,1,"slave","patterns"],["Arturia DrumBrute","psu",2,1,"slave","patterns"],["Arturia DrumBrute Impact","psu",2,1,"slave","patterns"],["Behringer Model D","psu",1,1,"none","presets"],["Behringer Poly D","iec",2,1,"slave","presets"],["Behringer Pro-800","psu",2,1,"slave","presets"],["Behringer DeepMind 12","iec",2,1,"slave","presets"],["Behringer UB-Xa","iec",2,1,"slave","presets"],["Behringer UB-Xa Mini","psu",2,1,"slave","presets"],["Behringer Wave","iec",2,1,"slave","presets"],["Behringer Crave","psu",1,1,"slave","presets"],["Behringer Neutron","psu",1,1,"none","presets"],["Korg Minilogue","psu",2,1,"slave","presets"],["Korg Minilogue XD","psu",2,1,"slave","presets"],["Korg Volca Keys","battery",1,1,"slave","presets"],["Korg Volca FM2","battery",1,1,"slave","presets"],["Korg Volca Modular","battery",1,0,"none","presets"],["Korg opsix","psu",2,1,"slave","presets"],["Korg Wavestate","psu",2,1,"slave","presets"],["Roland SE-02","usb",1,1,"slave","presets"],["Roland System-8","psu",2,1,"slave","presets"],["Roland Jupiter-X","iec",2,1,"slave","presets"],["Roland Aira Compact J-6","usb",1,1,"slave","presets"],["Roland Aira Compact T-8","usb",1,1,"slave","patterns"],["Roland Aira Compact S-1","usb",1,1,"slave","patterns"],["Moog Subharmonicon","psu",1,1,"none","presets"],["Moog Mother-32","psu",1,1,"slave","patterns"],["Moog DFAM","psu",1,0,"none","patterns"],["Moog Matriarch","psu",2,1,"none","presets"],["Novation Bass Station II","psu",1,1,"slave","presets"],["Novation Summit","iec",2,1,"slave","presets"],["Novation Peak","psu",2,1,"slave","presets"],["Arturia MicroFreak","psu",1,1,"slave","presets"],["Arturia MiniBrute 2","psu",1,1,"slave","presets"],["Arturia MiniBrute 2S","psu",1,1,"slave","patterns"],["Arturia PolyBrute","iec",2,1,"slave","presets"],["Dreadbox Erebus","psu",1,1,"none","presets"],["Dreadbox Nyx V2","psu",1,1,"none","presets"],["Dreadbox Typhon","psu",1,1,"slave","patterns"],["Dreadbox Nymphes","psu",1,1,"slave","presets"],["Erica Synths Perkons HD-01","iec",2,1,"master","patterns"],["Erica Synths LXR-02","psu",2,1,"slave","patterns"],["Erica Synths Bassline DB-01","psu",1,1,"slave","patterns"],["Waldorf Iridium","psu",2,1,"slave","presets"],["Waldorf Blofeld","psu",2,1,"slave","presets"],["ASM Hydrasynth Desktop","psu",2,1,"slave","presets"],["ASM Hydrasynth Explorer","battery",2,1,"slave","presets"],["1010music Blackbox","usb",2,1,"slave","patterns"],["1010music Bitbox MK2","psu",2,1,"slave","patterns"],["1010music Nanobox Lemondrop","usb",2,1,"slave","presets"],["1010music Nanobox Fireball","usb",2,1,"slave","presets"],["1010music Nanobox Razzmatazz","usb",2,1,"slave","patterns"],["Polyend Tracker+","usb",2,1,"master","patterns"],["Polyend Tracker Mini","usb",2,1,"master","patterns"],["Akai MPC One+","psu",2,1,"master","patterns"],["Akai MPC Live II","psu",2,1,"master","patterns"],["Akai MPC Live III","psu",2,1,"master","patterns"],["Polyend Play+","usb",2,1,"master","patterns"],["Novation Circuit Tracks","psu",2,1,"master","patterns"],["Novation Circuit Rhythm","psu",2,1,"master","patterns"],["Teenage Engineering OP-1 Field","usb",1,0,"slave","patterns"],["Teenage Engineering OP-Z","usb",1,0,"master","patterns"],["Teenage Engineering EP-133 K.O. II","battery",2,1,"master","patterns"],["Squarp Pyramid","usb",0,1,"master","none"],["Squarp Hapax","psu",0,1,"master","none"],["Torso T-1","usb",0,1,"master","none"],["Erica Synths Drum Sequencer","psu",0,1,"master","none"],["Oxi One","usb",0,1,"master","none"],["Oxi One MKII","usb",0,1,"master","none"],["Elektron Analog Heat +FX","psu",2,1,"none","none"],["1010music Bluebox","usb",2,1,"none","none"],["Erica Synths Fusion FX","psu",2,0,"none","none"],["Erica Synths Black Hole DSP2","psu",2,0,"none","none"],["Eventide H9","psu",2,1,"none","presets"],["Eventide H90","psu",4,1,"none","presets"],["Strymon BigSky","psu",2,1,"none","presets"],["Strymon Timeline","psu",2,1,"none","presets"],["Strymon Volante","psu",2,1,"none","presets"],["Delay Pedal (generic)","psu",2,0,"none","none"],["Reverb Pedal (generic)","psu",2,0,"none","none"],["Overdrive/Distortion Pedal (generic)","psu",1,0,"none","none"],["Multi-FX Pedal (generic)","psu",2,1,"none","presets"],["Access Virus A","iec",2,1,"slave","presets"],["Access Virus B","iec",2,1,"slave","presets"],["Access Virus C","iec",2,1,"slave","presets"],["Access Virus TI Desktop","psu",2,1,"slave","presets"],["Access Virus TI2 Desktop","psu",2,1,"slave","presets"],["Access Virus TI2 Keyboard","iec",2,1,"slave","presets"],["Clavia Nord Lead 1","iec",2,1,"slave","presets"],["Clavia Nord Lead 2","iec",2,1,"slave","presets"],["Clavia Nord Lead 2X","iec",2,1,"slave","presets"],["Clavia Nord Lead 3","iec",2,1,"slave","presets"],["Clavia Nord Lead 4","iec",2,1,"slave","presets"],["Clavia Nord Lead A1","iec",2,1,"slave","presets"],["Clavia Nord Rack 2","iec",2,1,"slave","presets"],["Clavia Nord Rack 2X","iec",2,1,"slave","presets"],["Clavia Nord Rack 3","iec",2,1,"slave","presets"],["Clavia Nord Lead 4R","iec",2,1,"slave","presets"],["Clavia Nord Lead A1R","iec",2,1,"slave","presets"],["Laptop / Ableton Live","none",2,0,"master","patterns"],["Laptop / Ableton + Audio-Interface","iec",2,1,"master","patterns"],["iPad / Tablet (Musik-Apps)","none",1,0,"slave","patterns"],["Akai APC40 MKII","usb",0,0,"none","none"],["Akai APC64","usb",0,1,"master","none"],["Akai MPK Mini MK3","usb",0,0,"none","none"],["Akai MPK249/261","psu",0,1,"none","none"],["Akai MPD218/226/232","usb",0,0,"none","none"],["Faderfox EC4","usb",0,1,"none","none"],["Faderfox PC12","usb",0,1,"none","none"],["Faderfox MX12","usb",0,1,"none","none"],["Faderfox UC4","usb",0,1,"none","none"],["Arturia KeyStep","usb",0,1,"master","none"],["Arturia KeyStep Pro","psu",0,1,"master","none"],["Arturia BeatStep Pro","usb",0,1,"master","patterns"],["Arturia MiniLab 3","usb",0,0,"none","none"],["Arturia KeyLab Essential","usb",0,0,"none","none"],["Novation Launchpad Pro MK3","usb",0,1,"none","none"],["Novation Launchkey MK4","usb",0,1,"none","none"],["Novation SL MKIII","psu",0,1,"master","patterns"],["Korg nanoKONTROL2","usb",0,0,"none","none"],["Generic USB MIDI Controller","usb",0,0,"none","none"],["Generic MIDI Keyboard (DIN)","psu",0,1,"none","none"],["MIDI Thru Box (generic)","psu",0,1,"none","none"],["MIDI Merger (generic)","psu",0,1,"none","none"],["USB MIDI Host (generic)","psu",0,1,"none","none"],["Kenton Thru-5","psu",0,1,"none","none"],["Kenton Thru-12","psu",0,1,"none","none"],["Kenton Merge-4","psu",0,1,"none","none"],["Kenton Merge-8","psu",0,1,"none","none"],["Kenton USB Host MKII","psu",0,1,"none","none"],["MIDI Solutions Thru (2/4/8)","none",0,1,"none","none"],["MIDI Solutions Merger","none",0,1,"none","none"],["MIDI Solutions Quadra Thru","none",0,1,"none","none"],["Blokas Midihub","usb",0,1,"none","none"],["Retrokits RK-006","usb",0,1,"master","none"],["iConnectivity mioXM","psu",0,1,"none","none"],["CME WIDI Master (wireless MIDI)","none",0,1,"none","none"],["Allen & Heath Xone:92","iec",4,0,"none","none"],["Allen & Heath Xone:96","iec",4,0,"none","none"],["Allen & Heath Xone:23","psu",2,0,"none","none"],["Allen & Heath Xone:PX5","iec",4,1,"none","none"],["PLAYdifferently Model 1","iec",4,0,"none","none"],["PLAYdifferently Model 1.4","iec",4,0,"none","none"],["Pioneer DJ DJM-450","iec",2,1,"master","none"],["Pioneer DJ DJM-750MK2","iec",2,1,"master","none"],["Pioneer DJ DJM-900NXS2","iec",2,1,"master","none"],["Pioneer DJ DJM-A9","iec",2,1,"master","none"],["Pioneer DJ DJM-V10","iec",4,1,"master","none"],["Ecler WARM2/WARM4","iec",2,0,"none","none"],["MasterSounds Radius 2/4","psu",2,0,"none","none"],["Tascam Model 12","iec",2,1,"none","none"],["Mackie ProFX10v3","iec",2,0,"none","none"],["Mackie 1202VLZ4","iec",2,0,"none","none"],["Soundcraft Signature 12","iec",2,0,"none","none"],["Yamaha MG10XU","iec",2,0,"none","none"],["Yamaha MG12XU","iec",2,0,"none","none"],["Behringer Xenyx QX1204USB","iec",2,0,"none","none"],["Korg MW-1608 SoundLink","iec",2,0,"none","none"],["Roland MX-1 Mix Performer","psu",2,1,"master","none"],["Generic Compact Mixer","iec",2,0,"none","none"],["Generic DJ Mixer","iec",2,0,"none","none"],["Jomox Alpha Base","psu",2,1,"slave","patterns"],["Jomox XBASE 09","psu",2,1,"slave","patterns"],["Jomox XBASE 999","psu",2,1,"slave","patterns"],["Jomox MBase 11","psu",1,1,"none","presets"],["Jomox ModBase 09 MK2","psu",1,1,"none","presets"],["Jomox T-Resonator MK2","psu",2,1,"none","presets"],["Modular Rig / Eurorack Case (generic)","iec",2,0,"none","patterns"],["Modular Rig with MIDI Interface (generic)","iec",2,1,"slave","patterns"],["Roland TR-1000","iec",2,1,"master","patterns"]];
+const K='liveSetPlanner_v1';
+let state={fields:{},gear:[],custom:[]};
+
+/* ---------- PDF EXPORT FLOW ---------- */
+const SETLIST_SPLIT_AT=16;   // rows that fit one sheet comfortably
+const SETLIST_SHRINK_MAX=20; // up to here: shrink font instead of splitting
+let PRINT_CHUNKS=null;       // e.g. [16,16] - set only during export
+function openPdfModal(){
+  // reset any leftover print state from the previous export
+  ['worksheet','gear','setlist','todo','pack','shrink-setlist','chunked'].forEach(k=>document.body.classList.remove('pdf-no-'+k,'pdf-'+k));
+  PRINT_CHUNKS=null;renderMatrix();
+  document.getElementById('pdfModal').style.display='flex';
+}
+function runPdfExport(){
+  const opts={worksheet:'pdfWorksheet',gear:'pdfGear',setlist:'pdfSetlist',todo:'pdfTodo',pack:'pdfPack'};
+  Object.entries(opts).forEach(([k,id])=>{
+    document.body.classList.toggle('pdf-no-'+k,!document.getElementById(id).checked);
+  });
+  // Smart Fit: <=16 one sheet | 17-20 shrink to fit | >20 balanced chunks of max 16
+  const trackCount=parseInt(state.fields.trackCount)||0;
+  const n=trackCount>0?trackCount+(state.safety??1):0;
+  document.body.classList.remove('pdf-shrink-setlist');
+  PRINT_CHUNKS=null;
+  if(n>SETLIST_SPLIT_AT&&n<=SETLIST_SHRINK_MAX){
+    document.body.classList.add('pdf-shrink-setlist');
+  }else if(n>SETLIST_SHRINK_MAX){
+    const pages=Math.ceil(n/SETLIST_SPLIT_AT);
+    const base=Math.floor(n/pages),extra=n%pages;
+    PRINT_CHUNKS=Array.from({length:pages},(_,i)=>base+(i<extra?1:0));
+  }
+  document.body.classList.toggle('pdf-chunked',!!PRINT_CHUNKS);
+  renderMatrix();
+  // stretch rows to fill the sheet: usable table height ~500pt (A4 minus section header)
+  const perPage=PRINT_CHUNKS?Math.max(...PRINT_CHUNKS):(n||16);
+  const pad=Math.max(4,Math.min(16,Math.round((500/Math.max(perPage,1)-20)/2)));
+  document.documentElement.style.setProperty('--print-row-pad',pad+'pt');
+  document.getElementById('pdfModal').style.display='none';
+  setTimeout(()=>window.print(),60);
+}
+window.addEventListener('afterprint',()=>{
+  // NOTE: no cleanup here - afterprint fires too early on mobile/preview.
+  // pdf-* body classes are print-only selectors, harmless on screen; reset happens in openPdfModal().
+  setTimeout(()=>{document.getElementById('shareNudge').style.display='flex';},400);
+});
+
+/* ---------- PERSONALIZATION: ACCENT + FONT ---------- */
+const ACCENTS=['#ff4d1c','#1c4dff','#a6ff1c','#ff1cd4','#00d4b8'];
+let ACCENT='#ff4d1c';
+const FONTS=[
+  ['Archivo Black','F1'],
+  ['Megrim','F2'],
+  ['Turret Road','F3'],
+  ['Climate Crisis','F4'],
+  ['Doto','F5'],
+  ['Bebas Neue','F6']
+];
+let HEADFONT='Archivo Black';
+(function buildCardStyleControls(){
+  const cs=document.getElementById('colorSwatches');
+  ACCENTS.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='sw';b.style.background=c;b.title=c;
+    b.onclick=()=>{applyAccent(c);state.cardAccent=c;persist();};
+    cs.appendChild(b);
+  });
+  const fs=document.getElementById('fontSwatches');
+  FONTS.forEach(f=>{
+    const b=document.createElement('button');
+    b.className='fw';b.textContent=f[1];b.title=f[0];
+    b.style.fontFamily='"'+f[0]+'",sans-serif';
+    b.onclick=()=>{applyFont(f[0]);state.cardFont=f[0];persist();};
+    fs.appendChild(b);
+  });
+})();
+function applyAccent(c){
+  ACCENT=c; // card accent only - app UI stays orange
+  document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('active',b.title===c));
+  renderPreview();
+}
+function applyFont(name){
+  const f=FONTS.find(x=>x[0]===name)||FONTS[0];
+  HEADFONT=f[0]; // card font only - app UI stays Archivo
+  document.querySelectorAll('.fw').forEach(b=>b.classList.toggle('active',b.title===f[0]));
+  renderPreview();
+}
+
+/* ---------- SHARE CARD (Flyer Style + Backgrounds) ---------- */
+const PLANNER_URL='ANDREASROET.DE/TOOLS';
+let cardBG=0;          // 0-4 preset index, or 'img'
+let cardBadge='LIVE';
+function setBadge(b){
+  cardBadge=b;state.cardBadge=b;persist();
+  document.querySelectorAll('.badge-btn').forEach(x=>x.classList.toggle('active',x.textContent.toUpperCase()===b));
+  renderPreview();
+}
+let bgImg=null,bgZoom=1,bgOX=0,bgOY=0;
+
+function shareCard(){
+  document.getElementById('cardModal').style.display='flex';
+  markBGButtons();
+  document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('active',b.title===ACCENT));
+  document.querySelectorAll('.fw').forEach(b=>b.classList.toggle('active',b.title===HEADFONT));
+  document.querySelectorAll('.badge-btn').forEach(x=>x.classList.toggle('active',x.textContent.toUpperCase()===cardBadge));
+  renderPreview();
+}
+function closeShareModal(){document.getElementById('cardModal').style.display='none';}
+function setBG(i){
+  cardBG=i;
+  document.getElementById('imgControls').classList.remove('on');
+  markBGButtons();renderPreview();
+}
+function markBGButtons(){
+  document.querySelectorAll('.bg-btn').forEach((b,i)=>{
+    b.classList.toggle('active',(cardBG===i)||(cardBG==='img'&&i===5));
+  });
+}
+function loadBGImage(ev){
+  const f=ev.target.files[0];if(!f)return;
+  const img=new Image();
+  img.onload=()=>{
+    bgImg=img;cardBG='img';bgZoom=1;bgOX=0;bgOY=0;
+    document.getElementById('bgZoom').value=100;
+    document.getElementById('imgControls').classList.add('on');
+    markBGButtons();renderPreview();
+  };
+  img.src=URL.createObjectURL(f);
+  ev.target.value='';
+}
+function setBGZoom(v){bgZoom=v/100;renderPreview();}
+
+/* --- pan on preview --- */
+(function(){
+  const cvEl=()=>document.getElementById('cardPreview');
+  let dragging=false,lx=0,ly=0;
+  document.addEventListener('pointerdown',e=>{
+    if(e.target.id!=='cardPreview'||cardBG!=='img')return;
+    dragging=true;lx=e.clientX;ly=e.clientY;e.preventDefault();
+  });
+  document.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    const r=cvEl().getBoundingClientRect();
+    const sc=1080/r.width;
+    bgOX+=(e.clientX-lx)*sc;bgOY+=(e.clientY-ly)*sc;
+    lx=e.clientX;ly=e.clientY;
+    renderPreview();
+  });
+  document.addEventListener('pointerup',()=>dragging=false);
+})();
+
+function hexA(hex,a){const n=parseInt(hex.slice(1),16);return 'rgba('+(n>>16)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+function drawBackground(x,W,H){
+  const ACC=ACCENT,INK='#0a0a0a',PAP='#f5f2ec';
+  x.fillStyle=INK;x.fillRect(0,0,W,H);
+  if(cardBG==='img'&&bgImg){
+    // cover-fit + user pan/zoom
+    const base=Math.max(W/bgImg.width,H/bgImg.height)*bgZoom;
+    const iw=bgImg.width*base,ih=bgImg.height*base;
+    x.drawImage(bgImg,(W-iw)/2+bgOX,(H-ih)/2+bgOY,iw,ih);
+    // legibility overlays
+    x.fillStyle='rgba(10,10,10,0.42)';x.fillRect(0,0,W,H);
+    const gr=x.createLinearGradient(0,H*0.55,0,H);
+    gr.addColorStop(0,'rgba(10,10,10,0)');gr.addColorStop(1,'rgba(10,10,10,0.75)');
+    x.fillStyle=gr;x.fillRect(0,0,W,H);
+  }else if(cardBG===0){ // Ring
+    x.fillStyle=ACC;x.beginPath();x.arc(W+60,300,330,0,Math.PI*2);x.fill();
+    x.fillStyle=INK;x.beginPath();x.arc(W+60,300,255,0,Math.PI*2);x.fill();
+    x.save();x.translate(-40,H-260);x.rotate(-0.06);x.fillStyle=ACC;x.fillRect(0,0,460,90);x.restore();
+  }else if(cardBG===1){ // Minimal
+    x.strokeStyle=PAP;x.lineWidth=5;x.strokeRect(30,30,W-60,H-60);
+  }else if(cardBG===2){ // Halftone
+    for(let ry=0;ry<H;ry+=34){
+      for(let rx=0;rx<W;rx+=34){
+        const r=Math.max(0.5,((rx/W)*0.6+(ry/H)*0.4)*9);
+        x.fillStyle=hexA(ACC,0.14+(ry/H)*0.22);
+        x.beginPath();x.arc(rx,ry,r,0,Math.PI*2);x.fill();
+      }
+    }
+    x.fillStyle='rgba(10,10,10,0.45)';x.fillRect(0,0,W,H);
+  }else if(cardBG===3){ // Stripes
+    x.save();x.translate(W,0);x.rotate(0.5);
+    for(let i=0;i<14;i++){
+      x.fillStyle=i%2?hexA(ACC,0.85):'rgba(245,242,236,0.06)';
+      x.fillRect(-200,i*46,900,26);
+    }
+    x.restore();
+  }else if(cardBG===4){ // Grid
+    x.strokeStyle='rgba(245,242,236,0.14)';x.lineWidth=1.5;
+    for(let gx=0;gx<=W;gx+=90){x.beginPath();x.moveTo(gx,0);x.lineTo(gx,H);x.stroke();}
+    for(let gy=0;gy<=H;gy+=90){x.beginPath();x.moveTo(0,gy);x.lineTo(W,gy);x.stroke();}
+    x.fillStyle=ACC;x.fillRect(W-260,-60,320,320);
+    x.fillStyle=INK;x.fillRect(W-220,-60,240,240);
+  }
+  // film grain on everything
+  x.globalAlpha=0.05;x.fillStyle=PAP;
+  for(let i=0;i<2600;i++){x.fillRect(Math.random()*W,Math.random()*H,1.5,1.5);}
+  x.globalAlpha=1;
+}
+
+function drawForeground(x,W,H){
+  const ACC=ACCENT,INK='#0a0a0a',PAP='#f5f2ec',GRAY='#9a9a9a';
+  const P=70;
+  const HEAD=(s)=>s+'px "'+HEADFONT+'", sans-serif';
+  const MONO=(s,b)=>(b?'bold ':'')+s+'px "Space Mono", monospace';
+  const f=state.fields||{};
+  const inSet=state.gear.filter(g=>g.inSet);
+
+  x.save();x.translate(W-34,H-90);x.rotate(-Math.PI/2);
+  x.fillStyle=GRAY;x.font=MONO(20,true);
+  x.fillText('HARDWARE \u00B7 NO LAPTOP \u00B7 NO NET \u00B7 ALL LIVE',0,0);
+  x.restore();
+
+  let y=P+30;
+  if(state.gig){
+    const d=new Date(state.gig+'T00:00:00');
+    const dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0');
+    x.fillStyle=PAP;x.font=HEAD(120);
+    x.fillText(dd+'.'+mm,P,y+100);
+    x.fillStyle=GRAY;x.font=MONO(24,true);
+    x.fillText(d.getFullYear()+' \u00B7 '+d.toLocaleDateString('en-GB',{weekday:'long'}).toUpperCase(),P,y+150);
+    y+=210;
+  }else{y+=40;}
+
+  x.save();x.translate(P+8,y+6);x.rotate(-0.045);
+  x.font=HEAD(32);
+  const bw=x.measureText(cardBadge).width+68;
+  x.fillStyle=ACC;x.fillRect(0,0,bw,52);
+  x.fillStyle=INK;x.fillText(cardBadge,34,38);
+  x.restore();y+=95;
+
+  const artist=(f.artist||'UNTITLED ARTIST').toUpperCase();
+  y+=fitText(x,artist,P,y,W-2*P-40,124,HEAD,PAP)+6;
+
+  const evLine=[f.eventName,f.venue].filter(Boolean).join('  \u2022  ').toUpperCase();
+  if(evLine){y+=fitText(x,evLine,P,y+10,W-2*P-40,42,HEAD,ACC)+22;}else{y+=22;}
+
+  if((f.oneSentence||'').trim()){
+    x.fillStyle=PAP;x.font=MONO(31,false);
+    y=wrapText(x,'\u201C'+f.oneSentence.trim()+'\u201D',P,y+18,W-2*P-60,44)+18;
+  }
+
+  const bits=[];
+  if(f.bpm)bits.push(f.bpm+' BPM');
+  if(f.length)bits.push(f.length+' MIN');
+  const tc=parseInt(f.trackCount)||0;
+  if(tc)bits.push(tc+' TRACKS');
+  if(f.style)bits.push(f.style.split(/[,\n]/)[0].trim().toUpperCase());
+  if(bits.length){
+    const line=bits.join('  //  ');
+    x.font=MONO(24,true);
+    const tw=x.measureText(line).width+48;
+    x.fillStyle=PAP;x.fillRect(P,y+14,Math.min(tw,W-2*P),56);
+    x.fillStyle=INK;x.fillText(line,P+24,y+52);
+    y+=110;
+  }
+
+  if(inSet.length){
+    x.fillStyle=ACC;x.font=MONO(21,true);
+    x.fillText('RIG:',P,y+20);
+    x.fillStyle=cardBG==='img'?PAP:GRAY;x.font=MONO(21,false);
+    const rig=inSet.map(g=>g.name).join(' / ');
+    y=wrapText(x,rig,P+72,y+20,W-2*P-110,32)+8;
+  }
+
+  x.fillStyle=ACC;x.fillRect(28,H-124,W-56,96);
+  x.fillStyle=INK;x.textAlign='center';
+  x.font=HEAD(26);
+  x.fillText('PLANNED WITH THE LIVE SET PLANNER',W/2,H-84);
+  x.font=MONO(24,true);
+  x.fillText('\u2192 '+PLANNER_URL,W/2,H-46);
+  x.textAlign='left';
+}
+
+function renderPreview(){
+  const cv=document.getElementById('cardPreview');
+  const x=cv.getContext('2d');
+  drawBackground(x,cv.width,cv.height);
+  drawForeground(x,cv.width,cv.height);
+}
+
+async function generateCard(){
+  try{await document.fonts.ready;}catch(e){}
+  const W=1080,H=1350;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const x=cv.getContext('2d');
+  drawBackground(x,W,H);
+  drawForeground(x,W,H);
+
+  const f=state.fields||{};
+  const evLine=[f.eventName,f.venue].filter(Boolean).join(' \u2022 ');
+  const caption='Planned my live set with THE LIVE SET PLANNER \u2192 https://'+PLANNER_URL.toLowerCase()+(f.artist?'\n'+f.artist:'')+(evLine?' \u2014 '+evLine:'');
+  try{await navigator.clipboard.writeText(caption);}catch(e){}
+
+  cv.toBlob(async blob=>{
+    const name=((f.artist||'live-set')+'-flyer').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.png';
+    const file=new File([blob],name,{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:'My Live Set',text:caption});closeShareModal();return;}catch(e){}
+    }
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=name;a.click();
+    closeShareModal();
+    alert('Flyer saved! Caption with your link was copied to the clipboard \u2014 paste it into your post.');
+  },'image/png');
+}
+function fitText(x,txt,px,py,maxW,startSize,fontFn,color){
+  let s=startSize;
+  x.font=fontFn(s);
+  while(x.measureText(txt).width>maxW&&s>18){s-=2;x.font=fontFn(s);}
+  x.fillStyle=color;x.fillText(txt,px,py+s*0.85);
+  return s*1.05;
+}
+function wrapText(x,txt,px,py,maxW,lh){
+  const words=txt.split(/\s+/);let line='',yy=py;
+  words.forEach(w=>{
+    const t=line?line+' '+w:w;
+    if(x.measureText(t).width>maxW&&line){x.fillText(line,px,yy);yy+=lh;line=w;}
+    else line=t;
+  });
+  if(line){x.fillText(line,px,yy);yy+=lh;}
+  return yy;
+}
+
+function setImprov(v){
+  v=parseInt(v);
+  state.improvPlan=v;
+  document.getElementById('islPlan').textContent=v;
+  document.getElementById('islImprov').textContent=100-v;
+  persist();
+}
+function toggleDark(){
+  state.dark=!state.dark;
+  document.body.classList.toggle('dark',state.dark);
+  document.getElementById('darkBtn').textContent=state.dark?'Light Mode':'Dark Mode';
+  persist();
+}
+function load(){
+  try{const s=localStorage.getItem(K);if(s)state=JSON.parse(s);}catch(e){}
+  document.querySelectorAll('[data-k]').forEach(el=>{el.value=state.fields[el.dataset.k]||'';});
+  if(state.dark){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='Light Mode';}
+  if(state.improvPlan!==undefined){document.getElementById('improvRange').value=state.improvPlan;setImprov(state.improvPlan);}
+  ACCENT=state.cardAccent||'#ff4d1c';
+  HEADFONT=state.cardFont||'Archivo Black';
+  cardBadge=state.cardBadge||'LIVE';
+  document.getElementById('printWatermark').textContent='PLANNED WITH THE LIVE SET PLANNER \u2192 '+PLANNER_URL;
+  calcTracks();
+  render();
+}
+function persist(){localStorage.setItem(K,JSON.stringify(state));}
+
+document.querySelectorAll('[data-k]').forEach(el=>{
+  el.addEventListener('input',()=>{state.fields[el.dataset.k]=el.value;persist();});
+});
+
+/* ---------- GEAR DATABASE AUTOFILL ---------- */
+(function(){
+  const dl=document.getElementById('gearDbList');
+  GEAR_DB.forEach(d=>{const o=document.createElement('option');o.value=d[0];dl.appendChild(o);});
+})();
+function autofillGear(v){
+  const hit=GEAR_DB.find(d=>d[0].toLowerCase()===v.trim().toLowerCase());
+  if(!hit)return;
+  document.getElementById('gPower').value=hit[1];
+  document.getElementById('gAudio').value=hit[2];
+  document.getElementById('gMidi').value=hit[3];
+  document.getElementById('gClock').value=hit[4]==='none'?'none':hit[4];
+  document.getElementById('gContent').value=hit[5];
+}
+
+function addGear(){
+  const name=document.getElementById('gName').value.trim();
+  if(!name)return;
+  state.gear.push({
+    name,
+    role:document.getElementById('gRole').value.trim(),
+    power:document.getElementById('gPower').value,
+    audio:parseInt(document.getElementById('gAudio').value)||0,
+    midi:parseInt(document.getElementById('gMidi').value)||0,
+    clock:document.getElementById('gClock').value,
+    content:document.getElementById('gContent').value,
+    inSet:true
+  });
+  document.getElementById('gName').value='';
+  document.getElementById('gRole').value='';
+  persist();render();
+}
+function delGear(i){state.gear.splice(i,1);persist();render();}
+function toggleGear(i){state.gear[i].inSet=!state.gear[i].inSet;persist();render();}
+
+function setRole(i,v){state.gear[i].role=v.trim();persist();render();}
+function cycleContent(i,d){
+  const order=['patterns','presets','none'];
+  const cur=order.indexOf(contentOf(state.gear[i]));
+  state.gear[i].content=order[(cur+d+order.length)%order.length];
+  persist();render();
+}
+function contentOf(g){
+  if(g.content===true)return'patterns';
+  if(g.content===false||g.content===undefined)return'none';
+  return g.content;
+}
+
+/* ---------- GIG / SLOTS / SAFETY ---------- */
+function setGig(v){state.gig=v;persist();render();}
+function stepSafety(d){state.safety=Math.max(0,(state.safety??1)+d);persist();render();}
+function addSlot(){
+  const d=document.getElementById('slotDate').value;
+  const h=parseFloat(document.getElementById('slotHours').value);
+  if(!d||!(h>0))return;
+  state.slots=state.slots||[];
+  state.slots.push({date:d,hours:h});
+  state.slots.sort((a,b)=>a.date.localeCompare(b.date));
+  document.getElementById('slotHours').value='';
+  persist();render();
+}
+function delSlot(i){state.slots.splice(i,1);persist();render();}
+function stepSlot(i,d){
+  state.slots[i].hours=Math.max(0.5,Math.round((state.slots[i].hours+d)*2)/2);
+  persist();render();
+}
+
+/* ---------- SET LIST MATRIX ---------- */
+function mKey(row,dev){return row+'|'+dev;}
+function syncOrder(rows){
+  state.order=Array.isArray(state.order)?state.order:[];
+  // keep only ids within range, append missing
+  state.order=state.order.filter(id=>id>=1&&id<=rows);
+  for(let id=1;id<=rows;id++)if(!state.order.includes(id))state.order.push(id);
+  return state.order;
+}
+function moveRow(pos,d){
+  const t=pos+d;
+  if(t<0||t>=state.order.length)return;
+  [state.order[pos],state.order[t]]=[state.order[t],state.order[pos]];
+  persist();render();
+}
+let dragPos=null;
+function dragStart(e,pos){dragPos=pos;e.dataTransfer.effectAllowed='move';}
+function dragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move';}
+function dropRow(e,pos){
+  e.preventDefault();
+  if(dragPos===null||dragPos===pos)return;
+  const[id]=state.order.splice(dragPos,1);
+  state.order.splice(pos,0,id);
+  dragPos=null;
+  persist();render();
+}
+function renumber(){
+  // current visual order becomes the new 1..N numbering; data moves with it
+  const order=state.order;
+  const newMatrix={},newNames={},newProg=state.prog||{};
+  const devs=[...new Set(Object.keys(state.matrix||{}).map(k=>k.split('|').slice(1).join('|')))];
+  order.forEach((oldId,pos)=>{
+    const newId=pos+1;
+    if(state.trackNames&&state.trackNames[oldId])newNames[newId]=state.trackNames[oldId];
+    devs.forEach(dev=>{
+      const c=(state.matrix||{})[oldId+'|'+dev];
+      if(c)newMatrix[newId+'|'+dev]=c;
+    });
+  });
+  state.matrix=newMatrix;
+  state.trackNames=newNames;
+  state.order=order.map((_,i)=>i+1);
+  persist();render();
+}
+function setCell(row,dev,v){
+  state.matrix=state.matrix||{};
+  state.matrix[mKey(row,dev)]=state.matrix[mKey(row,dev)]||{};
+  state.matrix[mKey(row,dev)].pat=v;
+  persist();
+}
+function setCellNote(row,dev,v){
+  state.matrix=state.matrix||{};
+  state.matrix[mKey(row,dev)]=state.matrix[mKey(row,dev)]||{};
+  state.matrix[mKey(row,dev)].note=v;
+  persist();
+}
+function setTrackName(row,v){
+  state.trackNames=state.trackNames||{};
+  state.trackNames[row]=v;
+  persist();
+}
+function toggleNote(id,btn){
+  const ta=document.getElementById(id);
+  ta.classList.toggle('open');
+  if(ta.classList.contains('open'))ta.focus();
+}
+function renderMatrix(){
+  const wrap=document.getElementById('matrixWrap');
+  const inSet=state.gear.filter(g=>g.inSet&&contentOf(g)!=='none');
+  const trackCount=parseInt(state.fields.trackCount)||0;
+  const safety=state.safety??1;
+  const rows=trackCount>0?trackCount+safety:0;
+  if(!inSet.length||!rows){
+    wrap.innerHTML='<div class="empty">Needs a set length (playlist calculator) and at least one pattern-carrying machine in the set.</div>';
+    return;
+  }
+  state.matrix=state.matrix||{};state.trackNames=state.trackNames||{};
+  const order=syncOrder(rows);
+  const dirty=order.some((id,pos)=>id!==pos+1);
+  let h=`<div class="matrix-bar noprint">${dirty?'<button class="reorder-btn" onclick="renumber()">Re-Order Tracks</button>':''}</div>`;
+  // chunk boundaries (only set during PDF export)
+  const chunks=PRINT_CHUNKS&&PRINT_CHUNKS.length>1?PRINT_CHUNKS:[order.length];
+  let cut=0;
+  const bounds=chunks.map(c=>{cut+=c;return cut;});
+  const thead='<thead><tr><th class="grab noprint"></th><th class="num">#</th><th class="tname">Track</th>'
+    +inSet.map(g=>'<th>'+esc(g.name)+(contentOf(g)==='presets'?' <span style="color:var(--gray);font-size:9px;">PRESETS</span>':'')+'</th>').join('')
+    +'<th class="grab noprint"></th></tr></thead>';
+  let chunkIdx=0;
+  const multi=chunks.length>1;
+  if(multi)h+='<div class="chunk-box"><div class="chunk-label printonly">SET LIST 1/'+chunks.length+'</div>';
+  h+='<table class="matrix">'+thead+'<tbody>';
+  order.forEach((id,pos)=>{
+    if(chunkIdx<bounds.length-1&&pos===bounds[chunkIdx]){
+      chunkIdx++;
+      h+='</tbody></table></div>';
+      h+='<div class="chunk-box"><div class="chunk-label printonly">SET LIST '+(chunkIdx+1)+'/'+chunks.length+'</div>';
+      h+='<table class="matrix">'+thead+'<tbody>';
+    }
+    const isSafety=pos>=trackCount;
+    const r=id;
+    h+=`<tr class="${isSafety?'safety':''}" draggable="true" ondragstart="dragStart(event,${pos})" ondragover="dragOver(event)" ondrop="dropRow(event,${pos})">
+      <td class="grab noprint" title="Drag to reorder">⠿</td>
+      <td class="rownum">${String(id).padStart(2,'0')}${isSafety?'<span style="font-size:9px;color:var(--accent);display:block;">SN</span>':''}</td>
+      <td><input class="tname-in" value="${esc(state.trackNames[r]||'')}" placeholder="${isSafety?'Safety net':'Track name…'}" onchange="setTrackName(${r},this.value)"></td>`;
+    inSet.forEach(g=>{
+      const c=state.matrix[mKey(r,g.name)]||{};
+      const nid='note_'+r+'_'+g.name.replace(/[^a-z0-9]/gi,'');
+      h+=`<td>
+        <input class="cell" value="${esc(c.pat||'')}" placeholder="${contentOf(g)==='presets'?'P'+String(id).padStart(2,'0'):'A'+id}" onchange="setCell(${r},'${esc(g.name)}',this.value)">
+        <button class="notebtn ${c.note?'has':''} noprint" onclick="toggleNote('${nid}',this)">≡ note</button>
+        <textarea class="cellnote ${c.note?'open':''}" id="${nid}" placeholder="T5 = Pad, T8 = Main Synth…" onchange="setCellNote(${r},'${esc(g.name)}',this.value)">${esc(c.note||'')}</textarea>
+      </td>`;
+    });
+    h+=`<td class="grab noprint"><span class="rowmove">
+      <button class="step" onclick="moveRow(${pos},-1)"><span class="rot">‹</span></button>
+      <button class="step" onclick="moveRow(${pos},1)"><span class="rot">›</span></button>
+    </span></td></tr>`;
+  });
+  h+='</tbody></table>'+(multi?'</div>':'');
+  wrap.innerHTML=h;
+}
+
+/* ---------- TODO ENGINE ---------- */
+function addTodo(){
+  const v=document.getElementById('customTodo').value.trim();
+  if(!v)return;
+  state.customTodos=state.customTodos||[];
+  state.customTodos.push(v);
+  document.getElementById('customTodo').value='';
+  persist();render();
+}
+function delTodo(i){state.customTodos.splice(i,1);persist();render();}
+function toggleDone(id){
+  state.done=state.done||{};
+  state.done[id]=!state.done[id];
+  persist();render();
+}
+function stepProg(id,d,max){
+  state.prog=state.prog||{};
+  state.prog[id]=Math.min(max,Math.max(0,(state.prog[id]||0)+d));
+  if(state.prog[id]>=max){state.done=state.done||{};state.done[id]=true;}
+  else{state.done=state.done||{};state.done[id]=false;}
+  persist();render();
+}
+function fmtDate(s){
+  if(!s)return'';
+  const d=new Date(s+'T00:00:00');
+  return d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'2-digit'});
+}
+function buildTodos(){
+  const todos=[];
+  const inSet=state.gear.filter(g=>g.inSet);
+  const trackCount=parseInt(state.fields.trackCount)||0;
+  const safety=state.safety??1;
+  const patternCount=trackCount>0?trackCount+safety:0;
+  const contentDevices=inSet.filter(g=>contentOf(g)==='patterns');
+
+  // production per content device
+  if(patternCount>0){
+    const totalP=patternCount*contentDevices.length;
+    let doneP=0;
+    contentDevices.forEach(g=>{doneP+=Math.min((state.prog||{})['pat_'+g.name]||0,patternCount);});
+    const openP=Math.max(0,totalP-doneP);
+    const hrs=(state.slots||[]).filter(s=>!state.gig||s.date<=state.gig).reduce((a,s)=>a+s.hours,0);
+    const mpp=openP>0&&hrs>0?Math.floor(hrs*60/openP):0;
+    contentDevices.forEach(g=>{
+      todos.push({id:'pat_'+g.name,label:patternCount+' patterns on '+g.name+(g.role?' ('+g.role+')':'')+(mpp?' — ~'+mpp+' min each':''),prog:{max:patternCount}});
+    });
+  }
+  if((state.fields.material||'').toLowerCase().includes('archiv')){
+    todos.push({id:'archive',label:'Sift archive & mark candidates'});
+  }
+  // preset devices: map & save sounds, no pattern budget
+  if(patternCount>0){
+    inSet.filter(g=>contentOf(g)==='presets').forEach(g=>{
+      todos.push({id:'pre_'+g.name,label:'Map & save presets on '+g.name+(g.role?' ('+g.role+')':'')+' — fill the set list column',prog:{max:patternCount}});
+    });
+  }
+  // setup
+  const masters=inSet.filter(g=>g.clock==='master').length;
+  const midiDev=inSet.filter(g=>g.clock!=='none').length;
+  if(midiDev>0&&masters===0)todos.push({id:'clockmaster',label:'Pick a clock master',hot:true});
+  if(masters>=1&&inSet.filter(g=>g.clock==='slave').length>=2)todos.push({id:'midichain',label:'Test MIDI chain (merger / thru)'});
+  if(inSet.length){
+    todos.push({id:'naming',label:'Name projects & patterns on all machines'});
+    todos.push({id:'dryrun',label:'Full setup dry run',due:relDate(-3)});
+  }
+  if((state.fields.recording||'').trim())todos.push({id:'rectest',label:'Test recording setup'});
+  if(!(state.fields.panic||'').trim())todos.push({id:'panic',label:'Write your fallback / panic plan',hot:true});
+  if(state.gig){
+    todos.push({id:'lock',label:'Material lock — nothing new after this',due:relDate(-7)});
+    todos.push({id:'pack',label:'Pack (run the pack list)',due:relDate(-1)});
+  }
+  // custom
+  (state.customTodos||[]).forEach((c,i)=>todos.push({id:'c_'+i,label:c,custom:i}));
+  return todos;
+}
+function relDate(offset){
+  if(!state.gig)return null;
+  const d=new Date(state.gig+'T00:00:00');
+  d.setDate(d.getDate()+offset);
+  return d.toISOString().slice(0,10);
+}
+function stepTrackLen(d){
+  state.trackLen=Math.max(1,(state.trackLen||4)+d);
+  persist();calcTracks();
+}
+function calcTracks(){
+  const tl=state.trackLen||4;
+  document.getElementById('trackLenVal').textContent=tl;
+  const len=parseFloat(document.getElementById('setLen').value);
+  const out=document.getElementById('trackCountOut');
+  if(len>0){
+    const n=Math.ceil(len/tl);
+    out.textContent=n+' tracks';
+    out.classList.add('hot');
+    state.fields.trackCount=String(n);
+  }else{
+    out.textContent='—';
+    out.classList.remove('hot');
+  }
+  persist();
+  render();
+}
+function stepAudio(i,d){state.gear[i].audio=Math.max(0,(state.gear[i].audio||0)+d);persist();render();}
+const CLOCK_ORDER=['master','slave','none'];
+function cycleClock(i,d){
+  const cur=CLOCK_ORDER.indexOf(state.gear[i].clock);
+  state.gear[i].clock=CLOCK_ORDER[(cur+d+CLOCK_ORDER.length)%CLOCK_ORDER.length];
+  persist();render();
+}
+
+function addCustom(){
+  const v=document.getElementById('customItem').value.trim();
+  if(!v)return;
+  state.custom.push(v);
+  document.getElementById('customItem').value='';
+  persist();render();
+}
+function delCustom(i){state.custom.splice(i,1);persist();render();}
+function quickAdd(item){
+  if(state.custom.includes(item))return;
+  state.custom.push(item);persist();render();
+  document.querySelectorAll('.chip').forEach(b=>{if(b.textContent===item)b.classList.add('added');});
+}
+
+const POWER_LABEL={psu:'PSU',iec:'IEC power cable',usb:'USB power',battery:'Batteries',none:null};
+
+function render(){
+  const tb=document.getElementById('gearBody');
+  tb.innerHTML='';
+  state.gear.forEach((g,i)=>{
+    const tr=document.createElement('tr');
+    if(!g.inSet){tr.style.opacity='0.35';tr.classList.add('notinset');}
+    tr.innerHTML=`
+      <td class="chk-col"><input type="checkbox" class="chk" ${g.inSet?'checked':''} onchange="toggleGear(${i})"></td>
+      <td><b>${esc(g.name)}</b></td>
+      <td><input type="text" class="role-edit" value="${esc(g.role)}" placeholder="Role…" onchange="setRole(${i},this.value)"></td>
+      <td>${POWER_LABEL[g.power]||'—'}</td>
+      <td>
+        <span class="stepper">
+          <button class="step" onclick="stepAudio(${i},-1)">−</button><b class="stepval">${g.audio}</b><button class="step" onclick="stepAudio(${i},1)">+</button>
+        </span>
+      </td>
+      <td>${g.midi||'—'}</td>
+      <td>
+        <span class="stepper">
+          <button class="step" onclick="cycleClock(${i},-1)">‹</button><span class="clockval">${g.clock==='master'?'<b style="color:var(--accent)">MASTER</b>':g.clock==='slave'?'Slave':'—'}</span><button class="step" onclick="cycleClock(${i},1)">›</button>
+        </span>
+      </td>
+      <td>
+        <span class="stepper">
+          <button class="step" onclick="cycleContent(${i},-1)">‹</button><span class="content-toggle ${contentOf(g)!=='none'?'on':''}">${contentOf(g)==='patterns'?'PATTERNS':contentOf(g)==='presets'?'PRESETS':'no'}</span><button class="step" onclick="cycleContent(${i},1)">›</button>
+        </span>
+      </td>
+      <td class="chk-col"><button class="del" onclick="delGear(${i})">×</button></td>`;
+    tb.appendChild(tr);
+  });
+  document.getElementById('gearEmpty').style.display=state.gear.length?'none':'block';
+
+  // clock sanity check
+  const inSet=state.gear.filter(g=>g.inSet);
+  const masters=inSet.filter(g=>g.clock==='master').length;
+  const midiDevices=inSet.filter(g=>g.clock!=='none').length;
+  const warn=document.getElementById('clockWarn');
+  if(midiDevices>0&&masters===0){warn.textContent='⚠ No clock master selected — who drives the tempo?';warn.style.display='block';}
+  else if(masters>1){warn.textContent='⚠ '+masters+' clock masters in this set — that\'s '+(masters-1)+' too many.';warn.style.display='block';}
+  else{warn.style.display='none';}
+  const slaves=inSet.filter(g=>g.clock==='slave').length;
+
+  // pack list: machines
+  const pg=document.getElementById('packGear');
+  pg.innerHTML=inSet.length?'':'<li class="empty">Nothing selected.</li>';
+  inSet.forEach(g=>{
+    pg.innerHTML+=`<li><b>${esc(g.name)}</b><span>${g.role?esc(g.role):''}</span></li>`;
+  });
+
+  // pack list: cables aggregated
+  const pc=document.getElementById('packCables');
+  const agg={};
+  inSet.forEach(g=>{
+    if(POWER_LABEL[g.power])agg[POWER_LABEL[g.power]]=(agg[POWER_LABEL[g.power]]||0)+1;
+    if(g.audio)agg['Audio cables']=(agg['Audio cables']||0)+g.audio;
+    if(g.midi)agg['MIDI cables']=(agg['MIDI cables']||0)+g.midi;
+  });
+  if(masters>=1&&slaves>=2)agg['MIDI Thru box / merger (check chain)']=1;
+  agg['Power strip (min. '+Math.max(inSet.filter(g=>g.power==='psu'||g.power==='iec').length,1)+' sockets)']=1;
+  pc.innerHTML='';
+  Object.keys(agg).forEach(k=>{
+    pc.innerHTML+=`<li><b>${esc(k)}</b><span class="qty">×${agg[k]}</span></li>`;
+  });
+
+  // custom
+  const cu=document.getElementById('packCustom');
+  cu.innerHTML='';
+  if((state.fields.recording||'').trim()){
+    cu.innerHTML+=`<li><b>REC: ${esc(state.fields.recording.trim())}</b><span class="qty" style="font-size:10px;">auto</span></li>`;
+  }
+  state.custom.forEach((c,i)=>{
+    cu.innerHTML+=`<li><b>${esc(c)}</b><button class="del noprint" onclick="delCustom(${i})">×</button></li>`;
+  });
+  document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('added',state.custom.includes(b.textContent)));
+
+  /* ----- gig / safety UI ----- */
+  document.getElementById('gigDate').value=state.gig||'';
+  document.getElementById('gigStripDate').textContent=state.gig?fmtDate(state.gig)+' '+state.gig.slice(0,4):'\u2014';
+  document.getElementById('safetyVal').textContent=state.safety??1;
+
+  /* ----- budget calc ----- */
+  const trackCount=parseInt(state.fields.trackCount)||0;
+  const patternCount=trackCount>0?trackCount+(state.safety??1):0;
+  const contentDevices=inSet.filter(g=>contentOf(g)==='patterns');
+  const totalPatterns=patternCount*contentDevices.length;
+  state.prog=state.prog||{};
+  let donePatterns=0;
+  contentDevices.forEach(g=>{donePatterns+=Math.min(state.prog['pat_'+g.name]||0,patternCount);});
+  const openPatterns=Math.max(0,totalPatterns-donePatterns);
+
+  const slots=(state.slots||[]).filter(s=>!state.gig||s.date<=state.gig);
+  const totalHours=slots.reduce((a,s)=>a+s.hours,0);
+  const minPerPattern=openPatterns>0&&totalHours>0?Math.floor(totalHours*60/openPatterns):0;
+
+  const sl=document.getElementById('slotList');
+  sl.innerHTML='';
+  // largest-remainder allocation: exact sum, proportional to hours
+  let shares=[];
+  if(openPatterns>0&&totalHours>0){
+    shares=slots.map(s=>{const exact=openPatterns*(s.hours/totalHours);return{f:Math.floor(exact),r:exact-Math.floor(exact)};});
+    let left=openPatterns-shares.reduce((a,x)=>a+x.f,0);
+    shares.map((x,i)=>i).sort((a,b)=>shares[b].r-shares[a].r).slice(0,left).forEach(i=>shares[i].f++);
+  }
+  slots.forEach((s,i)=>{
+    const share=shares.length?`<span class="pp">${shares[i].f} patterns</span>`:'';
+    sl.innerHTML+=`<div class="slot-row"><b>${fmtDate(s.date)}</b>
+      <span class="stepper"><button class="step noprint" onclick="stepSlot(${i},-0.5)">−</button><b class="stepval">${s.hours}h</b><button class="step noprint" onclick="stepSlot(${i},0.5)">+</button></span>
+      ${share}<button class="del noprint" onclick="delSlot(${i})">×</button></div>`;
+  });
+
+  const bo=document.getElementById('budgetOut');
+  if(totalPatterns>0&&totalHours>0){
+    let msg=`${totalHours}h for ${openPatterns} open patterns = <b>${minPerPattern} min / pattern</b>`;
+    if(minPerPattern<15&&minPerPattern>0)msg+=` <span class="warn">⚠ Cut scope or find more sessions.</span>`;
+    if(openPatterns===0)msg=`All ${totalPatterns} patterns done. Go rehearse.`;
+    bo.innerHTML=msg;
+  }else if(totalPatterns>0){
+    bo.innerHTML=`<span style="color:var(--gray);font-weight:400;font-size:12px;">Add sessions to see your minutes-per-pattern budget.</span>`;
+  }else{
+    bo.innerHTML='';
+  }
+
+  /* ----- set list matrix ----- */
+  renderMatrix();
+
+  /* ----- todo list ----- */
+  const tl=document.getElementById('todoList');
+  tl.innerHTML='';
+  state.done=state.done||{};
+  const todos=buildTodos();
+  if(!todos.length){tl.innerHTML='<li class="empty" style="border:none;">Fill the plan above — your to-dos build themselves.</li>';}
+  todos.forEach(t=>{
+    const done=t.prog?(state.prog[t.id]||0)>=t.prog.max:!!state.done[t.id];
+    let extras='';
+    if(t.prog){
+      const p=state.prog[t.id]||0;
+      extras=`<span class="prog stepper"><button class="step noprint" onclick="stepProg('${t.id}',-1,${t.prog.max})">−</button><b class="stepval">${p}/${t.prog.max}</b><button class="step noprint" onclick="stepProg('${t.id}',1,${t.prog.max})">+</button></span>`;
+    }
+    if(t.due)extras+=`<span class="due">by ${fmtDate(t.due)}</span>`;
+    if(t.custom!==undefined)extras+=`<button class="del noprint" onclick="delTodo(${t.custom})">×</button>`;
+    tl.innerHTML+=`<li class="${done?'done':''}${t.hot&&!done?' hot':''}">
+      <input type="checkbox" ${done?'checked':''} ${t.prog?'disabled':''} onchange="toggleDone('${t.id}')">
+      <label onclick="${t.prog?'':`toggleDone('${t.id}')`}" ${t.hot&&!done?'style="color:var(--accent);font-weight:800;"':''}>${esc(t.label)}</label>
+      ${extras}</li>`;
+  });
+}
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function saveFile(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const name=((state.fields.artist?state.fields.artist+'-':'')+(state.fields.eventName||state.fields.oneSentence||'live-set')).toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,50)||'live-set';
+  a.download=name+'.liveset.txt';
+  a.click();
+}
+function loadFile(ev){
+  const f=ev.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      state=JSON.parse(r.result);
+      state.fields=state.fields||{};state.gear=state.gear||[];state.custom=state.custom||[];
+      persist();
+      document.querySelectorAll('[data-k]').forEach(el=>{el.value=state.fields[el.dataset.k]||'';});
+      calcTracks();
+      render();
+    }catch(e){alert('Could not read this file — is it a .liveset.txt export?');}
+  };
+  r.readAsText(f);
+  ev.target.value='';
+}
+function resetAll(){
+  if(!confirm('Wipe everything — worksheet, gear library, pack list?'))return;
+  state={fields:{},gear:[],custom:[]};persist();
+  document.querySelectorAll('[data-k]').forEach(el=>el.value='');
+  render();
+}
+load();
+</script>
+</body>
+</html>

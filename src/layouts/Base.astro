@@ -19,9 +19,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
 const NAV = [
   { href: '/', id: 'home', label: 'Index' },
-  { href: '/music', id: 'music', label: 'Music' },
-  { href: '/blog', id: 'blog', label: 'Tutorials & Blog' },
-  { href: '/tools', id: 'tools', label: 'Tools' },
+  { href: '/music', id: 'music', label: 'Listen' },
+  { href: '/blog', id: 'blog', label: 'Learn' },
+  { href: '/apps', id: 'apps', label: 'Apps' },
   { href: '/about', id: 'about', label: 'About' },
 ];
 
@@ -112,7 +112,7 @@ const pageLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
               <li><a href="/music">Music</a></li>
               <li><a href="/shop">Shop</a></li>
               <li><a href="/blog">Tutorials & Blog</a></li>
-              <li><a href="/tools">Tools</a></li>
+              <li><a href="/apps">Apps</a></li>
               <li><a href="/about">About</a></li>
             </ul>
           </div>

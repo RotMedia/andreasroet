@@ -4,7 +4,7 @@ import SoundCloud from '../components/SoundCloud.astro';
 import { getCollection } from 'astro:content';
 import productsData from '../data/products.json';
 
-const SC_SPOTLIGHT = 'https://soundcloud.com/andreas-roet-nbg/sets/webpage-showcase/s-Z66zBTgHbNF';
+const SC_SPOTLIGHT = 'https://soundcloud.com/andreas-roet-nbg/sets/website-spotlight';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -63,7 +63,7 @@ const products = productsData.products.slice(0, 3);
             </div>
             <div style="padding-top: 14px;">
               <div class="mono" style="margin-bottom: 6px;">{p.cat}</div>
-              <div style="font-family:var(--font-display); font-weight:800; font-size:24px; letter-spacing:-0.022em; line-height:1;">{p.title}</div>
+              <div style="font-family:var(--font-body); font-weight:600; font-size:20px; letter-spacing:-0.01em; line-height:1.15;">{p.title}</div>
               <div style="margin-top:6px; font-size:13px; color:var(--ink-soft);">{p.sub} · {p.price}</div>
             </div>
           </a>

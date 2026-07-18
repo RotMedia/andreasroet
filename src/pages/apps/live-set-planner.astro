@@ -1,0 +1,92 @@
+---
+import Base from '../../layouts/Base.astro';
+const APP = {
+  name: 'The Live Set Planner', short: 'Live Set Planner', badge: 'Free · browser tool',
+  tagline: 'A gig is turned into a plan.',
+  url: '/live-set-planner/',
+  cover: '/covers/tool-live-set-planner.webp',
+};
+const benefits = [
+  ['Vision and logistics are kept separate, on purpose.', 'A creative direction is set down before the spreadsheet brain takes over — genre, mood, BPM, the one sentence that has to hold the whole set together.'],
+  ['Production math is done automatically.', 'A set length and a track length are entered, and the number of tracks still owed is calculated instantly — along with how many minutes are left per pattern.'],
+  ['A hardware setup is planned like a real rig.', 'Machines are pulled from a library of well over a hundred pieces of gear, power types and cable counts are counted automatically, and a clock master is flagged when two machines fight for the tempo.'],
+  ['A to-do list writes itself.', 'Pattern counts, setup checks and milestones counted back from the gig date are generated from what\u2019s already planned — nothing is typed twice.'],
+  ['A pattern matrix keeps every machine honest.', 'One row per track, one column per machine — which pattern lives where is always one glance away, even mid-jam.'],
+  ['The plan leaves the browser the way it\u2019s needed.', 'A Club Mode PDF in oversized, low-light-proof type with only the pages needed — plus a flyer-style share card for announcing the gig.'],
+];
+const sheet = [
+  ['Creative Vision', 'A set described in a single sentence, then loosened into style, setting, mood, tempo, and the reference that started it. Nothing is mandatory — a blank field is a decision too.'],
+  ['Technical Details', 'A set length becomes a track count, a gig date becomes a countdown, and the improv-to-planned ratio is dialled in on a slider instead of guessed at.'],
+  ['Gear Library', 'A rig built once and reused forever. Power, cables, clock role, and whether a machine plays patterns or presets — set per device and per gig.'],
+  ['Set List // Pattern Matrix', 'Tracks laid out against machines in a grid built for the club, not the spreadsheet. Rows are dragged and reordered live, mid-jam.'],
+  ['Generated To-Do', 'A checklist that builds itself from the plan already in place, with a running countdown of minutes left per unfinished pattern.'],
+  ['Pack List', 'Cables and power bricks counted from the gear actually in the set, not the gear simply owned. A recording plan gets packed automatically too.'],
+  ['Club Mode PDF', 'Exported the way it needs to be read at 2 a.m. under one dim light — oversized type, only the chosen pages, a set list that never breaks its frame.'],
+  ['Share Your Gig', 'A flyer generated straight from the plan — date, artist, one sentence, rig — over a preset background or a photo dragged in and framed by hand.'],
+];
+---
+<Base title={`${APP.name} — Free Planner for Hardware Live Sets | Andreas Roet`}
+      description="The Live Set Planner: build a techno or dub techno live set from first idea to packed car. Free, browser-based, no login. Gear library, pattern matrix, Club Mode PDF."
+      activeNav="apps" mode="dark">
+  <div class="page app">
+    <section style="padding:40px 0 24px;">
+      <div class="eyebrow" style="margin-bottom:16px;">Apps · {APP.badge}</div>
+      <h1 style="margin-bottom:20px;">The Live<br />Set Planner.</h1>
+      <p style="font-size:20px; color:var(--ink-soft); max-width:560px; margin-bottom:28px;">{APP.tagline}</p>
+      <a class="btn accent" href={APP.url} style="display:inline-flex;">Open the planner <span class="arrow">→</span></a>
+    </section>
+
+    <section class="section" style="border-top:0; padding-top:0;">
+      <img src={APP.cover} alt={`${APP.short} interface`} loading="lazy" style="width:100%; border:1px solid var(--rule);" />
+    </section>
+
+    <section class="section" style="max-width:760px;">
+      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+        No installation. No login. A browser tab is opened, a gig date is set, and a plan starts taking shape.
+      </p>
+      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+        Most live sets get planned across four or five places at once — a notes app for the concept, a spreadsheet for gear,
+        a scrap of paper for pattern numbers, a mental countdown for the deadline. Here it all lands on one sheet, split the way
+        a live set actually gets built: the heart first, then the head. The creative vision is written down before a single cable
+        is counted — and only once the sound is clear are set length, gear, patterns and deadlines worked out.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow" style="margin-bottom:24px;">What it's good for</div>
+      <div class="feat-grid">
+        {benefits.map(([h, t]) => (
+          <div class="feat">
+            <h3 style="font-size:18px; margin:0 0 8px;">{h}</h3>
+            <p style="font-size:14px; color:var(--ink-soft); margin:0; line-height:1.55;">{t}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow" style="margin-bottom:24px;">Inside the sheet</div>
+      {sheet.map(([n, d]) => (
+        <div class="algo-row">
+          <div class="mono algo-name">{n}</div>
+          <div class="algo-desc">{d}</div>
+        </div>
+      ))}
+    </section>
+
+    <section class="section" style="text-align:center; padding:40px 0;">
+      <p class="mono" style="color:var(--ink-mute); margin-bottom:20px;">Built for artists who'd rather play a set than manage one.</p>
+      <a class="btn accent" href={APP.url} style="display:inline-flex;">Open the planner <span class="arrow">→</span></a>
+    </section>
+  </div>
+
+  <style>
+    .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .feat { border:1px solid var(--rule); padding:20px; }
+    .algo-row { display:grid; grid-template-columns:220px 1fr; gap:24px; padding:16px 0; border-bottom:1px solid var(--rule); }
+    .algo-row:last-child { border-bottom:0; }
+    .algo-name { color:var(--accent); font-size:13px; padding-top:2px; }
+    .algo-desc { font-size:15px; color:var(--ink-soft); line-height:1.55; }
+    @media (max-width:900px){ .feat-grid{grid-template-columns:1fr;} .algo-row{grid-template-columns:1fr; gap:6px;} }
+  </style>
+</Base>

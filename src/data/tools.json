@@ -7,8 +7,8 @@
       "tagline": "Turn sacred geometry into MIDI.",
       "sub": "Creative & workflow tool",
       "status": "free",
-      "url": "https://andreasroet.de/geosonic",
-      "cover": null
+      "url": "/geosonic/",
+      "cover": "/covers/tool-geosonic.webp"
     },
     {
       "id": "live-set-planner",
@@ -16,8 +16,8 @@
       "tagline": "Plan and structure your hardware live sets.",
       "sub": "Creative & workflow tool",
       "status": "free",
-      "url": "#",
-      "cover": null
+      "url": "/live-set-planner/",
+      "cover": "/covers/tool-live-set-planner.webp"
     },
     {
       "id": "mandoline",
@@ -26,7 +26,7 @@
       "sub": "Creative & workflow tool",
       "status": "coming-soon",
       "waitlistSubject": "Mandoline Waitlist",
-      "cover": null
+      "cover": "/covers/tool-mandoline.webp"
     }
   ]
 }

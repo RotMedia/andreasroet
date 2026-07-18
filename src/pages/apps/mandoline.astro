@@ -1,0 +1,104 @@
+---
+import Base from '../../layouts/Base.astro';
+const APP = {
+  name: 'MANDOLINE', badge: 'Coming soon',
+  tagline: 'A take is turned into a pack.',
+  cover: '/covers/tool-mandoline.webp',
+};
+const benefits = [
+  ['Curation is kept at the speed of hearing.', 'Every slice is previewed the instant it\u2019s reached — no waiting, no re-clicking. Walk a take with the arrow keys and judge it in the time it takes to listen.'],
+  ['Precision is never lost to convenience.', 'Automatic detection is a first draft, not a verdict. A marker can be pulled into a sample-accurate zoom and nudged against the visible zero-crossings.'],
+  ['A pack organizes itself as it\u2019s built.', 'Slices are sorted into categories with a single key press, and that tag doubles as the export decision — no separate step to remember.'],
+  ['Every export can be trusted.', 'Root notes are detected from the actual audio, not guessed. Producer, pack name and BPM are written into each file as real metadata.'],
+  ['Nothing leaves without being asked.', 'Original recordings are never touched. A full session — every marker, every tag — can be saved and picked up exactly where it was left.'],
+];
+const flow = [
+  ['Import', 'A folder, a handful of files, or a straight drag-and-drop. WAV, AIFF, FLAC and MP3 are read directly in the browser.'],
+  ['Detect', 'Transients found automatically, with sensitivity and minimum length as the only two dials. Every cut snaps to a zero-crossing, so nothing clicks.'],
+  ['Curate', 'Slices played, tagged, split and fine-tuned entirely from the keyboard. A category is a judgment call and an export flag in one motion.'],
+  ['Export', 'Filenames built from swappable tags, not typed by hand. Folders structured by category, root notes detected on request, metadata written into the file.'],
+];
+---
+<Base title="MANDOLINE — Browser Sample Slicer (Coming Soon) | Andreas Roet"
+      description="MANDOLINE: a browser-based sample slicer for producers who record their own one-shots. Automatic transient detection, keyboard curation, metadata export. Coming soon — join the waitlist."
+      activeNav="apps" mode="dark">
+  <div class="page app">
+    <section style="padding:40px 0 24px;">
+      <div class="eyebrow" style="margin-bottom:16px;">Apps · {APP.badge}</div>
+      <h1 style="margin-bottom:20px;">{APP.name}.</h1>
+      <p style="font-size:20px; color:var(--ink-soft); max-width:560px; margin-bottom:28px;">{APP.tagline}</p>
+      <a class="btn accent" id="wl-link" href="#" style="display:inline-flex;">Join the waitlist <span class="arrow">→</span></a>
+      <script>
+        (() => {
+          const p = ['in','fo',String.fromCharCode(64),'andreas','roet','.','de'];
+          const link = document.getElementById('wl-link');
+          if (link) link.setAttribute('href','mail'+'to:'+p.join('')+'?subject='+encodeURIComponent('Mandoline Waitlist'));
+        })();
+      </script>
+    </section>
+
+    <section class="section" style="border-top:0; padding-top:0;">
+      <img src={APP.cover} alt="MANDOLINE interface" loading="lazy" style="width:100%; border:1px solid var(--rule);" />
+    </section>
+
+    <section class="section" style="max-width:760px;">
+      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+        A browser-based sample slicer built for producers who record their own one-shots — long takes played into a synth,
+        a sampler or a drum machine, then chopped and curated in a single sitting. No installation, no account. A folder is
+        dropped in, transients are found automatically, and a raw take becomes a stack of clean, named one-shots.
+      </p>
+      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+        Sample chopping is traditionally built around a waveform and a mouse, every start point placed by hand. Here that part
+        is handled first: transients are detected the moment a file loads, cuts snap to the nearest zero-crossing, and a full tree
+        of slices is waiting before a single key is pressed. What's left is the part that actually matters — deciding what's good.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow" style="margin-bottom:24px;">What it's good for</div>
+      <div class="feat-grid">
+        {benefits.map(([h, t]) => (
+          <div class="feat">
+            <h3 style="font-size:18px; margin:0 0 8px;">{h}</h3>
+            <p style="font-size:14px; color:var(--ink-soft); margin:0; line-height:1.55;">{t}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow" style="margin-bottom:24px;">The workflow</div>
+      {flow.map(([n, d]) => (
+        <div class="algo-row">
+          <div class="mono algo-name">{n}</div>
+          <div class="algo-desc">{d}</div>
+        </div>
+      ))}
+    </section>
+
+    <section class="section" style="text-align:center; padding:40px 0;">
+      <p style="color:var(--ink-soft); max-width:520px; margin:0 auto 20px; font-size:15px;">
+        MANDOLINE is currently in the making. What's described here is running and being played with daily — the full public
+        release is still ahead.
+      </p>
+      <a class="btn accent" id="wl-link2" href="#" style="display:inline-flex;">Join the waitlist <span class="arrow">→</span></a>
+      <script>
+        (() => {
+          const p = ['in','fo',String.fromCharCode(64),'andreas','roet','.','de'];
+          const link = document.getElementById('wl-link2');
+          if (link) link.setAttribute('href','mail'+'to:'+p.join('')+'?subject='+encodeURIComponent('Mandoline Waitlist'));
+        })();
+      </script>
+    </section>
+  </div>
+
+  <style>
+    .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .feat { border:1px solid var(--rule); padding:20px; }
+    .algo-row { display:grid; grid-template-columns:160px 1fr; gap:24px; padding:16px 0; border-bottom:1px solid var(--rule); }
+    .algo-row:last-child { border-bottom:0; }
+    .algo-name { color:var(--accent); font-size:13px; padding-top:2px; }
+    .algo-desc { font-size:15px; color:var(--ink-soft); line-height:1.55; }
+    @media (max-width:900px){ .feat-grid{grid-template-columns:1fr;} .algo-row{grid-template-columns:1fr; gap:6px;} }
+  </style>
+</Base>

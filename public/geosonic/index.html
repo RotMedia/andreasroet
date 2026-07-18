@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GEOSONIC v0.4 — geometry to MIDI</title>
+<style>
+  :root { --ink: #0E0E0E; }
+  body[data-mode="euclid"]  { --surf: #E84B1C; }
+  body[data-mode="fib"]     { --surf: #4D7CFF; }
+  body[data-mode="prime"]   { --surf: #8FE000; }
+  body[data-mode="ca"]      { --surf: #FF3D8A; }
+  body[data-mode="lorenz"]  { --surf: #1BD6C6; }
+  body[data-mode="lsys"]    { --surf: #FFD02E; }
+  body[data-mode="meta"]    { --surf: #D9D9D9; }
+  body[data-mode="rfib"]    { --surf: #A88BFF; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--surf); color: var(--ink);
+    font-family: "IBM Plex Mono", "Courier New", ui-monospace, monospace;
+    transition: background 0.25s; min-height: 100vh;
+  }
+  .frame { max-width: 1080px; margin: 0 auto; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; padding: 22px 24px 14px; gap: 16px; flex-wrap: wrap; }
+  .logo { font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif; font-weight: 900; font-size: clamp(44px, 8vw, 76px); line-height: 0.88; letter-spacing: -3px; }
+  .meta { text-align: right; font-size: 11px; line-height: 1.7; }
+  .meta .badge { display: inline-block; background: var(--ink); color: var(--surf); padding: 3px 9px; letter-spacing: 1px; margin-top: 5px; }
+  nav { display: flex; flex-wrap: wrap; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+  nav button {
+    appearance: none; background: transparent; border: none; border-right: 2px solid var(--ink);
+    color: var(--ink); font: inherit; font-size: 11px; letter-spacing: 1.5px; padding: 10px 13px; cursor: pointer;
+  }
+  nav button.active { background: var(--ink); color: var(--surf); }
+  main { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); flex: 1; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } .canvasWrap { border-right: none !important; border-bottom: 2px solid var(--ink); } }
+  .canvasWrap { border-right: 2px solid var(--ink); padding: 18px; display: flex; align-items: center; justify-content: center; }
+  canvas { width: 100%; max-width: 560px; height: auto; display: block; }
+  .side { display: flex; flex-direction: column; }
+  .row { border-bottom: 1px solid var(--ink); padding: 11px 18px; font-size: 11px; letter-spacing: 1px; }
+  .row label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
+  .row .val { font-family: "Arial Black", Arial, sans-serif; font-size: 17px; letter-spacing: 0; }
+  input[type="range"] { width: 100%; appearance: none; height: 10px; background: transparent; border: 2px solid var(--ink); cursor: pointer; }
+  input[type="range"]::-webkit-slider-thumb { appearance: none; width: 18px; height: 18px; background: var(--ink); border: none; }
+  input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; background: var(--ink); border: none; border-radius: 0; }
+  select, input[type="number"] {
+    appearance: none; background: transparent; border: 2px solid var(--ink); color: var(--ink);
+    font: inherit; font-size: 12px; padding: 5px 8px; border-radius: 0; width: 100%;
+  }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .check { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  input[type="checkbox"] { appearance: none; width: 18px; height: 18px; border: 2px solid var(--ink); cursor: pointer; }
+  input[type="checkbox"]:checked { background: var(--ink); }
+  .params[hidden] { display: none; }
+  .ghostBtn { appearance: none; background: transparent; border: 2px solid var(--ink); color: var(--ink); font: inherit; font-size: 11px; letter-spacing: 2px; padding: 8px 12px; cursor: pointer; width: 100%; }
+  .ringRow .grid5 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 34px; gap: 6px; align-items: end; }
+  .ringRow .mini { font-size: 9px; letter-spacing: 1px; display: block; margin-bottom: 3px; }
+  .ringRow .x { appearance: none; background: var(--ink); color: var(--surf); border: none; font: inherit; font-size: 13px; height: 31px; cursor: pointer; }
+  .transport { margin-top: auto; border-top: 2px solid var(--ink); display: grid; grid-template-columns: 1fr 1fr; }
+  .transport button {
+    appearance: none; border: none; font-family: "Arial Black", Arial, sans-serif; font-size: 15px; letter-spacing: 2px;
+    padding: 16px 10px; cursor: pointer;
+  }
+  #playBtn { background: var(--ink); color: var(--surf); }
+  #exportBtn { background: transparent; color: var(--ink); border-left: 2px solid var(--ink); }
+  #exportBtn:active, nav button:active, #playBtn:active, .ghostBtn:active { transform: scale(0.985); }
+  footer { border-top: 2px solid var(--ink); padding: 10px 24px; font-size: 10px; letter-spacing: 1px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+</style>
+</head>
+<body data-mode="euclid">
+<div class="frame">
+
+  <header>
+    <div class="logo">GEO<br>SONIC</div>
+    <div class="meta">
+      <div>ENGINE: DETERMINISTIC_GEOMETRY</div>
+      <div>FILE: SELF_CONTAINED · NO_DEPS</div>
+      <div>MIDI: <span id="midiStatus">CHECKING…</span></div>
+      <div class="badge" id="bpmBadge">124.0 BPM ▮ STOPPED</div>
+    </div>
+  </header>
+
+  <nav>
+    <button data-mode="euclid" class="active">EUCLID</button>
+    <button data-mode="fib">FIBONACCI</button>
+    <button data-mode="prime">PRIME</button>
+    <button data-mode="ca">CELL_AUTO</button>
+    <button data-mode="lorenz">LORENZ</button>
+    <button data-mode="lsys">L_SYSTEM</button>
+    <button data-mode="meta">METATRON</button>
+    <button data-mode="rfib">RADIAL_FIB</button>
+  </nav>
+
+  <main>
+    <div class="canvasWrap">
+      <canvas id="cv" width="560" height="560" role="img" aria-label="Live geometry visualisation of the current pattern"></canvas>
+    </div>
+
+    <div class="side">
+
+      <div class="row">
+        <div class="pair">
+          <div><label><span>BPM</span></label><input type="number" id="bpm" min="60" max="180" step="0.5" value="124"></div>
+          <div><label><span>MIDI_CH</span></label><select id="ch"></select></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <label><span>MIDI_OUT (HARDWARE / VIRTUAL)</span></label>
+        <select id="midiOut"><option value="">— PREVIEW SYNTH ONLY —</option></select>
+      </div>
+
+      <div class="row">
+        <div class="pair">
+          <div><label><span>ROOT</span></label><select id="root"></select></div>
+          <div><label><span>SCALE</span></label><select id="scale">
+            <option value="minor">MINOR</option>
+            <option value="dorian" selected>DORIAN</option>
+            <option value="phrygian">PHRYGIAN</option>
+            <option value="harmonic">HARMONIC_MIN</option>
+          </select></div>
+        </div>
+      </div>
+
+      <div class="params" data-for="euclid">
+        <div class="row"><label><span>PULSES_K</span><span class="val" id="kVal">7</span></label><input type="range" id="k" min="1" max="16" value="7"></div>
+        <div class="row"><label><span>STEPS_N</span><span class="val" id="nVal">16</span></label><input type="range" id="n" min="4" max="32" value="16"></div>
+        <div class="row"><label><span>ROTATE</span><span class="val" id="rotVal">0</span></label><input type="range" id="rot" min="0" max="31" value="0"></div>
+      </div>
+
+      <div class="params" data-for="fib" hidden>
+        <div class="row"><label><span>DENSITY (φ-GATE)</span><span class="val" id="densVal">0.50</span></label><input type="range" id="dens" min="10" max="100" value="50"></div>
+        <div class="row"><label><span>HUMANIZE ±MS</span><span class="val" id="humVal">18</span></label><input type="range" id="hum" min="0" max="40" value="18"></div>
+        <div class="row"><label><span>OCTAVE_SPAN</span><span class="val" id="octVal">2</span></label><input type="range" id="oct" min="1" max="3" value="2"></div>
+      </div>
+
+      <div class="params" data-for="prime" hidden>
+        <div id="rings"></div>
+        <div class="row"><button id="addRing" class="ghostBtn">+ ADD_RING (MAX 6)</button></div>
+        <div class="row"><label class="check"><input type="checkbox" id="anchor" checked> <span>4/4_ANCHOR_PULSE (LOW_OCT)</span></label></div>
+        <div class="row"><label><span>NEXT_ALIGNMENT_IN</span><span class="val" id="alignVal">—</span></label></div>
+      </div>
+
+      <div class="params" data-for="ca" hidden>
+        <div class="row"><div class="pair">
+          <div><label><span>RULE</span></label><select id="caRule">
+            <option value="30">RULE_30 (CHAOS)</option>
+            <option value="90" selected>RULE_90 (SIERPINSKI)</option>
+            <option value="110">RULE_110 (COMPLEX)</option>
+          </select></div>
+          <div><label><span>CELLS_N</span></label><select id="caN">
+            <option value="16" selected>16 STEPS</option>
+            <option value="32">32 STEPS</option>
+          </select></div>
+        </div></div>
+        <div class="row"><label><span>SEED_BITS</span><span class="val" id="caSeedVal">8</span></label><input type="range" id="caSeed" min="1" max="255" value="8"></div>
+        <div class="row"><label><span>VOICE</span></label><select id="caVoice">
+          <option value="perc" selected>PERC (SINGLE_PITCH)</option>
+          <option value="melodic">MELODIC (COLUMN→DEGREE)</option>
+        </select></div>
+        <div class="row" style="font-size:10px; line-height:1.7;">ROW=1_BAR · EVOLVES_EVERY_BAR<br>VELOCITY=NEIGHBOR_DENSITY</div>
+      </div>
+
+      <div class="params" data-for="lorenz" hidden>
+        <div class="row"><label><span>RATE (dt)</span><span class="val" id="loRateVal">1.5</span></label><input type="range" id="loRate" min="5" max="40" value="15"></div>
+        <div class="row"><label class="check"><input type="checkbox" id="loPulse" checked> <span>BAR_DRONE (ROOT, 1_BAR)</span></label></div>
+        <div class="row"><button id="butterfly" class="ghostBtn">🦋 BUTTERFLY +0.001</button></div>
+        <div class="row" style="font-size:10px; line-height:1.7;">X → CC74 (CUTOFF)<br>Y → CC91 (SEND/REVERB)<br>Z → CC71 (RESONANCE)<br>NO_NOTES · PURE_MODULATION</div>
+      </div>
+
+      <div class="params" data-for="lsys" hidden>
+        <div class="row"><label><span>SYSTEM</span></label><select id="lsSys">
+          <option value="fib" selected>FIBONACCI_WORD (A→AB, B→A)</option>
+          <option value="thue">THUE_MORSE (A→AB, B→BA)</option>
+          <option value="cantor">CANTOR_DUST (A→ABA, B→BBB)</option>
+        </select></div>
+        <div class="row"><label><span>DEPTH</span><span class="val" id="lsDepthVal">7</span></label><input type="range" id="lsDepth" min="3" max="9" value="7"></div>
+        <div class="row"><label><span>PITCH</span></label><select id="lsPitch">
+          <option value="walk" selected>WALK (A:+1 B:−2)</option>
+          <option value="perc">PERC (SINGLE_PITCH)</option>
+        </select></div>
+        <div class="row"><label><span>LOOP_LENGTH</span><span class="val" id="lsLenVal">—</span></label></div>
+      </div>
+
+      <div class="params" data-for="meta" hidden>
+        <div class="row"><label><span>SOLID</span></label><select id="mSolid">
+          <option value="tetra">TETRAHEDRON (4V)</option>
+          <option value="octa">OCTAHEDRON (6V)</option>
+          <option value="cube">CUBE (8V)</option>
+          <option value="icosa" selected>ICOSAHEDRON (12V)</option>
+        </select></div>
+        <div class="row"><label><span>SPIN °/STEP</span><span class="val" id="mSpinVal">2.0</span></label><input type="range" id="mSpin" min="5" max="60" value="20"></div>
+        <div class="row" style="font-size:10px; line-height:1.7;">VERTEX_ANGLE → STEP_SLICE<br>VERTEX_INDEX → SCALE_DEGREE<br>PROJECTED_RADIUS → VELOCITY<br>DUAL_AXIS_SPIN @ φ_RATIO</div>
+      </div>
+
+      <div class="params" data-for="rfib" hidden>
+        <div class="row"><label><span>DEPTH (FIB_TERMS)</span><span class="val" id="rfDepthVal">7</span></label><input type="range" id="rfDepth" min="4" max="9" value="7"></div>
+        <div class="row"><label><span>DIRECTION</span></label><select id="rfDir">
+          <option value="out" selected>OUTWARD (EXPANDING GAPS)</option>
+          <option value="in">INWARD (ACCELERATING)</option>
+          <option value="pp">PINGPONG (BREATHING)</option>
+        </select></div>
+        <div class="row"><label class="check"><input type="checkbox" id="rfGhost" checked> <span>GHOST_TICKS (RING_PITCH)</span></label></div>
+        <div class="row"><label><span>LOOP_LENGTH</span><span class="val" id="rfLenVal">—</span></label></div>
+        <div class="row" style="font-size:10px; line-height:1.7;">ARC_TIME ∝ RADIUS (1,1,2,3,5,8…)<br>BIG_RING → LOW_NOTE · ACCENT=ARC_START</div>
+      </div>
+
+      <div class="row">
+        <div class="pair">
+          <div><label><span>EXPORT_LENGTH</span></label><select id="bars">
+            <option value="4">4 BARS</option><option value="8" selected>8 BARS</option><option value="16">16 BARS</option><option value="32">32 BARS</option>
+          </select></div>
+          <div><label><span>DIVISION</span></label><select id="div" disabled><option>1/16 (FIXED)</option></select></div>
+        </div>
+      </div>
+
+      <div class="transport">
+        <button id="playBtn">▶ PLAY</button>
+        <button id="exportBtn">⠿ EXPORT .MID</button>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <span>GEOSONIC v0.4 // 8_ENGINES // TECHNOSUPPS</span>
+    <span>OPEN LOCALLY IN CHROME/EDGE FOR HARDWARE MIDI OUT</span>
+  </footer>
+
+</div>
+
+<script>
+'use strict';
+
+/* ---------- constants & state ---------- */
+const SCALES = {
+  minor:    [0,2,3,5,7,8,10],
+  dorian:   [0,2,3,5,7,9,10],
+  phrygian: [0,1,3,5,7,8,10],
+  harmonic: [0,2,3,5,7,8,11]
+};
+const PHI = 0.6180339887498949;
+const GA  = 137.50776405003785;
+const SPB = 4;
+
+const state = {
+  mode: 'euclid',
+  bpm: 124, root: 45, scale: 'dorian', ch: 1,
+  euclid: { k: 7, n: 16, rot: 0 },
+  fib:    { density: 0.5, humanize: 18, octaves: 2 },
+  prime:  { anchor: true, layers: [
+    { len: 3, hits: 1, deg: 8, oct: 2 },
+    { len: 5, hits: 1, deg: 0, oct: 0 },
+    { len: 7, hits: 2, deg: 4, oct: 1 }
+  ]},
+  ca:     { rule: 90, n: 16, seed: 8, voice: 'perc' },
+  lorenz: { rate: 1.5, pulse: true },
+  lsys:   { system: 'fib', depth: 7, pitch: 'walk' },
+  meta:   { solid: 'icosa', spin: 2.0 },
+  rfib:   { depth: 7, dir: 'out', ghost: true }
+};
+
+function quant(deg) {
+  const sc = SCALES[state.scale];
+  const oct = Math.floor(deg / sc.length);
+  return state.root + 12 * oct + sc[((deg % sc.length) + sc.length) % sc.length];
+}
+const clampVel = v => Math.max(1, Math.min(127, Math.round(v)));
+const clamp127 = v => Math.max(0, Math.min(127, Math.round(v)));
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+const lcm = (a, b) => a * b / gcd(a, b);
+
+/* ---------- engine: euclidean helper ---------- */
+function euclidHit(i, k, n) {
+  i = ((i % n) + n) % n;
+  return Math.floor((i + 1) * k / n) - Math.floor(i * k / n) === 1;
+}
+
+/* ---------- engine: cellular automaton ---------- */
+let caCache = { key: '', rows: [] };
+function caRow(gen) {
+  const { rule, n, seed } = state.ca;
+  const key = rule + '_' + n + '_' + seed;
+  if (caCache.key !== key) {
+    const row = new Array(n).fill(0);
+    for (let b = 0; b < 8; b++) {
+      if ((seed >> b) & 1) row[(Math.floor(n / 2) - 4 + b + n) % n] = 1;
+    }
+    caCache = { key, rows: [row] };
+  }
+  gen = gen % 4000;
+  while (caCache.rows.length <= gen) {
+    const prev = caCache.rows[caCache.rows.length - 1];
+    const next = prev.map((_, i) => {
+      const l = prev[(i - 1 + n) % n], c = prev[i], r = prev[(i + 1) % n];
+      return (rule >> ((l << 2) | (c << 1) | r)) & 1;
+    });
+    caCache.rows.push(next);
+  }
+  return caCache.rows[gen];
+}
+
+/* ---------- engine: lorenz attractor ---------- */
+const LO_SUB = 8;
+let loCache = { key: '', pts: [{ x: 0.01, y: 0, z: 20 }] };
+function lorenzTo(step) {
+  const key = 'r' + state.lorenz.rate;
+  if (loCache.key !== key) loCache = { key, pts: [{ x: 0.01, y: 0, z: 20 }] };
+  const need = step * LO_SUB + 1;
+  const dt = 0.004 * state.lorenz.rate;
+  while (loCache.pts.length < need) {
+    const p = loCache.pts[loCache.pts.length - 1];
+    const dx = 10 * (p.y - p.x);
+    const dy = p.x * (28 - p.z) - p.y;
+    const dz = p.x * p.y - (8 / 3) * p.z;
+    loCache.pts.push({ x: p.x + dx * dt, y: p.y + dy * dt, z: p.z + dz * dt });
+  }
+  return loCache.pts[Math.min(step * LO_SUB, loCache.pts.length - 1)];
+}
+function lorenzCCs(step) {
+  const p = lorenzTo(step);
+  return [
+    [74, clamp127((p.x + 22) / 44 * 127)],
+    [91, clamp127((p.y + 28) / 56 * 127)],
+    [71, clamp127(p.z / 50 * 127)]
+  ];
+}
+
+/* ---------- engine: L-systems ---------- */
+const LSYS = {
+  fib:    { axiom: 'A', rules: { A: 'AB', B: 'A' } },
+  thue:   { axiom: 'A', rules: { A: 'AB', B: 'BA' } },
+  cantor: { axiom: 'A', rules: { A: 'ABA', B: 'BBB' } }
+};
+let lsCache = { key: '', gens: [] };
+function lsString(depth) {
+  const sys = LSYS[state.lsys.system];
+  if (lsCache.key !== state.lsys.system) lsCache = { key: state.lsys.system, gens: [sys.axiom] };
+  while (lsCache.gens.length <= depth) {
+    const prev = lsCache.gens[lsCache.gens.length - 1];
+    if (prev.length > 3000) break;
+    let nx = '';
+    for (const ch of prev) nx += sys.rules[ch] || ch;
+    lsCache.gens.push(nx);
+  }
+  return lsCache.gens[Math.min(depth, lsCache.gens.length - 1)];
+}
+
+/* ---------- engine: platonic solids ---------- */
+const IP = 1.6180339887;
+const SOLID_VERTS = {
+  tetra: [[1,1,1],[1,-1,-1],[-1,1,-1],[-1,-1,1]],
+  octa:  [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]],
+  cube:  [[1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],[-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1]],
+  icosa: [[0,1,IP],[0,1,-IP],[0,-1,IP],[0,-1,-IP],[1,IP,0],[1,-IP,0],[-1,IP,0],[-1,-IP,0],[IP,0,1],[IP,0,-1],[-IP,0,1],[-IP,0,-1]]
+};
+const solidCache = {};
+function getSolid(name) {
+  if (solidCache[name]) return solidCache[name];
+  const raw = SOLID_VERTS[name];
+  const verts = raw.map(v => {
+    const l = Math.hypot(v[0], v[1], v[2]);
+    return [v[0] / l, v[1] / l, v[2] / l];
+  });
+  let dmin = Infinity;
+  for (let i = 0; i < verts.length; i++) for (let j = i + 1; j < verts.length; j++) {
+    const d = Math.hypot(verts[i][0]-verts[j][0], verts[i][1]-verts[j][1], verts[i][2]-verts[j][2]);
+    if (d < dmin) dmin = d;
+  }
+  const edges = [];
+  for (let i = 0; i < verts.length; i++) for (let j = i + 1; j < verts.length; j++) {
+    const d = Math.hypot(verts[i][0]-verts[j][0], verts[i][1]-verts[j][1], verts[i][2]-verts[j][2]);
+    if (d <= dmin * 1.05) edges.push([i, j]);
+  }
+  solidCache[name] = { verts, edges };
+  return solidCache[name];
+}
+function rot3(v, a) {
+  const b = a * PHI;
+  const x1 = v[0] * Math.cos(a) + v[2] * Math.sin(a);
+  const z1 = -v[0] * Math.sin(a) + v[2] * Math.cos(a);
+  const y1 = v[1];
+  return {
+    x: x1,
+    y: y1 * Math.cos(b) - z1 * Math.sin(b),
+    z: y1 * Math.sin(b) + z1 * Math.cos(b)
+  };
+}
+function metaVerts(step) {
+  const ang = step * state.meta.spin * Math.PI / 180;
+  return getSolid(state.meta.solid).verts.map(v => rot3(v, ang));
+}
+
+/* ---------- engine: radial fibonacci ---------- */
+function rfibSeq() {
+  const f = [1, 1];
+  while (f.length < state.rfib.depth) f.push(f[f.length - 1] + f[f.length - 2]);
+  return f.slice(0, Math.max(state.rfib.depth, 2));
+}
+function rfibPos(step) {
+  const f = rfibSeq();
+  const loop = f.reduce((a, b) => a + b, 0);
+  const dir = state.rfib.dir;
+  let pos;
+  if (dir === 'out') pos = step % loop;
+  else if (dir === 'in') pos = loop - 1 - (step % loop);
+  else {
+    const per = Math.max(2 * loop - 2, 1);
+    const p = step % per;
+    pos = p < loop ? p : per - p;
+  }
+  let acc = 0;
+  for (let i = 0; i < f.length; i++) {
+    if (pos < acc + f[i]) return { f, loop, pos, ring: i, local: pos - acc };
+    acc += f[i];
+  }
+  return { f, loop, pos, ring: f.length - 1, local: 0 };
+}
+
+/* ---------- step -> events ---------- */
+function eventsForStep(step) {
+  const ev = [];
+  if (state.mode === 'euclid') {
+    const { k, n, rot } = state.euclid;
+    if (euclidHit(step + rot, k, n)) {
+      ev.push({ note: quant(0) + 12, vel: (step % n) === 0 ? 118 : 90, durSteps: 0.8, offMs: 0 });
+    }
+  }
+  else if (state.mode === 'fib') {
+    const { density, humanize, octaves } = state.fib;
+    const f = (step * PHI) % 1;
+    if (f < density) {
+      const span = SCALES[state.scale].length * octaves;
+      const deg = Math.floor(((step * GA) % 360) / 360 * span);
+      ev.push({
+        note: quant(deg) + 12,
+        vel: clampVel(58 + 64 * ((step * 0.7548776662) % 1)),
+        durSteps: f < density * 0.382 ? 2.4 : 0.9,
+        offMs: (f / density - 0.5) * 2 * humanize,
+        cc74: Math.round(36 + 84 * ((step % 64) / 64))
+      });
+    }
+  }
+  else if (state.mode === 'prime') {
+    for (const L of state.prime.layers) {
+      const loopSteps = L.len * SPB;
+      const pos = step % loopSteps;
+      if (pos % SPB === 0 && euclidHit(pos / SPB, L.hits, L.len)) {
+        ev.push({
+          note: quant(L.deg) + 12 * L.oct,
+          vel: pos === 0 ? 110 : 88,
+          durSteps: L.len <= 3 ? 0.6 : L.len <= 5 ? 2.0 : 3.0,
+          offMs: 0
+        });
+      }
+    }
+    if (state.prime.anchor && step % SPB === 0) {
+      ev.push({ note: state.root, vel: 72, durSteps: 0.45, offMs: 0 });
+    }
+  }
+  else if (state.mode === 'ca') {
+    const { n, voice } = state.ca;
+    const gen = Math.floor(step / n);
+    const pos = step % n;
+    const row = caRow(gen);
+    if (row[pos]) {
+      const neigh = row[(pos - 1 + n) % n] + row[(pos + 1) % n];
+      let note;
+      if (voice === 'perc') note = quant(0) + 24;
+      else {
+        const span = SCALES[state.scale].length * 2;
+        note = quant(Math.floor(pos / n * span)) + 12;
+      }
+      ev.push({ note, vel: clampVel(72 + neigh * 24), durSteps: 0.5 + neigh * 0.3, offMs: 0 });
+    }
+  }
+  else if (state.mode === 'lorenz') {
+    ev.push({ ccOnly: lorenzCCs(step) });
+    if (state.lorenz.pulse && step % 16 === 0) {
+      ev.push({ note: quant(0), vel: 84, durSteps: 15.5, offMs: 0 });
+    }
+  }
+  else if (state.mode === 'lsys') {
+    const s = lsString(state.lsys.depth);
+    const L = s.length;
+    const pos = step % L;
+    const ch = s[pos];
+    const audible = ch === 'A' || (state.lsys.system === 'thue' && ch === 'B');
+    if (audible) {
+      let note;
+      if (state.lsys.pitch === 'walk') {
+        let d = 0;
+        for (let i = 0; i <= pos; i++) d += (s[i] === 'A') ? 1 : -2;
+        const span = SCALES[state.scale].length * 2;
+        note = quant(((d % span) + span) % span) + 12;
+      } else note = quant(0) + 24;
+      ev.push({ note, vel: ch === 'A' ? 100 : 68, durSteps: ch === 'A' ? 0.9 : 0.45, offMs: 0 });
+    }
+  }
+  else if (state.mode === 'meta') {
+    const verts = metaVerts(step);
+    const sb = step % 16;
+    const span = SCALES[state.scale].length * 2;
+    verts.forEach((p, vi) => {
+      const th = ((Math.atan2(p.y, p.x) / (2 * Math.PI)) + 1.25) % 1;
+      if (th >= sb / 16 && th < (sb + 1) / 16) {
+        const rr = Math.sqrt(p.x * p.x + p.y * p.y);
+        ev.push({
+          note: quant(Math.floor(vi / verts.length * span)) + 12,
+          vel: clampVel(60 + 60 * rr),
+          durSteps: 0.8, offMs: 0
+        });
+      }
+    });
+  }
+  else if (state.mode === 'rfib') {
+    const { f, ring, local } = rfibPos(step);
+    const span = SCALES[state.scale].length * 2;
+    const deg = Math.round((f.length - 1 - ring) * span / Math.max(f.length - 1, 1));
+    const note = quant(deg) + 12;
+    if (local === 0) {
+      ev.push({
+        note,
+        vel: clampVel(66 + 54 * (f[ring] / f[f.length - 1])),
+        durSteps: Math.min(0.8 + f[ring] * 0.25, 3),
+        offMs: 0
+      });
+    } else if (state.rfib.ghost) {
+      ev.push({ note, vel: 40, durSteps: 0.3, offMs: 0 });
+    }
+  }
+  return ev;
+}
+
+/* ---------- audio preview ---------- */
+let ctx = null, master, masterFlt, delayNode, fbGain, delFilter, sendBus;
+function initAudio() {
+  if (ctx) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  masterFlt = ctx.createBiquadFilter(); masterFlt.type = 'lowpass'; masterFlt.frequency.value = 12000;
+  master = ctx.createGain(); master.gain.value = 0.8;
+  master.connect(masterFlt); masterFlt.connect(ctx.destination);
+  delayNode = ctx.createDelay(2.0);
+  fbGain = ctx.createGain(); fbGain.gain.value = 0.42;
+  delFilter = ctx.createBiquadFilter(); delFilter.type = 'lowpass'; delFilter.frequency.value = 1500;
+  sendBus = ctx.createGain(); sendBus.gain.value = 0.33;
+  sendBus.connect(delayNode);
+  delayNode.connect(delFilter); delFilter.connect(fbGain); fbGain.connect(delayNode);
+  delFilter.connect(master);
+  updateDelayTime();
+}
+function updateDelayTime() {
+  if (ctx) delayNode.delayTime.setTargetAtTime(0.75 * 60 / state.bpm, ctx.currentTime, 0.05);
+}
+function resetMod() {
+  if (!ctx) return;
+  masterFlt.frequency.setTargetAtTime(12000, ctx.currentTime, 0.05);
+  sendBus.gain.setTargetAtTime(0.33, ctx.currentTime, 0.05);
+}
+function applyPreviewMod(ccs, t) {
+  for (const [num, val] of ccs) {
+    if (num === 74) masterFlt.frequency.setTargetAtTime(140 + Math.pow(val / 127, 2) * 8200, t, 0.04);
+    if (num === 91) sendBus.gain.setTargetAtTime(0.1 + (val / 127) * 0.55, t, 0.05);
+  }
+}
+function previewNote(note, vel, t, durSec) {
+  const freq = 440 * Math.pow(2, (note - 69) / 12);
+  const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = freq;
+  const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 1.2;
+  f.frequency.setValueAtTime(500 + vel * 12, t);
+  f.frequency.exponentialRampToValueAtTime(300, t + Math.max(durSec, 0.08));
+  const g = ctx.createGain();
+  const peak = (vel / 127) * 0.42;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(peak, t + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + Math.max(durSec, 0.06));
+  o.connect(f); f.connect(g); g.connect(master); g.connect(sendBus);
+  o.start(t); o.stop(t + Math.max(durSec, 0.06) + 0.1);
+}
+
+/* ---------- Web MIDI ---------- */
+let midiAccess = null, midiOut = null;
+const midiSel = document.getElementById('midiOut');
+const midiStatus = document.getElementById('midiStatus');
+function refreshOuts() {
+  const prev = midiSel.value;
+  midiSel.innerHTML = '<option value="">— PREVIEW SYNTH ONLY —</option>';
+  if (!midiAccess) return;
+  for (const out of midiAccess.outputs.values()) {
+    const o = document.createElement('option');
+    o.value = out.id; o.textContent = out.name.toUpperCase();
+    midiSel.appendChild(o);
+  }
+  midiSel.value = prev;
+  midiOut = midiAccess.outputs.get(midiSel.value) || null;
+}
+if (navigator.requestMIDIAccess) {
+  navigator.requestMIDIAccess().then(a => {
+    midiAccess = a; midiStatus.textContent = 'API_AVAILABLE';
+    refreshOuts(); a.onstatechange = refreshOuts;
+  }).catch(() => { midiStatus.textContent = 'PERMISSION_DENIED'; });
+} else {
+  midiStatus.textContent = 'N/A (USE CHROME LOCAL)';
+}
+midiSel.addEventListener('change', () => {
+  midiOut = midiAccess ? (midiAccess.outputs.get(midiSel.value) || null) : null;
+});
+function midiSend(e, audioT, durSec) {
+  if (!midiOut || !ctx) return;
+  const when = performance.now() + (audioT - ctx.currentTime) * 1000;
+  const ch = state.ch - 1;
+  midiOut.send([0x90 | ch, e.note, e.vel], when);
+  midiOut.send([0x80 | ch, e.note, 0], when + durSec * 1000);
+  if (e.cc74 !== undefined) midiOut.send([0xB0 | ch, 74, e.cc74], when);
+}
+function midiSendCC(ccs, audioT) {
+  if (!midiOut || !ctx) return;
+  const when = performance.now() + (audioT - ctx.currentTime) * 1000;
+  const ch = state.ch - 1;
+  for (const [num, val] of ccs) midiOut.send([0xB0 | ch, num, val], when);
+}
+function allNotesOff() {
+  if (midiOut) midiOut.send([0xB0 | (state.ch - 1), 123, 0]);
+}
+
+/* ---------- transport / scheduler ---------- */
+let playing = false, timerID = null, currentStep = 0, nextTime = 0;
+let drawQueue = [], visStep = 0;
+const stepDur = () => 60 / state.bpm / SPB;
+
+function doStep(step, t) {
+  for (const e of eventsForStep(step)) {
+    if (e.ccOnly) {
+      applyPreviewMod(e.ccOnly, Math.max(t, ctx.currentTime));
+      midiSendCC(e.ccOnly, t);
+      continue;
+    }
+    const tt = Math.max(t + (e.offMs || 0) / 1000, ctx.currentTime + 0.001);
+    const durSec = e.durSteps * stepDur();
+    previewNote(e.note, e.vel, tt, durSec);
+    midiSend(e, tt, durSec);
+  }
+  drawQueue.push({ step, time: t });
+}
+function tick() {
+  while (nextTime < ctx.currentTime + 0.12) {
+    doStep(currentStep, nextTime);
+    currentStep++;
+    nextTime += stepDur();
+  }
+}
+function play() {
+  initAudio();
+  ctx.resume();
+  currentStep = 0; visStep = 0; drawQueue = [];
+  nextTime = ctx.currentTime + 0.08;
+  timerID = setInterval(tick, 25);
+  playing = true;
+  document.getElementById('playBtn').textContent = '■ STOP';
+  updateBadge();
+  requestAnimationFrame(raf);
+}
+function stop() {
+  clearInterval(timerID); timerID = null; playing = false;
+  allNotesOff(); resetMod();
+  document.getElementById('playBtn').textContent = '▶ PLAY';
+  updateBadge();
+  draw();
+}
+document.getElementById('playBtn').addEventListener('click', () => playing ? stop() : play());
+function updateBadge() {
+  document.getElementById('bpmBadge').textContent =
+    state.bpm.toFixed(1) + ' BPM ▮ ' + (playing ? 'RUN' : 'STOPPED');
+}
+
+/* ---------- canvas ---------- */
+const cv = document.getElementById('cv');
+const cx = cv.getContext('2d');
+const INK = '#0E0E0E';
+const W = 560, C = W / 2;
+
+function regMarks() {
+  cx.strokeStyle = INK; cx.lineWidth = 2;
+  const m = 14, l = 18;
+  [[m, m, 1, 1], [W - m, m, -1, 1], [m, W - m, 1, -1], [W - m, W - m, -1, -1]].forEach(([x, y, sx, sy]) => {
+    cx.beginPath(); cx.moveTo(x, y); cx.lineTo(x + l * sx, y);
+    cx.moveTo(x, y); cx.lineTo(x, y + l * sy); cx.stroke();
+  });
+}
+function labelText(t) {
+  cx.fillStyle = INK; cx.font = '11px "Courier New", monospace';
+  cx.textAlign = 'left'; cx.fillText(t, 18, W - 20);
+}
+
+function drawEuclid() {
+  const { k, n, rot } = state.euclid;
+  const R = 200;
+  cx.strokeStyle = INK; cx.lineWidth = 2.5;
+  cx.beginPath(); cx.arc(C, C, R, 0, Math.PI * 2); cx.stroke();
+  const hits = [];
+  for (let i = 0; i < n; i++) {
+    const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+    const x = C + R * Math.cos(a), y = C + R * Math.sin(a);
+    if (euclidHit(i + rot, k, n)) {
+      hits.push([x, y]);
+      cx.fillStyle = INK; cx.beginPath(); cx.arc(x, y, 11, 0, Math.PI * 2); cx.fill();
+    } else {
+      cx.lineWidth = 2; cx.beginPath(); cx.arc(x, y, 6.5, 0, Math.PI * 2); cx.stroke();
+    }
+  }
+  if (hits.length > 1) {
+    cx.lineWidth = 1.2; cx.beginPath(); cx.moveTo(hits[0][0], hits[0][1]);
+    hits.slice(1).forEach(p => cx.lineTo(p[0], p[1])); cx.closePath(); cx.stroke();
+  }
+  const pa = -Math.PI / 2 + ((visStep % n) / n) * Math.PI * 2;
+  cx.lineWidth = 3.5; cx.beginPath(); cx.moveTo(C, C);
+  cx.lineTo(C + (R - 22) * Math.cos(pa), C + (R - 22) * Math.sin(pa)); cx.stroke();
+  labelText('E(' + k + ',' + n + ') ROT_' + rot + ' // FILLED=HIT HOLLOW=REST');
+}
+
+function drawFib() {
+  const win = 72;
+  const start = Math.max(0, visStep - win);
+  const dens = state.fib.density;
+  const SCy = 218, SR = 168;
+  for (let p = start; p <= Math.max(visStep, win); p++) {
+    const j = p - start;
+    const a = ((p * GA) % 360) / 360 * Math.PI * 2 - Math.PI / 2;
+    const r = SR * Math.sqrt(j / win);
+    const x = C + r * Math.cos(a), y = SCy + r * Math.sin(a);
+    const trig = ((p * PHI) % 1) < dens;
+    cx.fillStyle = INK; cx.strokeStyle = INK;
+    if (trig) { cx.beginPath(); cx.arc(x, y, 5, 0, Math.PI * 2); cx.fill(); }
+    else { cx.beginPath(); cx.arc(x, y, 1.6, 0, Math.PI * 2); cx.fill(); }
+    if (playing && p === visStep) {
+      cx.lineWidth = 2.5; cx.beginPath(); cx.arc(x, y, 10, 0, Math.PI * 2); cx.stroke();
+    }
+  }
+  const laneY = 432, laneH = 76, laneX = 30, laneW = W - 60, lanes = 32;
+  cx.strokeStyle = INK; cx.lineWidth = 2;
+  cx.strokeRect(laneX, laneY, laneW, laneH);
+  const first = Math.max(0, visStep - 8);
+  const wStep = laneW / lanes;
+  for (let s = 0; s < lanes; s++) {
+    const p = first + s;
+    const x0 = laneX + s * wStep;
+    if (s % 4 === 0 && s > 0) {
+      cx.lineWidth = 1; cx.beginPath(); cx.moveTo(x0, laneY); cx.lineTo(x0, laneY + laneH); cx.stroke();
+    }
+    const f = (p * PHI) % 1;
+    if (f < dens) {
+      const vel = 58 + 64 * ((p * 0.7548776662) % 1);
+      const h = (vel / 127) * (laneH - 10);
+      const off = (f / dens - 0.5) * 0.7 * wStep;
+      cx.fillStyle = INK;
+      cx.fillRect(x0 + off + wStep * 0.22, laneY + laneH - h - 4, wStep * 0.5, h);
+    }
+    if (playing && p === visStep) {
+      cx.lineWidth = 3; cx.beginPath(); cx.moveTo(x0, laneY - 6); cx.lineTo(x0, laneY + laneH + 6); cx.stroke();
+    }
+  }
+  labelText('SPIRAL=SOURCE · LANE=TIME // BLOCK_H=VEL · X_SHIFT=HUMANIZE');
+}
+
+function drawPrime() {
+  const Ls = state.prime.layers;
+  const count = Math.max(Ls.length, 1);
+  const rMin = 64, rMax = 212;
+  Ls.forEach((L, idx) => {
+    const R = count === 1 ? rMax : rMin + (rMax - rMin) * (idx / (count - 1));
+    cx.strokeStyle = INK; cx.lineWidth = 2;
+    cx.beginPath(); cx.arc(C, C, R, 0, Math.PI * 2); cx.stroke();
+    for (let i = 0; i < L.len; i++) {
+      const a = -Math.PI / 2 + (i / L.len) * Math.PI * 2;
+      const x = C + R * Math.cos(a), y = C + R * Math.sin(a);
+      if (euclidHit(i, L.hits, L.len)) {
+        cx.fillStyle = INK; cx.beginPath(); cx.arc(x, y, 8, 0, Math.PI * 2); cx.fill();
+      } else {
+        cx.lineWidth = 2; cx.beginPath(); cx.arc(x, y, 5, 0, Math.PI * 2); cx.stroke();
+      }
+    }
+    const loopSteps = L.len * SPB;
+    const pa = -Math.PI / 2 + ((visStep % loopSteps) / loopSteps) * Math.PI * 2;
+    cx.lineWidth = 3; cx.beginPath();
+    cx.moveTo(C + (R - 26) * Math.cos(pa), C + (R - 26) * Math.sin(pa));
+    cx.lineTo(C + (R - 5) * Math.cos(pa), C + (R - 5) * Math.sin(pa)); cx.stroke();
+  });
+  if (state.prime.anchor && playing && visStep % SPB === 0) {
+    cx.fillStyle = INK; cx.beginPath(); cx.arc(C, C, 13, 0, Math.PI * 2); cx.fill();
+  } else {
+    cx.strokeStyle = INK; cx.lineWidth = 2; cx.beginPath(); cx.arc(C, C, 13, 0, Math.PI * 2); cx.stroke();
+  }
+  const alignBeats = Ls.reduce((acc, L) => lcm(acc, L.len), 1);
+  const alignSteps = alignBeats * SPB;
+  const beatsLeft = Math.ceil((alignSteps - (visStep % alignSteps)) / SPB);
+  document.getElementById('alignVal').textContent = beatsLeft.toLocaleString() + ' BEATS';
+  labelText('RINGS=' + Ls.length + ' // FULL_CYCLE=' + alignBeats.toLocaleString() + ' BEATS');
+}
+
+function drawCA() {
+  const { n, rule } = state.ca;
+  const gen = Math.floor(visStep / n) % 4000;
+  const G = 12;
+  const startG = Math.max(0, gen - (G - 1));
+  const cw = (W - 64) / n;
+  const chH = 30;
+  for (let g = startG; g <= gen; g++) {
+    const row = caRow(g);
+    const y = 58 + (g - startG) * chH;
+    for (let i = 0; i < n; i++) {
+      const x = 32 + i * cw;
+      if (row[i]) { cx.fillStyle = INK; cx.fillRect(x + 1, y + 1, cw - 2, chH - 2); }
+      else { cx.strokeStyle = INK; cx.lineWidth = 0.6; cx.strokeRect(x + 1, y + 1, cw - 2, chH - 2); }
+    }
+  }
+  const pos = visStep % n;
+  const py = 58 + (gen - startG) * chH;
+  cx.lineWidth = 3; cx.strokeStyle = INK;
+  cx.strokeRect(32 + pos * cw, py - 2, cw, chH + 4);
+  labelText('RULE_' + rule + ' // GEN_' + gen + ' // ROW=BAR · CELL=16TH');
+}
+
+function drawLorenz() {
+  if (loCache.pts.length < 500) lorenzTo(400);
+  const pts = loCache.pts;
+  const endIdx = playing ? Math.min(visStep * LO_SUB, pts.length - 1) : pts.length - 1;
+  const startIdx = Math.max(0, endIdx - 900);
+  const px = v => C + (v.x / 22) * 190;
+  const py = v => 262 - ((v.z - 25) / 26) * 175;
+  cx.strokeStyle = INK; cx.lineWidth = 1.3;
+  cx.beginPath();
+  for (let i = startIdx; i <= endIdx; i++) {
+    const p = pts[i];
+    if (i === startIdx) cx.moveTo(px(p), py(p)); else cx.lineTo(px(p), py(p));
+  }
+  cx.stroke();
+  const cur = pts[endIdx];
+  cx.fillStyle = INK; cx.beginPath(); cx.arc(px(cur), py(cur), 7, 0, Math.PI * 2); cx.fill();
+  const ccs = [
+    ['CC74_CUT', clamp127((cur.x + 22) / 44 * 127)],
+    ['CC91_SND', clamp127((cur.y + 28) / 56 * 127)],
+    ['CC71_RES', clamp127(cur.z / 50 * 127)]
+  ];
+  ccs.forEach(([name, val], i) => {
+    const y = 456 + i * 26;
+    cx.font = '10px "Courier New", monospace'; cx.fillStyle = INK;
+    cx.fillText(name, 32, y + 11);
+    cx.strokeStyle = INK; cx.lineWidth = 2;
+    cx.strokeRect(120, y, W - 152, 14);
+    cx.fillRect(120, y, (W - 152) * (val / 127), 14);
+  });
+  labelText('σ=10 ρ=28 β=8/3 // BOUNDED · NEVER_REPEATS · NO_NOTES');
+}
+
+function drawLsys() {
+  const depth = state.lsys.depth;
+  const laneX = 32, laneW = W - 64;
+  let y = 54;
+  for (let g = 0; g <= depth; g++) {
+    const s = lsString(g);
+    const len = s.length;
+    if (len > 96 || y > 380) break;
+    const bw = laneW / len;
+    const h = 26;
+    for (let i = 0; i < len; i++) {
+      const bx = laneX + i * bw;
+      if (s[i] === 'A') { cx.fillStyle = INK; cx.fillRect(bx + 0.5, y, Math.max(bw - 1, 1), h); }
+      else { cx.strokeStyle = INK; cx.lineWidth = 0.8; cx.strokeRect(bx + 0.5, y, Math.max(bw - 1, 1), h); }
+    }
+    y += h + 8;
+  }
+  const full = lsString(depth);
+  const L = full.length;
+  const winN = Math.min(48, L);
+  const pos = visStep % L;
+  const wStart = Math.max(0, Math.min(pos - 8, L - winN));
+  const laneY = 432, laneH = 72;
+  cx.strokeStyle = INK; cx.lineWidth = 2;
+  cx.strokeRect(laneX, laneY, laneW, laneH);
+  const bw2 = laneW / winN;
+  for (let i = 0; i < winN; i++) {
+    const idx = wStart + i;
+    const bx = laneX + i * bw2;
+    const chr = full[idx];
+    const audible = chr === 'A' || (state.lsys.system === 'thue' && chr === 'B');
+    if (audible) {
+      const hh = chr === 'A' ? laneH - 12 : (laneH - 12) * 0.55;
+      cx.fillStyle = INK;
+      cx.fillRect(bx + bw2 * 0.2, laneY + laneH - hh - 4, bw2 * 0.6, hh);
+    }
+    if (playing && idx === pos) {
+      cx.lineWidth = 3; cx.strokeStyle = INK;
+      cx.beginPath(); cx.moveTo(bx, laneY - 6); cx.lineTo(bx, laneY + laneH + 6); cx.stroke();
+    }
+  }
+  document.getElementById('lsLenVal').textContent = L + ' STEPS';
+  labelText('REWRITE_CASCADE ↓ // NOW_STRIP: LOOP_' + L + ' // A=FULL B=GHOST/REST');
+}
+
+function drawMeta() {
+  const { verts: baseVerts, edges } = getSolid(state.meta.solid);
+  const ang = visStep * state.meta.spin * Math.PI / 180;
+  const rot = baseVerts.map(v => rot3(v, ang));
+  const R = 212;
+  cx.strokeStyle = INK; cx.lineWidth = 2.5;
+  cx.beginPath(); cx.arc(C, C, R, 0, Math.PI * 2); cx.stroke();
+  for (let i = 0; i < 16; i++) {
+    const a = -Math.PI / 2 + (i / 16) * Math.PI * 2;
+    cx.lineWidth = i % 4 === 0 ? 2.5 : 1.2;
+    cx.beginPath();
+    cx.moveTo(C + (R - 10) * Math.cos(a), C + (R - 10) * Math.sin(a));
+    cx.lineTo(C + R * Math.cos(a), C + R * Math.sin(a));
+    cx.stroke();
+  }
+  const S = 148;
+  const P = rot.map(p => ({ X: C + p.x * S, Y: C + p.y * S, z: p.z }));
+  cx.lineWidth = 1.5;
+  for (const [i, j] of edges) {
+    cx.beginPath(); cx.moveTo(P[i].X, P[i].Y); cx.lineTo(P[j].X, P[j].Y); cx.stroke();
+  }
+  const sb = visStep % 16;
+  P.forEach((p, vi) => {
+    const rp = rot[vi];
+    const th = ((Math.atan2(rp.y, rp.x) / (2 * Math.PI)) + 1.25) % 1;
+    const active = playing && th >= sb / 16 && th < (sb + 1) / 16;
+    cx.fillStyle = INK;
+    cx.beginPath(); cx.arc(p.X, p.Y, 3.5 + 3 * (p.z + 1) / 2, 0, Math.PI * 2); cx.fill();
+    if (active) {
+      cx.lineWidth = 2.5;
+      cx.beginPath(); cx.arc(p.X, p.Y, 13, 0, Math.PI * 2); cx.stroke();
+    }
+  });
+  const pa = -Math.PI / 2 + (sb / 16) * Math.PI * 2;
+  cx.lineWidth = 3;
+  cx.beginPath();
+  cx.moveTo(C + (R - 34) * Math.cos(pa), C + (R - 34) * Math.sin(pa));
+  cx.lineTo(C + (R - 12) * Math.cos(pa), C + (R - 12) * Math.sin(pa));
+  cx.stroke();
+  labelText(state.meta.solid.toUpperCase() + ' // SPIN_' + state.meta.spin.toFixed(1) + '°/STEP // DUAL_AXIS@φ');
+}
+
+function drawRfib() {
+  const { f, loop, ring, local } = rfibPos(visStep);
+  const n = f.length;
+  const unit = 182 / f[n - 1];
+  const cyC = C + 14;
+  cx.fillStyle = INK; cx.font = 'bold 15px "Courier New", monospace'; cx.textAlign = 'center';
+  cx.fillText(f.join(', ') + ', …', C, 44);
+  cx.textAlign = 'left';
+  for (let k = 1; k < n; k++) {
+    const R = f[k] * unit;
+    cx.strokeStyle = INK; cx.lineWidth = k === ring ? 3.5 : 1;
+    cx.beginPath(); cx.arc(C, cyC, R, 0, Math.PI * 2); cx.stroke();
+    if (f[k] >= 3) {
+      cx.font = '11px "Courier New", monospace';
+      cx.fillText('R=' + f[k], C + 6, cyC + R - 7);
+    }
+  }
+  cx.lineWidth = 2.5; cx.strokeStyle = INK; cx.beginPath();
+  const SEG = 36;
+  for (let k = 0; k < n; k++) {
+    const r0 = Math.max(f[k], 0.5) * unit;
+    const r1 = Math.max(f[Math.min(k + 1, n - 1)], 0.5) * unit;
+    for (let s = 0; s <= SEG; s++) {
+      const t = s / SEG;
+      const r = r0 * Math.pow(r1 / r0, t);
+      const a = -Math.PI / 2 + (k + t) * Math.PI / 2;
+      const x = C + r * Math.cos(a), y = cyC + r * Math.sin(a);
+      if (k === 0 && s === 0) cx.moveTo(x, y); else cx.lineTo(x, y);
+    }
+  }
+  cx.stroke();
+  const frac = f[ring] > 0 ? local / f[ring] : 0;
+  const r0 = Math.max(f[ring], 0.5) * unit;
+  const r1 = Math.max(f[Math.min(ring + 1, n - 1)], 0.5) * unit;
+  const rP = r0 * Math.pow(r1 / r0, frac);
+  const aP = -Math.PI / 2 + (ring + frac) * Math.PI / 2;
+  cx.fillStyle = INK;
+  cx.beginPath(); cx.arc(C + rP * Math.cos(aP), cyC + rP * Math.sin(aP), 8, 0, Math.PI * 2); cx.fill();
+  document.getElementById('rfLenVal').textContent = loop + ' STEPS';
+  labelText('ARC_TIME∝RADIUS // RING_' + f[ring] + ' // ' + state.rfib.dir.toUpperCase() + ' // LOOP_' + loop);
+}
+
+function draw() {
+  cx.clearRect(0, 0, W, W);
+  regMarks();
+  if (state.mode === 'euclid') drawEuclid();
+  else if (state.mode === 'fib') drawFib();
+  else if (state.mode === 'prime') drawPrime();
+  else if (state.mode === 'ca') drawCA();
+  else if (state.mode === 'lorenz') drawLorenz();
+  else if (state.mode === 'lsys') drawLsys();
+  else if (state.mode === 'meta') drawMeta();
+  else drawRfib();
+}
+function raf() {
+  if (!playing) return;
+  while (drawQueue.length && drawQueue[0].time <= ctx.currentTime) {
+    visStep = drawQueue.shift().step;
+  }
+  draw();
+  requestAnimationFrame(raf);
+}
+
+/* ---------- MIDI file export ---------- */
+function vlq(v) { const b = [v & 0x7f]; while ((v >>= 7) > 0) b.unshift((v & 0x7f) | 0x80); return b; }
+function msToTicks(ms) { return Math.round(ms / 1000 * (state.bpm / 60) * 480); }
+
+function exportMidi() {
+  const bars = parseInt(document.getElementById('bars').value, 10);
+  const totalSteps = bars * 16;
+  const TPS = 120;
+  const ch = state.ch - 1;
+  const evts = [];
+  for (let s = 0; s < totalSteps; s++) {
+    for (const e of eventsForStep(s)) {
+      if (e.ccOnly) {
+        for (const [num, val] of e.ccOnly) {
+          evts.push({ tick: s * TPS, pri: 0, data: [0xB0 | ch, num, val] });
+        }
+        continue;
+      }
+      const on = Math.max(0, s * TPS + msToTicks(e.offMs || 0));
+      const off = on + Math.max(12, Math.round(e.durSteps * TPS));
+      if (e.cc74 !== undefined) evts.push({ tick: on, pri: 0, data: [0xB0 | ch, 74, e.cc74] });
+      evts.push({ tick: on, pri: 2, data: [0x90 | ch, e.note, e.vel] });
+      evts.push({ tick: off, pri: 1, data: [0x80 | ch, e.note, 0] });
+    }
+  }
+  evts.sort((a, b) => a.tick - b.tick || a.pri - b.pri);
+  const usPerQ = Math.round(60000000 / state.bpm);
+  let track = [0x00, 0xFF, 0x51, 0x03, (usPerQ >> 16) & 0xff, (usPerQ >> 8) & 0xff, usPerQ & 0xff];
+  let last = 0;
+  for (const e of evts) {
+    track = track.concat(vlq(e.tick - last), e.data);
+    last = e.tick;
+  }
+  track = track.concat([0x00, 0xFF, 0x2F, 0x00]);
+  const len = track.length;
+  const bytes = [
+    0x4D, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, 0x01, 0xE0,
+    0x4D, 0x54, 0x72, 0x6B,
+    (len >> 24) & 0xff, (len >> 16) & 0xff, (len >> 8) & 0xff, len & 0xff
+  ].concat(track);
+  const blob = new Blob([new Uint8Array(bytes)], { type: 'audio/midi' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'geosonic_' + state.mode + '_' + state.bpm + 'bpm_' + bars + 'bars.mid';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(a.href);
+}
+document.getElementById('exportBtn').addEventListener('click', exportMidi);
+
+/* ---------- UI wiring ---------- */
+document.querySelectorAll('nav button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.mode = b.dataset.mode;
+    document.body.dataset.mode = state.mode;
+    document.querySelectorAll('.params').forEach(p => p.hidden = p.dataset.for !== state.mode);
+    if (state.mode !== 'lorenz') resetMod();
+    draw();
+  });
+});
+
+const chSel = document.getElementById('ch');
+for (let i = 1; i <= 16; i++) { const o = document.createElement('option'); o.value = i; o.textContent = 'CH ' + i; chSel.appendChild(o); }
+chSel.addEventListener('change', () => { allNotesOff(); state.ch = parseInt(chSel.value, 10); });
+
+const rootSel = document.getElementById('root');
+const NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+for (let m = 36; m <= 59; m++) {
+  const o = document.createElement('option');
+  o.value = m; o.textContent = NAMES[m % 12] + (Math.floor(m / 12) - 1);
+  if (m === 45) o.selected = true;
+  rootSel.appendChild(o);
+}
+rootSel.addEventListener('change', () => { state.root = parseInt(rootSel.value, 10); });
+document.getElementById('scale').addEventListener('change', e => { state.scale = e.target.value; draw(); });
+
+document.getElementById('bpm').addEventListener('change', e => {
+  state.bpm = Math.min(180, Math.max(60, parseFloat(e.target.value) || 124));
+  e.target.value = state.bpm;
+  updateDelayTime(); updateBadge();
+});
+
+function bindRange(id, valId, fn, fmt) {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    fn(parseFloat(el.value));
+    document.getElementById(valId).textContent = fmt(parseFloat(el.value));
+    draw();
+  });
+}
+bindRange('k', 'kVal', v => state.euclid.k = v, v => v);
+bindRange('n', 'nVal', v => state.euclid.n = v, v => v);
+bindRange('rot', 'rotVal', v => state.euclid.rot = v, v => v);
+bindRange('dens', 'densVal', v => state.fib.density = v / 100, v => (v / 100).toFixed(2));
+bindRange('hum', 'humVal', v => state.fib.humanize = v, v => Math.round(v));
+bindRange('oct', 'octVal', v => state.fib.octaves = v, v => v);
+bindRange('caSeed', 'caSeedVal', v => state.ca.seed = v, v => v);
+bindRange('loRate', 'loRateVal', v => state.lorenz.rate = v / 10, v => (v / 10).toFixed(1));
+bindRange('lsDepth', 'lsDepthVal', v => state.lsys.depth = v, v => v);
+bindRange('mSpin', 'mSpinVal', v => state.meta.spin = v / 10, v => (v / 10).toFixed(1));
+bindRange('rfDepth', 'rfDepthVal', v => state.rfib.depth = v, v => v);
+document.getElementById('rfDir').addEventListener('change', e => { state.rfib.dir = e.target.value; draw(); });
+document.getElementById('rfGhost').addEventListener('change', e => { state.rfib.ghost = e.target.checked; });
+
+document.getElementById('caRule').addEventListener('change', e => { state.ca.rule = parseInt(e.target.value, 10); draw(); });
+document.getElementById('caN').addEventListener('change', e => { state.ca.n = parseInt(e.target.value, 10); draw(); });
+document.getElementById('caVoice').addEventListener('change', e => { state.ca.voice = e.target.value; });
+document.getElementById('loPulse').addEventListener('change', e => { state.lorenz.pulse = e.target.checked; });
+document.getElementById('butterfly').addEventListener('click', () => {
+  loCache.pts[loCache.pts.length - 1].x += 0.001;
+});
+document.getElementById('lsSys').addEventListener('change', e => { state.lsys.system = e.target.value; draw(); });
+document.getElementById('lsPitch').addEventListener('change', e => { state.lsys.pitch = e.target.value; });
+document.getElementById('mSolid').addEventListener('change', e => { state.meta.solid = e.target.value; draw(); });
+
+document.getElementById('anchor').addEventListener('change', e => { state.prime.anchor = e.target.checked; });
+
+const PRIMES = [2, 3, 5, 7, 11, 13];
+function buildRings() {
+  const wrap = document.getElementById('rings');
+  wrap.innerHTML = '';
+  state.prime.layers.forEach((L, idx) => {
+    const row = document.createElement('div');
+    row.className = 'row ringRow';
+    const lenOpts = PRIMES.map(p => '<option value="' + p + '"' + (p === L.len ? ' selected' : '') + '>' + p + '</option>').join('');
+    let hitOpts = '';
+    for (let h = 1; h <= L.len; h++) hitOpts += '<option value="' + h + '"' + (h === L.hits ? ' selected' : '') + '>' + h + '</option>';
+    let degOpts = '';
+    for (let d = 0; d <= 13; d++) degOpts += '<option value="' + d + '"' + (d === L.deg ? ' selected' : '') + '>' + d + '</option>';
+    let octOpts = '';
+    for (let o = 0; o <= 2; o++) octOpts += '<option value="' + o + '"' + (o === L.oct ? ' selected' : '') + '>+' + o + '</option>';
+    row.innerHTML =
+      '<div class="grid5">' +
+      '<div><span class="mini">LEN_QN</span><select data-f="len">' + lenOpts + '</select></div>' +
+      '<div><span class="mini">HITS</span><select data-f="hits">' + hitOpts + '</select></div>' +
+      '<div><span class="mini">DEG</span><select data-f="deg">' + degOpts + '</select></div>' +
+      '<div><span class="mini">OCT</span><select data-f="oct">' + octOpts + '</select></div>' +
+      '<button class="x" aria-label="Remove ring ' + (idx + 1) + '">✕</button>' +
+      '</div>';
+    row.querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', () => {
+        L[sel.dataset.f] = parseInt(sel.value, 10);
+        if (sel.dataset.f === 'len') { L.hits = Math.min(L.hits, L.len); buildRings(); }
+        draw();
+      });
+    });
+    row.querySelector('.x').addEventListener('click', () => {
+      if (state.prime.layers.length > 1) { state.prime.layers.splice(idx, 1); buildRings(); draw(); }
+    });
+    wrap.appendChild(row);
+  });
+}
+document.getElementById('addRing').addEventListener('click', () => {
+  if (state.prime.layers.length >= 6) return;
+  const used = state.prime.layers.map(l => l.len);
+  const next = PRIMES.find(p => !used.includes(p)) || 11;
+  state.prime.layers.push({ len: next, hits: 1, deg: 2, oct: 1 });
+  buildRings(); draw();
+});
+buildRings();
+
+draw();
+updateBadge();
+</script>
+</body>
+</html>
