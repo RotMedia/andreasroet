@@ -32,7 +32,7 @@ const algos = [
       <div class="eyebrow" style="margin-bottom:16px;">Apps · {APP.badge}</div>
       <h1 style="margin-bottom:20px;">{APP.name}.</h1>
       <p style="font-size:20px; color:var(--ink-soft); max-width:560px; margin-bottom:28px;">{APP.tagline}</p>
-      <a class="btn accent" href={APP.url} style="display:inline-flex;">Try {APP.name} now <span class="arrow">→</span></a>
+      <a class="btn accent" href={APP.url} target="_blank" rel="noopener" style="display:inline-flex;">Try {APP.name} now <span class="arrow">→</span></a>
     </section>
 
     <section class="section" style="border-top:0; padding-top:0;">
@@ -49,6 +49,16 @@ const algos = [
         from its shape. Nothing is randomized. Every note traces back to a real mathematical property, so patterns can be explored,
         tweaked, and trusted to make musical sense.
       </p>
+    </section>
+
+    <section class="section" style="max-width:760px;">
+      <div class="about-benefit" style="margin:0;">
+        <p style="font-size:15px; line-height:1.6; margin:0;">
+          <strong>Browser note:</strong> MIDI output to hardware works in Chrome and Edge.
+          Firefox needs an extra add-on for Web MIDI — the built-in preview synth and
+          .mid export work everywhere.
+        </p>
+      </div>
     </section>
 
     <section class="section">
@@ -78,7 +88,7 @@ const algos = [
 
     <section class="section" style="text-align:center; padding:40px 0;">
       <p class="mono" style="color:var(--ink-mute); margin-bottom:20px;">Built for producers who'd rather explore a shape than program a grid.</p>
-      <a class="btn accent" href={APP.url} style="display:inline-flex;">Try {APP.name} now <span class="arrow">→</span></a>
+      <a class="btn accent" href={APP.url} target="_blank" rel="noopener" style="display:inline-flex;">Try {APP.name} now <span class="arrow">→</span></a>
     </section>
   </div>
 

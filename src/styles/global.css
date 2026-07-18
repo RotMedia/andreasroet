@@ -15,6 +15,7 @@
   --accent: #DE4D53;   /* signal red */
   --accent-ink: #ffffff;
 
+  --font-heading: 'Archivo Black', 'Helvetica Neue', Arial, sans-serif;
   --font-display: "BBH Bartle", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-body: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -91,7 +92,7 @@ body::before {
 }
 
 /* Typography —— display uses Glock Grotesk; brutalism dial drives weights & tracking */
-h1, h2, h3, h4, .display {
+h1, .display {
   font-family: var(--font-display);
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -101,7 +102,8 @@ h1, h2, h3, h4, .display {
   text-wrap: balance;
 }
 h1 { font-size: clamp(44px, 6vw, 92px); }
-h2 { font-size: clamp(30px, 4vw, 56px); }
+h2, h3, h4 { font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.01em; line-height: 1.05; }
+h2 { font-size: clamp(28px, 3.4vw, 48px); }
 h3 { font-size: clamp(22px, 2.4vw, 32px); letter-spacing: -0.018em; line-height: 1.04; }
 h4 { font-size: clamp(16px, 1.4vw, 19px); letter-spacing: -0.01em; line-height: 1.1; font-weight: 700; }
 
@@ -395,4 +397,50 @@ html { scroll-behavior: smooth; }
 .rail::-webkit-scrollbar-thumb { background: var(--rule-strong); }
 
 /* Baked-in brutalism dial = 7 (approved design) */
-h1, h2 { letter-spacing: 0; text-transform: uppercase; font-weight: 900; }
+h1 { letter-spacing: 0; text-transform: uppercase; font-weight: 900; }
+h2 { text-transform: uppercase; letter-spacing: 0.005em; }
+
+/* --- Mobile burger nav --------------------------------------------------- */
+.burger { display: none; }
+
+@media (max-width: 900px) {
+  .topbar-inner { position: relative; }
+
+  .burger {
+    display: flex; flex-direction: column; justify-content: center; gap: 5px;
+    width: 40px; height: 40px; padding: 8px 6px;
+    cursor: pointer; border: 1px solid var(--rule); margin-left: auto;
+  }
+  .burger span {
+    display: block; height: 2px; width: 100%;
+    background: var(--ink); transition: transform .2s, opacity .2s;
+  }
+
+  .nav {
+    display: none;
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 0;
+    background: var(--bone);
+    border-bottom: 1px solid var(--rule);
+    padding: 8px 0 14px;
+    z-index: 200;
+  }
+  .nav-toggle:checked ~ .nav { display: flex; }
+
+  .nav a {
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 16px;
+  }
+  .nav a.active::after { display: none; }
+  .nav .nav-cta {
+    margin-top: 14px; text-align: center;
+    border-bottom: 1px solid var(--accent);
+    padding: 12px 18px;
+  }
+
+  /* burger -> X when open */
+  .nav-toggle:checked ~ .burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle:checked ~ .burger span:nth-child(2) { opacity: 0; }
+  .nav-toggle:checked ~ .burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+}

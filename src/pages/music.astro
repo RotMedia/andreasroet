@@ -9,7 +9,7 @@ const SC_SPOTLIGHT = 'https://soundcloud.com/andreas-roet-nbg/sets/website-spotl
 const sections = [
   { key: 'label', title: 'Label Releases', items: music.label },
   { key: 'self', title: 'Self-Published · Bandcamp', items: music.self },
-].filter((s) => s.items.length > 0);
+];
 
 const musicLd = {
   '@context': 'https://schema.org',
@@ -54,6 +54,9 @@ const musicLd = {
     {sections.map((section) => (
       <section class="section">
         <div class="eyebrow" style="margin-bottom: 24px;">{section.title}</div>
+        {section.items.length === 0 && (
+          <p class="mono" style="color:var(--ink-mute);">COMING SOON.</p>
+        )}
         {section.items.map((r, i) => (
           <a href={r.url} rel="noopener" class="release-row" style="display:grid; grid-template-columns:40px 100px 1fr 160px 100px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
             <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>

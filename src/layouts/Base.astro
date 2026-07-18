@@ -1,5 +1,6 @@
 ---
 import '@fontsource/bbh-bartle/400.css';
+import '@fontsource/archivo-black/400.css';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
@@ -23,6 +24,7 @@ const NAV = [
   { href: '/blog', id: 'blog', label: 'Learn' },
   { href: '/apps', id: 'apps', label: 'Apps' },
   { href: '/about', id: 'about', label: 'About' },
+  { href: '/socials', id: 'socials', label: 'Socials' },
 ];
 
 const siteLd = {
@@ -82,6 +84,10 @@ const pageLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
           <span class="brand-mark">AR</span>
           <span>Andreas Roet</span>
         </a>
+        <input type="checkbox" id="navtoggle" class="nav-toggle" hidden />
+        <label for="navtoggle" class="burger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </label>
         <nav class="nav" aria-label="Main">
           {NAV.map((item) => (
             <a href={item.href} class={activeNav === item.id ? 'active' : ''}>{item.label}</a>
