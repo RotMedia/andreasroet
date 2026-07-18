@@ -36,20 +36,24 @@ const algos = [
     </section>
 
     <section class="section" style="border-top:0; padding-top:0;">
-      <img src={APP.cover} alt={`${APP.name} interface`} loading="lazy" style="width:100%; border:1px solid var(--rule);" />
-    </section>
-
-    <section class="section" style="max-width:760px;">
-      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+      <div class="app-intro">
+        <div class="app-shot">
+          <img src={APP.cover} alt={`${APP.name} interface`} loading="lazy" style="width:100%; border:1px solid var(--rule);" />
+        </div>
+        <div class="app-copy">
+      <p style="font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;">
         No installation. No account. A browser tab is opened, a shape is picked, and a groove is heard — instantly.
       </p>
-      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+      <p style="font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;">
         Traditional step sequencers are built around a grid, with every note placed by hand. GeoSonic flips that: a mathematical
         structure — a spiral, a rotating solid, a self-repeating pattern — is chosen, and rhythm, melody and timing are generated
         from its shape. Nothing is randomized. Every note traces back to a real mathematical property, so patterns can be explored,
         tweaked, and trusted to make musical sense.
       </p>
+        </div>
+      </div>
     </section>
+
 
     <section class="section" style="max-width:760px;">
       <div class="about-benefit" style="margin:0;">
@@ -93,6 +97,9 @@ const algos = [
   </div>
 
   <style>
+    .app-intro { display:grid; grid-template-columns: 1.1fr 1fr; gap:32px; align-items:start; }
+    .app-shot img { width:100%; border:1px solid var(--rule); display:block; }
+    @media (max-width:900px){ .app-intro{ grid-template-columns:1fr; gap:20px; } }
     .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
     .feat { border:1px solid var(--rule); padding:20px; }
     .algo-row { display:grid; grid-template-columns:200px 1fr; gap:24px; padding:16px 0; border-bottom:1px solid var(--rule); }

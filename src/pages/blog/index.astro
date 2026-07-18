@@ -37,9 +37,9 @@ const blogLd = {
       <div class="eyebrow" style="margin-bottom: 24px;">Tutorials</div>
       {tutorials.length === 0 && <p class="mono" style="color:var(--ink-mute);">FIRST TUTORIALS INCOMING.</p>}
       {tutorials.map((post, i) => (
-        <a href={`/blog/${post.id}`} class="post-row" style="display:grid; grid-template-columns:40px 1fr 160px 100px 120px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+        <a href={`/blog/${post.id}`} class="post-row" style="display:grid; grid-template-columns:40px 1fr 160px 100px 120px; align-items:center; gap:24px; padding:18px 0; text-decoration:none; color:inherit;">
           <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
-          <span style="font-family:var(--font-display); font-weight:800; font-size:24px; letter-spacing:-0.02em; line-height:1.05;">{post.data.title}</span>
+          <span class="post-title">{post.data.title}</span>
           <span class="mono">{post.data.topic ?? ''}</span>
           <span class="mono">{post.data.duration ?? ''}</span>
           <span class="mono" style="text-align:right;">{post.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })} →</span>
@@ -51,9 +51,9 @@ const blogLd = {
       <div class="eyebrow" style="margin-bottom: 24px;">Articles</div>
       {articles.length === 0 && <p class="mono" style="color:var(--ink-mute);">FIRST ARTICLES INCOMING.</p>}
       {articles.map((post, i) => (
-        <a href={`/blog/${post.id}`} class="post-row" style="display:grid; grid-template-columns:40px 1fr 160px 120px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+        <a href={`/blog/${post.id}`} class="post-row" style="display:grid; grid-template-columns:40px 1fr 160px 120px; align-items:center; gap:24px; padding:18px 0; text-decoration:none; color:inherit;">
           <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
-          <span style="font-family:var(--font-display); font-weight:800; font-size:24px; letter-spacing:-0.02em; line-height:1.05;">{post.data.title}</span>
+          <span class="post-title">{post.data.title}</span>
           <span class="mono">{post.data.topic ?? ''}</span>
           <span class="mono" style="text-align:right;">{post.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })} →</span>
         </a>
@@ -62,19 +62,28 @@ const blogLd = {
 
     <!-- Community CTA -->
     <section class="section" style="text-align:center; padding: 44px 0 16px;">
-      <img src="/discord-mark.svg" alt="" width="34" height="26" style="opacity:.85; margin-bottom:16px;" />
+      <div style="color:var(--ink); margin-bottom:16px;">
+        <svg width="34" height="26" viewBox="0 0 127.14 96.36" fill="currentColor" aria-hidden="true"><path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"/></svg>
+      </div>
       <h2 style="margin-bottom:16px;">Tutorials are the start,<br />not the finish.</h2>
       <p style="max-width:520px; margin:0 auto 26px; color:var(--ink-soft); font-size:16px; line-height:1.6;">
-        The Dub Techno Outpost is where producers put it into practice — challenges
-        instead of consume-and-forget.
+        The Dub Techno Outpost is where producers put it into practice and grow together.
       </p>
       <a class="btn accent" href="/community" style="display:inline-flex;">
-        Join the Outpost — free <span class="arrow">→</span>
+        Learn more about the Dub Techno Outpost <span class="arrow">→</span>
       </a>
     </section>
   </div>
 
   <style>
+    .post-row { border-bottom: 1px solid var(--rule); transition: padding-left .15s, background .15s; }
+    .post-row:last-of-type { border-bottom: 0; }
+    .post-row:hover { padding-left: 10px; background: color-mix(in oklab, var(--accent) 7%, transparent); }
+    .post-row:hover .post-title { color: var(--accent); }
+    .post-title {
+      font-family: var(--font-heading); font-weight: 400; text-transform: uppercase;
+      font-size: 20px; letter-spacing: 0; line-height: 1.1; transition: color .15s;
+    }
     @media (max-width: 760px) {
       .post-row { grid-template-columns: 1fr !important; gap: 6px !important; }
       .post-row > :first-child { display: none; }

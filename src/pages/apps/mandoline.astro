@@ -38,21 +38,25 @@ const flow = [
     </section>
 
     <section class="section" style="border-top:0; padding-top:0;">
-      <img src={APP.cover} alt="MANDOLINE interface" loading="lazy" style="width:100%; border:1px solid var(--rule);" />
-    </section>
-
-    <section class="section" style="max-width:760px;">
-      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+      <div class="app-intro">
+        <div class="app-shot">
+          <img src={APP.cover} alt="MANDOLINE interface" loading="lazy" style="width:100%; border:1px solid var(--rule);" />
+        </div>
+        <div class="app-copy">
+      <p style="font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;">
         A browser-based sample slicer built for producers who record their own one-shots — long takes played into a synth,
         a sampler or a drum machine, then chopped and curated in a single sitting. No installation, no account. A folder is
         dropped in, transients are found automatically, and a raw take becomes a stack of clean, named one-shots.
       </p>
-      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+      <p style="font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;">
         Sample chopping is traditionally built around a waveform and a mouse, every start point placed by hand. Here that part
         is handled first: transients are detected the moment a file loads, cuts snap to the nearest zero-crossing, and a full tree
         of slices is waiting before a single key is pressed. What's left is the part that actually matters — deciding what's good.
       </p>
+        </div>
+      </div>
     </section>
+
 
     <section class="section">
       <div class="eyebrow" style="margin-bottom:24px;">What it's good for</div>
@@ -93,6 +97,9 @@ const flow = [
   </div>
 
   <style>
+    .app-intro { display:grid; grid-template-columns: 1.1fr 1fr; gap:32px; align-items:start; }
+    .app-shot img { width:100%; border:1px solid var(--rule); display:block; }
+    @media (max-width:900px){ .app-intro{ grid-template-columns:1fr; gap:20px; } }
     .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
     .feat { border:1px solid var(--rule); padding:20px; }
     .algo-row { display:grid; grid-template-columns:160px 1fr; gap:24px; padding:16px 0; border-bottom:1px solid var(--rule); }

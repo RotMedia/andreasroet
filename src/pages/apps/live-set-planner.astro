@@ -37,20 +37,24 @@ const sheet = [
     </section>
 
     <section class="section" style="border-top:0; padding-top:0;">
-      <img src={APP.cover} alt={`${APP.short} interface`} loading="lazy" style="width:100%; border:1px solid var(--rule);" />
-    </section>
-
-    <section class="section" style="max-width:760px;">
-      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+      <div class="app-intro">
+        <div class="app-shot">
+          <img src={APP.cover} alt={`${APP.short} interface`} loading="lazy" style="width:100%; border:1px solid var(--rule);" />
+        </div>
+        <div class="app-copy">
+      <p style="font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;">
         No installation. No login. A browser tab is opened, a gig date is set, and a plan starts taking shape.
       </p>
-      <p style="font-size:17px; line-height:1.65; color:var(--ink-soft);">
+      <p style="font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;">
         Most live sets get planned across four or five places at once — a notes app for the concept, a spreadsheet for gear,
         a scrap of paper for pattern numbers, a mental countdown for the deadline. Here it all lands on one sheet, split the way
         a live set actually gets built: the heart first, then the head. The creative vision is written down before a single cable
         is counted — and only once the sound is clear are set length, gear, patterns and deadlines worked out.
       </p>
+        </div>
+      </div>
     </section>
+
 
     <section class="section">
       <div class="eyebrow" style="margin-bottom:24px;">What it's good for</div>
@@ -81,6 +85,9 @@ const sheet = [
   </div>
 
   <style>
+    .app-intro { display:grid; grid-template-columns: 1.1fr 1fr; gap:32px; align-items:start; }
+    .app-shot img { width:100%; border:1px solid var(--rule); display:block; }
+    @media (max-width:900px){ .app-intro{ grid-template-columns:1fr; gap:20px; } }
     .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
     .feat { border:1px solid var(--rule); padding:20px; }
     .algo-row { display:grid; grid-template-columns:220px 1fr; gap:24px; padding:16px 0; border-bottom:1px solid var(--rule); }
