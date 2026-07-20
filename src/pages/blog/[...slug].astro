@@ -4,11 +4,19 @@ import YouTube from '../../components/YouTube.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const posts = (await getCollection('blog', ({ data }) => !data.draft))
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      newer: i > 0 ? posts[i - 1] : null,
+      older: i < posts.length - 1 ? posts[i + 1] : null,
+    },
+  }));
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 const d = post.data;
 
@@ -55,6 +63,21 @@ if (d.youtube) {
         <Content />
       </div>
     </article>
+
+    <nav class="post-nav" aria-label="More posts">
+      {older ? (
+        <a class="pn pn-prev" href={`/blog/${older.id}`}>
+          <span class="mono pn-label">← Previous</span>
+          <span class="pn-title">{older.data.title}</span>
+        </a>
+      ) : <span class="pn pn-empty"></span>}
+      {newer ? (
+        <a class="pn pn-next" href={`/blog/${newer.id}`}>
+          <span class="mono pn-label">Next →</span>
+          <span class="pn-title">{newer.data.title}</span>
+        </a>
+      ) : <span class="pn pn-empty"></span>}
+    </nav>
   </div>
 
   <style is:global>
@@ -70,5 +93,28 @@ if (d.youtube) {
     .prose ul, .prose ol { margin: 0 0 18px; padding-left: 24px; }
     .prose li { margin-bottom: 6px; }
     .prose img { max-width: 100%; }
+  </style>
+
+  <style>
+    .post-nav {
+      display:grid; grid-template-columns:1fr 1fr; gap:16px;
+      margin:48px 0 8px; border-top:1px solid var(--rule); padding-top:24px;
+    }
+    .pn {
+      display:flex; flex-direction:column; gap:8px;
+      padding:20px; border:1px solid var(--rule);
+      text-decoration:none; color:inherit;
+      transition:border-color .15s, background .15s;
+    }
+    .pn:hover { border-color:var(--accent); background:color-mix(in oklab, var(--accent) 7%, transparent); }
+    .pn-next { text-align:right; align-items:flex-end; }
+    .pn-label { color:var(--ink-mute); font-size:11px; }
+    .pn-title {
+      font-family:var(--font-heading); font-weight:400; text-transform:uppercase;
+      font-size:16px; line-height:1.15;
+    }
+    .pn:hover .pn-title { color:var(--accent); }
+    .pn-empty { border:0; }
+    @media (max-width:700px){ .post-nav{grid-template-columns:1fr;} .pn-next{text-align:left; align-items:flex-start;} }
   </style>
 </Base>

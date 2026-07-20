@@ -5,7 +5,7 @@
       "id": "geosonic",
       "name": "GeoSonic",
       "tagline": "Turn sacred geometry into MIDI.",
-      "sub": "Creative & workflow tool",
+      "sub": "Geometric MIDI Generator",
       "status": "free",
       "url": "/geosonic/",
       "cover": "/covers/tool-geosonic.webp"
@@ -23,7 +23,7 @@
       "id": "mandoline",
       "name": "Mandoline",
       "tagline": "A new way to work with loops and texture.",
-      "sub": "Creative & workflow tool",
+      "sub": "Auto-Slice Long Takes into curated Sample Packs",
       "status": "coming-soon",
       "waitlistSubject": "Mandoline Waitlist",
       "cover": "/covers/tool-mandoline.webp"

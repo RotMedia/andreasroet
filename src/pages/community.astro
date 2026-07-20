@@ -9,13 +9,17 @@ const DISCORD = 'https://discord.gg/vXDSCJwPN';
   mode="dark"
 >
   <div class="page app">
-    <section style="padding: 64px 0 32px; max-width: 760px;">
-      <div class="row" style="align-items:center; gap:14px; margin-bottom:20px;">
-        <img src="/discord-mark.svg" alt="" width="30" height="23" style="opacity:.9;" />
-        <div class="eyebrow" style="margin:0;">Community · Discord</div>
+    <section class="outpost-hero">
+      <div class="outpost-hero-inner">
+        <div class="row" style="align-items:center; gap:14px; margin-bottom:20px;">
+          <img src="/discord-mark.svg" alt="" width="30" height="23" />
+          <div class="eyebrow" style="margin:0;">Community · Discord</div>
+        </div>
+        <h1 style="margin:0;">Join the<br />Dub Techno Outpost.</h1>
       </div>
-      <h1 style="margin-bottom: 32px;">Join the<br />Dub Techno Outpost.</h1>
+    </section>
 
+    <section class="section" style="border-top:0; padding-top:28px; max-width:760px;">
       <p style="font-size: 20px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 28px; max-width: 620px;">
         A free community for open and like-minded producers.
       </p>
@@ -35,4 +39,21 @@ const DISCORD = 'https://discord.gg/vXDSCJwPN';
       </a>
     </section>
   </div>
+
+  <style>
+    .outpost-hero {
+      position: relative; overflow: hidden;
+      border-radius: 14px; margin-top: 24px;
+      background: url('/covers/outpost-banner.webp') center/cover no-repeat;
+      min-height: clamp(280px, 34vw, 440px);
+      display: flex; align-items: flex-end;
+    }
+    .outpost-hero::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(20,20,18,.25) 0%, rgba(20,20,18,.55) 55%, rgba(20,20,18,.88) 100%);
+    }
+    .outpost-hero-inner { position: relative; z-index: 1; padding: 32px clamp(20px, 4vw, 44px) 30px; }
+    .outpost-hero h1 { color: #e4e2dd; }
+    .outpost-hero .eyebrow { color: #e4e2dd; }
+  </style>
 </Base>

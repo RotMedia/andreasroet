@@ -4,6 +4,7 @@ const APP = {
   name: 'MANDOLINE', badge: 'Coming soon',
   tagline: 'A take is turned into a pack.',
   cover: '/covers/tool-mandoline.webp',
+  video: null,
 };
 const benefits = [
   ['Curation is kept at the speed of hearing.', 'Every slice is previewed the instant it\u2019s reached — no waiting, no re-clicking. Walk a take with the arrow keys and judge it in the time it takes to listen.'],
@@ -27,32 +28,19 @@ const flow = [
       <div class="eyebrow" style="margin-bottom:16px;">Apps · {APP.badge}</div>
       <h1 style="margin-bottom:20px;">{APP.name}.</h1>
       <p style="font-size:20px; color:var(--ink-soft); max-width:560px; margin-bottom:28px;">{APP.tagline}</p>
-      <a class="btn accent" id="wl-link" href="#" style="display:inline-flex;">Join the waitlist <span class="arrow">→</span></a>
-      <script>
-        (() => {
-          const p = ['in','fo',String.fromCharCode(64),'andreas','roet','.','de'];
-          const link = document.getElementById('wl-link');
-          if (link) link.setAttribute('href','mail'+'to:'+p.join('')+'?subject='+encodeURIComponent('Mandoline Waitlist'));
-        })();
-      </script>
     </section>
 
     <section class="section" style="border-top:0; padding-top:0;">
       <div class="app-intro">
         <div class="app-shot">
-          <img src={APP.cover} alt="MANDOLINE interface" loading="lazy" style="width:100%; border:1px solid var(--rule);" />
+          {APP.video
+            ? <video src={APP.video} poster={APP.cover} autoplay muted loop playsinline></video>
+            : <img src={APP.cover} alt="MANDOLINE interface" loading="lazy" />}
         </div>
         <div class="app-copy">
-      <p style="font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;">
-        A browser-based sample slicer built for producers who record their own one-shots — long takes played into a synth,
-        a sampler or a drum machine, then chopped and curated in a single sitting. No installation, no account. A folder is
-        dropped in, transients are found automatically, and a raw take becomes a stack of clean, named one-shots.
-      </p>
-      <p style="font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px;">
-        Sample chopping is traditionally built around a waveform and a mouse, every start point placed by hand. Here that part
-        is handled first: transients are detected the moment a file loads, cuts snap to the nearest zero-crossing, and a full tree
-        of slices is waiting before a single key is pressed. What's left is the part that actually matters — deciding what's good.
-      </p>
+          <p class="app-p">A browser-based sample slicer built for producers who record their own one-shots — long takes played into a synth, a sampler or a drum machine, then chopped and curated in a single sitting. No installation, no account. A folder is dropped in, transients are found automatically, and a raw take becomes a stack of clean, named one-shots.</p>
+          <p class="app-p">Sample chopping is traditionally built around a waveform and a mouse, every start point placed by hand. Here that part is handled first: transients are detected the moment a file loads, cuts snap to the nearest zero-crossing, and a full tree of slices is waiting before a single key is pressed. What's left is the part that actually matters — deciding what's good.</p>
+          <a class="btn accent" id="wl-link" href="#" style="align-self:flex-start;">Join the waitlist <span class="arrow">→</span></a>
         </div>
       </div>
     </section>
@@ -98,7 +86,11 @@ const flow = [
 
   <style>
     .app-intro { display:grid; grid-template-columns: 1.1fr 1fr; gap:32px; align-items:start; }
-    .app-shot img { width:100%; border:1px solid var(--rule); display:block; }
+    .app-shot img, .app-shot video { width:100%; border:1px solid var(--rule); display:block; }
+    .app-copy { display:flex; flex-direction:column; }
+    .app-p { font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px; }
+    .app-note { border-left:3px solid var(--accent); padding:12px 16px; margin:4px 0 18px; }
+    .app-note p { font-size:14px; line-height:1.55; margin:0; color:var(--ink-soft); }
     @media (max-width:900px){ .app-intro{ grid-template-columns:1fr; gap:20px; } }
     .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
     .feat { border:1px solid var(--rule); padding:20px; }
