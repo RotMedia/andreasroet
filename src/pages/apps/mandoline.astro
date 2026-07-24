@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 const APP = {
   name: 'MANDOLINE', badge: 'Coming soon',
-  tagline: 'A take is turned into a pack.',
+  tagline: 'Auto-Slice Long Takes into curated Sample Packs',
   cover: '/covers/tool-mandoline.webp',
   video: null,
 };
@@ -38,8 +38,9 @@ const flow = [
             : <img src={APP.cover} alt="MANDOLINE interface" loading="lazy" />}
         </div>
         <div class="app-copy">
-          <p class="app-p">A browser-based sample slicer built for producers who record their own one-shots — long takes played into a synth, a sampler or a drum machine, then chopped and curated in a single sitting. No installation, no account. A folder is dropped in, transients are found automatically, and a raw take becomes a stack of clean, named one-shots.</p>
-          <p class="app-p">Sample chopping is traditionally built around a waveform and a mouse, every start point placed by hand. Here that part is handled first: transients are detected the moment a file loads, cuts snap to the nearest zero-crossing, and a full tree of slices is waiting before a single key is pressed. What's left is the part that actually matters — deciding what's good.</p>
+          <p class="app-p">Sample chopping is traditionally built around a waveform and a mouse, every start point placed by hand. Then you'd replay each slice and decide what to keep and what to discard. Again, by hand.</p>
+          <p class="app-p">Mandoline does the slicing for you, by detecting transients the moment a file loads. Cuts snap to the nearest zero-crossing, and a full tree of slices is waiting before a single key is pressed.</p>
+          <p class="app-p">What's left is the part that actually matters — cherry-picking what's good, grouped and ready for export.</p>
           <a class="btn accent" id="wl-link" href="#" style="align-self:flex-start;">Join the waitlist <span class="arrow">→</span></a>
         </div>
       </div>

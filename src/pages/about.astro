@@ -1,5 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
+import Gallery from '../components/Gallery.astro';
+
+const gearImages = [];
 
 const gear = [
   { group: 'Elektron core', items: 'Octatrack MK2 · Analog Four MK2 · Analog Rytm MK1 · Syntakt' },
@@ -34,7 +37,7 @@ const aboutLd = {
     <!-- Hero + short version -->
     <section style="padding: 48px 0 24px; max-width: 760px;">
       <div class="eyebrow" style="margin-bottom: 20px;">About</div>
-      <h1 style="margin-bottom: 32px;">Built dense,<br />mixed dry.</h1>
+      <h1 style="margin-bottom: 32px;">Records, sounds<br />and how they're made.</h1>
 
       <div class="about-lead">
         <p>I've been making music since 1997 — starting with beats on a friend's MPC and my keyboard, then Fruity Loops. A little later I tried a Roland MC-303 and knew right away: hardware was my way in.</p>
@@ -95,10 +98,8 @@ const aboutLd = {
           <span class="sum-icon" aria-hidden="true">+</span>
         </summary>
         <div class="gear-list">
-          <div class="studio-shots">
-            <div class="studio-shot placeholder"><span class="mono">STUDIO</span></div>
-            <div class="studio-shot placeholder"><span class="mono">RIG</span></div>
-            <div class="studio-shot placeholder"><span class="mono">DESK</span></div>
+          <div style="margin-bottom:28px;">
+            <Gallery images={gearImages} ratio="4/3" />
           </div>
           {gear.map((g) => (
             <div class="gear-row">

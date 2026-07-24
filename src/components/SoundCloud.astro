@@ -11,9 +11,7 @@ const { url, label = 'SoundCloud · Featured', title = 'Spotlight', height = 400
 const embedSrc = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23DE4D53&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false`;
 ---
 <div class="sc-facade imgbox" data-sc-src={embedSrc} data-sc-height={height} style="position:relative; background:var(--bone-2); cursor:pointer; min-height:200px;">
-  <div class="placeholder" style="position:absolute; inset:0;">
-    <span class="mono" style="font-size:11px;">{label}</span>
-  </div>
+  <div class="placeholder" style="position:absolute; inset:0;"></div>
   <div class="sc-inner">
     <div class="eyebrow" style="margin-bottom:12px;">{label}</div>
     <div class="sc-title">{title}</div>

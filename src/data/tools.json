@@ -4,8 +4,8 @@
     {
       "id": "geosonic",
       "name": "GeoSonic",
-      "tagline": "Turn sacred geometry into MIDI.",
-      "sub": "Geometric MIDI Generator",
+      "tagline": "Geometric MIDI Generator",
+      "sub": "",
       "status": "free",
       "url": "/geosonic/",
       "cover": "/covers/tool-geosonic.webp"
@@ -14,7 +14,7 @@
       "id": "live-set-planner",
       "name": "Live Set Planner",
       "tagline": "Plan and structure your hardware live sets.",
-      "sub": "Creative & workflow tool",
+      "sub": "",
       "status": "free",
       "url": "/live-set-planner/",
       "cover": "/covers/tool-live-set-planner.webp"
@@ -22,8 +22,8 @@
     {
       "id": "mandoline",
       "name": "Mandoline",
-      "tagline": "A new way to work with loops and texture.",
-      "sub": "Auto-Slice Long Takes into curated Sample Packs",
+      "tagline": "Auto-Slice Long Takes into curated Sample Packs",
+      "sub": "",
       "status": "coming-soon",
       "waitlistSubject": "Mandoline Waitlist",
       "cover": "/covers/tool-mandoline.webp"

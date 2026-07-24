@@ -43,7 +43,7 @@ if (d.youtube) {
 ---
 <Base title={`${d.title} | Andreas Roet`} description={d.description} activeNav="blog" jsonLd={articleLd}>
   <div class="page app">
-    <article style="max-width: 760px; margin: 0 auto; padding: 48px 0 72px;">
+    <article style="max-width: 860px; margin: 0 auto; padding: 48px 0 72px;">
       <div class="eyebrow" style="margin-bottom: 16px;">
         {d.category === 'tutorial' ? 'Tutorial' : 'Article'}{d.topic ? ` · ${d.topic}` : ''}
       </div>
@@ -97,6 +97,7 @@ if (d.youtube) {
 
   <style>
     .post-nav {
+      max-width: 860px;
       display:grid; grid-template-columns:1fr 1fr; gap:16px;
       margin:48px 0 8px; border-top:1px solid var(--rule); padding-top:24px;
     }

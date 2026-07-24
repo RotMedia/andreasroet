@@ -35,7 +35,7 @@ const tools = toolsData.tools;
               )}
             </div>
             <div class="tool-meta" style="padding-top:16px;">
-              <div class="mono" style="color:var(--ink-mute); margin-bottom:8px;">{t.sub}</div>
+              {t.sub && <div class="mono" style="color:var(--ink-mute); margin-bottom:8px;">{t.sub}</div>}
               <div style="font-family:var(--font-display); font-size:28px; line-height:1; margin-bottom:8px;">{t.name}</div>
               <p style="font-size:14px; color:var(--ink-soft); margin:0;">{t.tagline}</p>
             </div>

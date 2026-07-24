@@ -1,0 +1,64 @@
+---
+export interface Props { images?: { src: string; alt?: string }[] }
+const { images = [] } = Astro.props;
+const items = images.length ? images : [
+  { src: '', alt: 'Studio 1' }, { src: '', alt: 'Studio 2' }, { src: '', alt: 'Studio 3' },
+];
+---
+{items.length > 0 && (
+  <div class="hero-gal" data-count={items.length}>
+    <div class="hero-gal-track">
+      {items.map((im, i) => (
+        im.src
+          ? <img src={im.src} alt={im.alt || ''} class="hero-gal-slide" data-i={i} loading={i === 0 ? 'eager' : 'lazy'} />
+          : <div class="hero-gal-slide placeholder" data-i={i}><span class="mono">{im.alt}</span></div>
+      ))}
+    </div>
+    {items.length > 1 && (
+      <div class="hero-gal-dots">
+        {items.map((_, i) => <button type="button" class="hero-dot" data-go={i} aria-label={`Image ${i + 1}`}></button>)}
+      </div>
+    )}
+  </div>
+)}
+
+<style>
+  .hero-gal { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .hero-gal-track { position:absolute; inset:0; }
+  .hero-gal-slide {
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    opacity:0; transition:opacity .6s ease;
+  }
+  .hero-gal-slide.is-active { opacity:1; }
+  .hero-gal::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, var(--bg) 0%, color-mix(in oklab, var(--bg) 82%, transparent) 45%, color-mix(in oklab, var(--bg) 40%, transparent) 100%);
+  }
+  .hero-gal-dots {
+    position:absolute; right:16px; bottom:16px; z-index:2;
+    display:flex; gap:8px; pointer-events:auto;
+  }
+  .hero-dot {
+    width:26px; height:3px; border:0; padding:0; cursor:pointer;
+    background:color-mix(in oklab, var(--ink) 35%, transparent);
+    transition:background .2s;
+  }
+  .hero-dot.is-active { background:var(--accent); }
+</style>
+
+<script>
+  document.querySelectorAll('.hero-gal').forEach((gal) => {
+    const slides = gal.querySelectorAll('.hero-gal-slide');
+    const dots = gal.querySelectorAll('.hero-dot');
+    if (!slides.length) return;
+    let idx = 0, timer;
+    const show = (n) => {
+      idx = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+    };
+    const auto = () => { clearInterval(timer); timer = setInterval(() => show(idx + 1), 6000); };
+    dots.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.go)); auto(); }));
+    show(0); if (slides.length > 1) auto();
+  });
+</script>
