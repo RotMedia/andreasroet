@@ -11,7 +11,11 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-const heroImages = [];
+const heroImages = [
+  { src: '/covers/hero-03.webp', alt: 'Andreas at the Octatrack' },
+  { src: '/covers/hero-01.webp', alt: 'Andreas at the Elektron rack' },
+  { src: '/covers/hero-02.webp', alt: 'Andreas playing hardware' },
+];
 const products = productsData.products.slice(0, 3);
 ---
 <Base
