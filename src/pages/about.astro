@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Gallery from '../components/Gallery.astro';
 
+const portrait = null;
+
 const gearImages = [
   { src: '/covers/gear-desk.webp', alt: 'The desk — Pro 2, monitors, pedals' },
   { src: '/covers/gear-pedals.webp', alt: 'Delay and colour pedals' },
@@ -40,10 +42,17 @@ const aboutLd = {
   <div class="page app">
 
     <!-- Hero + short version -->
-    <section style="padding: 48px 0 24px; max-width: 760px;">
+    <section style="padding: 48px 0 24px;">
       <div class="eyebrow" style="margin-bottom: 20px;">About</div>
-      <h1 style="margin-bottom: 32px;">Records, sounds<br />and how they're made.</h1>
+      <h1 style="margin-bottom: 32px; max-width: 14ch;">Records, sounds<br />and how they're made.</h1>
 
+      <div class="about-two-col">
+        <div class="about-portrait">
+          {portrait
+            ? <img src={portrait} alt="Andreas Roet" loading="lazy" />
+            : <div class="placeholder"><span class="mono">PORTRAIT</span></div>}
+        </div>
+        <div>
       <div class="about-lead">
         <p>I've been making music since 1997 — starting with beats on a friend's MPC and my keyboard, then Fruity Loops. A little later I tried a Roland MC-303 and knew right away: hardware was my way in.</p>
         <p>I was deep in techno, breakbeats, jungle and hardcore, soaking up how raw and gritty those styles were. While everyone else listened to whatever the radio played, I was the kid spinning acid techno on his Discman in the school bus.</p>
@@ -53,7 +62,9 @@ const aboutLd = {
       </div>
 
       <div class="about-benefit">
-        <p><strong>What this means for you:</strong> the samples and presets I sell, I built for myself — raw material for my own tracks and live sets.<br /><br />Finished enough that you're not fixing basics for an hour.<br /><br />Raw enough that there's still room to make it yours.</p>
+        <p>The samples and presets I sell, I built for myself — raw material for my own tracks and live sets.<br /><br />Finished enough that you're not fixing basics for an hour.<br /><br />Raw enough that there's still room to make it yours.</p>
+      </div>
+        </div>
       </div>
 
       <!-- Three benefit links -->
@@ -139,6 +150,11 @@ const aboutLd = {
   </div>
 
   <style>
+    .about-two-col { display:grid; grid-template-columns: 0.8fr 1.2fr; gap:36px; align-items:start; max-width:1000px; }
+    .about-portrait { position:sticky; top:88px; }
+    .about-portrait img { width:100%; display:block; border:1px solid var(--rule); }
+    .about-portrait .placeholder { aspect-ratio:3/4; }
+    @media (max-width:860px){ .about-two-col{ grid-template-columns:1fr; gap:20px; } .about-portrait{ position:static; } }
     .about-lead p { font-size: 18px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 18px; }
     .about-benefit { margin: 32px 0 40px; padding: 24px; border-left: 3px solid var(--accent); }
     .about-benefit p { font-size: 18px; line-height: 1.6; margin: 0; }

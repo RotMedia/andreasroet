@@ -1,0 +1,90 @@
+---
+import Base from '../../layouts/Base.astro';
+const APP = {
+  name: 'Glitchworks', badge: 'Free · browser tool',
+  tagline: 'VHS & glitch VFX for your visuals.',
+  url: '/glitchworks/',
+  cover: '/covers/tool-glitchworks.webp',
+  video: null,
+};
+const benefits = [
+  ['Visuals are glitched in real time.', 'Drop in a video or image and the effects render live on the canvas — no export-and-wait loop, no timeline scrubbing.'],
+  ['Effects are stacked, not baked.', 'A pipeline of up to five slots — RGB split, VHS static, datamosh, echo trail and more — layered and reordered until the look is right.'],
+  ['Every effect is dialed in by hand.', 'Blend mode, opacity and per-effect parameters are tweakable, so the same processor can go from subtle to destroyed.'],
+  ['Made for release artwork and clips.', 'Built to turn a plain track loop, a photo or a video into something that looks like your sound — raw, analog, a little broken.'],
+];
+const fx = [
+  ['RGB Split', 'Channels pulled apart for that chromatic-aberration, mistracked-signal look.'],
+  ['VHS / Static', 'Tape noise, dropouts and scanlines — the core analog-decay layer.'],
+  ['Datamosh', 'Frames bleeding into each other, compression artifacts turned into an effect.'],
+  ['Echo Trail', 'Motion smeared across time — ghosting and feedback trails.'],
+  ['Posterize / Dither', 'Colour crushed into banded, dithered steps for a lo-fi digital feel.'],
+  ['Generators', 'Wireframe, oscillograph, noise and flow-lines — built-in sources when there\u2019s no footage.'],
+];
+---
+<Base title="Glitchworks — Free VHS & Glitch VFX Tool | Andreas Roet"
+      description="Glitchworks: a browser-based VHS and glitch VFX tool. Stack RGB split, datamosh, VHS static and more on video or images, live. Free, no install."
+      activeNav="apps" mode="dark">
+  <div class="page app">
+    <section style="padding:40px 0 24px;">
+      <div class="eyebrow" style="margin-bottom:16px;">Apps · {APP.badge}</div>
+      <h1 style="margin-bottom:20px;">{APP.name}.</h1>
+    </section>
+
+    <section class="section" style="border-top:0; padding-top:0;">
+      <div class="app-intro">
+        <div class="app-shot">
+          {APP.video
+            ? <video src={APP.video} poster={APP.cover} autoplay muted loop playsinline></video>
+            : <img src={APP.cover} alt="Glitchworks interface" loading="lazy" />}
+        </div>
+        <div class="app-copy">
+          <p class="app-p">A browser-based VFX tool for VHS and glitch aesthetics. Drop in a video or image, stack effects, and watch it break apart in real time — then export the result. No installation, no account.</p>
+          <p class="app-p">Built for producers who want their visuals to match their sound: release loops, clips and artwork pushed through RGB split, tape static, datamosh and more, layered in a five-slot pipeline and tuned by hand.</p>
+          <a class="btn accent" href={APP.url} target="_blank" rel="noopener" style="align-self:flex-start;">Try {APP.name} now <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow" style="margin-bottom:24px;">What it's good for</div>
+      <div class="feat-grid">
+        {benefits.map(([h, t]) => (
+          <div class="feat">
+            <h3 style="font-size:18px; margin:0 0 8px;">{h}</h3>
+            <p style="font-size:14px; color:var(--ink-soft); margin:0; line-height:1.55;">{t}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow" style="margin-bottom:24px;">The effects</div>
+      {fx.map(([n, d]) => (
+        <div class="algo-row">
+          <div class="mono algo-name">{n}</div>
+          <div class="algo-desc">{d}</div>
+        </div>
+      ))}
+    </section>
+
+    <section class="section" style="text-align:center; padding:40px 0;">
+      <a class="btn accent" href={APP.url} target="_blank" rel="noopener" style="display:inline-flex;">Try {APP.name} now <span class="arrow">→</span></a>
+    </section>
+  </div>
+
+  <style>
+    .app-intro { display:grid; grid-template-columns: 1.1fr 1fr; gap:32px; align-items:start; }
+    .app-shot img, .app-shot video { width:100%; border:1px solid var(--rule); display:block; }
+    .app-copy { display:flex; flex-direction:column; }
+    .app-p { font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px; }
+    @media (max-width:900px){ .app-intro{ grid-template-columns:1fr; gap:20px; } }
+    .feat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
+    .feat { border:1px solid var(--rule); padding:20px; }
+    .algo-row { display:grid; grid-template-columns:180px 1fr; gap:24px; padding:16px 0; border-bottom:1px solid var(--rule); }
+    .algo-row:last-child { border-bottom:0; }
+    .algo-name { color:var(--accent); font-size:13px; padding-top:2px; }
+    .algo-desc { font-size:15px; color:var(--ink-soft); line-height:1.55; }
+    @media (max-width:900px){ .feat-grid{grid-template-columns:1fr;} .algo-row{grid-template-columns:1fr; gap:6px;} }
+  </style>
+</Base>

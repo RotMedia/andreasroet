@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=VT323&family=Major+Mono+Display&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:#0b0b0d;font-family:Helvetica,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;background:#2c2c33;border-radius:3px;outline:none;cursor:pointer;display:block}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#e8e8ec;border:none;box-shadow:0 0 0 3px #0b0b0d,0 0 7px rgba(232,232,236,.4);cursor:pointer}
+    input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#e8e8ec;border:none;cursor:pointer}
+    input[type=number]::-webkit-inner-spin-button{opacity:.3}
+    select{-webkit-appearance:none;appearance:none}
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-thumb{background:#26262b;border-radius:6px;border:2px solid #101013}
+    ::-webkit-scrollbar-track{background:transparent}
+    @keyframes recblink{0%,49%{opacity:1}50%,100%{opacity:.2}}
+  </style>
+</helmet>
+<div data-screen-label="VFX Glitch Generator" style="display:flex;flex-direction:column;height:100vh;width:100vw;background:#0b0b0d;color:#e8e8ec;overflow:hidden">
+
+  <div style="display:flex;align-items:center;gap:16px;padding:0 16px;height:54px;flex:0 0 54px;border-bottom:1px solid #1d1d22;background:#0e0e11">
+     <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:13px;height:13px;background:#e8e8ec;border-radius:2px"></div>
+        <span style="font:600 14px Helvetica;letter-spacing:.02em">GLITCHWORKS</span>
+        <span style="font:500 10px 'JetBrains Mono';color:#65656d;letter-spacing:.12em;border:1px solid #26262b;padding:3px 6px;border-radius:5px">VHS · VFX</span>
+     </div>
+     <div style="display:flex;align-items:center;gap:12px;margin-left:6px">
+        <span style="font:500 10px 'JetBrains Mono';color:#65656d;letter-spacing:.1em">SOURCE</span>
+        <div style="display:flex;border:1px solid #26262b;border-radius:8px;overflow:hidden">
+           <button onClick="{{ openVideo }}" style="{{ srcStyleVideo }}">Video</button>
+           <button onClick="{{ openImage }}" style="{{ srcStyleImage }}">Image</button>
+           <button onClick="{{ setBlank }}" style="{{ srcStyleBlank }}">Blank</button>
+        </div>
+        <span style="font:400 11px 'JetBrains Mono';color:#7a7a82;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ fileName }}</span>
+     </div>
+     <span style="flex:1"></span>
+     <button onClick="{{ openExport }}" style="padding:9px 20px;border-radius:8px;border:none;background:#e8e8ec;color:#0b0b0d;font:600 12.5px Helvetica;cursor:pointer" style-hover="background:#ffffff">Export ↓</button>
+  </div>
+
+  <div style="display:flex;flex:1;min-height:0">
+
+     <div style="{{ stageColStyle }}">
+        <div onDrop="{{ onDrop }}" onDragOver="{{ onDragOver }}" style="{{ stageInnerStyle }}">
+           <canvas ref="{{ canvasRef }}" style="{{ canvasStyle }}"></canvas>
+           <button onClick="{{ onFs }}" style="{{ fsExitStyle }}" title="Exit fullscreen">⤡ Exit</button>
+           <div style="position:absolute;top:18px;left:18px;display:flex;align-items:center;gap:7px;font:500 10px 'JetBrains Mono';color:#9a9aa2;letter-spacing:.12em;pointer-events:none">
+              <span style="width:7px;height:7px;border-radius:50%;background:#e8e8ec;animation:recblink 1.1s steps(1) infinite"></span> LIVE
+           </div>
+           <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font:400 10.5px 'JetBrains Mono';color:#55555d;pointer-events:none;letter-spacing:.03em">drag &amp; drop a video or image onto the canvas</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid #1d1d22;background:#0e0e11;flex:0 0 auto">
+           <button onClick="{{ onPlay }}" style="display:flex;align-items:center;gap:7px;padding:8px 15px;border-radius:8px;border:1px solid #2a2a30;background:#17171b;color:#e8e8ec;font:500 12.5px Helvetica;cursor:pointer;min-width:98px;justify-content:center" style-hover="background:#1f1f25">{{ playLabel }}</button>
+           <button onClick="{{ onRandom }}" style="padding:8px 14px;border-radius:8px;border:1px solid #2a2a30;background:#17171b;color:#cdcdd3;font:500 12.5px Helvetica;cursor:pointer" style-hover="background:#1f1f25">Randomize</button>
+           <button onClick="{{ onReset }}" style="padding:8px 14px;border-radius:8px;border:1px solid #2a2a30;background:#17171b;color:#cdcdd3;font:500 12.5px Helvetica;cursor:pointer" style-hover="background:#1f1f25">Reset</button>
+           <button onClick="{{ onBypass }}" style="{{ bypassStyle }}">{{ bypassLabel }}</button>
+           <button onClick="{{ onFs }}" style="padding:8px 14px;border-radius:8px;border:1px solid #2a2a30;background:#17171b;color:#cdcdd3;font:500 12.5px Helvetica;cursor:pointer" style-hover="background:#1f1f25">{{ fsLabel }}</button>
+           <span style="flex:1"></span>
+           <span style="font:500 11px 'JetBrains Mono';color:#65656d">{{ dimsLabel }}</span>
+           <span style="width:1px;height:14px;background:#2a2a30"></span>
+           <span ref="{{ fpsRef }}" style="font:500 11px 'JetBrains Mono';color:#65656d;min-width:52px;text-align:right">– fps</span>
+        </div>
+     </div>
+
+     <div style="width:352px;flex:0 0 352px;border-left:1px solid #1d1d22;background:#101013;display:flex;flex-direction:column;min-height:0">
+
+        <div style="padding:15px 18px 10px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between">
+           <span style="font:500 10px 'JetBrains Mono';color:#65656d;letter-spacing:.16em">PIPELINE · SERIES</span>
+           <span style="font:400 10px 'JetBrains Mono';color:#4f4f57">{{ slotCount }} slots</span>
+        </div>
+        <div style="padding:0 12px;display:flex;flex-direction:column;gap:6px;flex:0 0 auto">
+           <sc-for list="{{ slotCards }}" as="s" hint-placeholder-count="3">
+             <div onClick="{{ s.onSelect }}" style="{{ s.cardStyle }}">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                   <span style="{{ s.numStyle }}">{{ s.index }}</span>
+                   <div onClick="{{ s.onToggle }}" style="{{ s.dotStyle }}"></div>
+                </div>
+                <div style="flex:1;min-width:0">
+                   <div style="{{ s.nameStyle }}">{{ s.name }}</div>
+                   <div style="font:400 10px 'JetBrains Mono';color:#65656d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.meta }}</div>
+                </div>
+                <span style="font:500 9px 'JetBrains Mono';color:#4f4f57;letter-spacing:.1em">{{ s.tag }}</span>
+             </div>
+           </sc-for>
+        </div>
+
+        <div style="height:1px;background:#1d1d22;margin:13px 0 0;flex:0 0 auto"></div>
+
+        <div style="flex:1;overflow-y:auto;min-height:0">
+           <div style="padding:14px 18px 6px">
+              <div style="display:flex;align-items:center;gap:11px">
+                 <span style="font:600 13.5px Helvetica;color:#e8e8ec">Slot {{ selSlotNum }}</span>
+                 <span style="flex:1"></span>
+                 <button onClick="{{ onResetSlot }}" style="background:none;border:none;color:#65656d;font:500 11px 'JetBrains Mono';cursor:pointer;padding:2px" style-hover="color:#9a9aa2">reset slot</button>
+              </div>
+           </div>
+
+           <div style="padding:2px 18px 6px">
+              <sc-for list="{{ pickerGroups }}" as="g" hint-placeholder-count="2">
+                <div style="font:500 9px 'JetBrains Mono';color:#5a5a62;letter-spacing:.14em;margin:8px 0 7px">{{ g.title }}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                   <sc-for list="{{ g.chips }}" as="c" hint-placeholder-count="4">
+                      <button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button>
+                   </sc-for>
+                </div>
+              </sc-for>
+           </div>
+
+           <sc-if value="{{ hasFx }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:14px 18px 2px">
+                 <div style="display:flex;gap:10px;align-items:flex-end">
+                    <div style="flex:0 0 132px">
+                       <div style="font:500 9px 'JetBrains Mono';color:#5a5a62;letter-spacing:.14em;margin-bottom:6px">BLEND</div>
+                       <select value="{{ blendVal }}" onChange="{{ onBlend }}" style="width:100%;background:#0e0e11;border:1px solid #2a2a30;border-radius:7px;color:#e8e8ec;padding:8px 10px;font:500 11.5px 'JetBrains Mono';outline:none;cursor:pointer">
+                          <sc-for list="{{ blendOptions }}" as="b" hint-placeholder-count="6">
+                             <option value="{{ b.id }}">{{ b.label }}</option>
+                          </sc-for>
+                       </select>
+                    </div>
+                    <div style="flex:1">
+                       <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                          <span style="font:500 9px 'JetBrains Mono';color:#5a5a62;letter-spacing:.14em">OPACITY</span>
+                          <span style="font:500 10px 'JetBrains Mono';color:#9a9aa2">{{ opacityLabel }}</span>
+                       </div>
+                       <input type="range" min="0" max="1" step="0.01" value="{{ opacityVal }}" onInput="{{ onOpacity }}">
+                    </div>
+                 </div>
+                 <div style="height:1px;background:#1d1d22;margin:16px 0 4px"></div>
+              </div>
+
+              <div style="padding:4px 18px 26px">
+                 <sc-for list="{{ activeParams }}" as="p" hint-placeholder-count="4">
+                   <div style="margin-bottom:15px">
+                      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+                         <span style="font:500 11px 'JetBrains Mono';letter-spacing:.03em;color:#b4b4ba">{{ p.label }}</span>
+                         <div style="display:flex;align-items:center;gap:9px">
+                            <span style="font:500 11px 'JetBrains Mono';color:#7a7a82">{{ p.valueLabel }}</span>
+                            <sc-if value="{{ p.canLfo }}" hint-placeholder-val="{{ true }}">
+                               <button onClick="{{ p.onToggleLfo }}" style="{{ p.lfoBtnStyle }}" title="LFO automation">∿</button>
+                            </sc-if>
+                         </div>
+                      </div>
+                      <sc-if value="{{ p.isEnum }}" hint-placeholder-val="{{ false }}">
+                         <div style="display:flex;gap:6px">
+                            <sc-for list="{{ p.options }}" as="o" hint-placeholder-count="2">
+                               <button onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button>
+                            </sc-for>
+                         </div>
+                      </sc-if>
+                      <sc-if value="{{ p.isSlider }}" hint-placeholder-val="{{ true }}">
+                         <input type="range" min="{{ p.min }}" max="{{ p.max }}" step="{{ p.step }}" value="{{ p.value }}" onInput="{{ p.onChange }}" style="{{ p.sliderStyle }}">
+                      </sc-if>
+                      <sc-if value="{{ p.isText }}" hint-placeholder-val="{{ false }}">
+                         <input type="text" value="{{ p.value }}" onInput="{{ p.onChange }}" placeholder="type text…" style="width:100%;background:#0e0e11;border:1px solid #2a2a30;border-radius:7px;color:#e8e8ec;padding:9px 11px;font:500 12.5px 'JetBrains Mono';outline:none;letter-spacing:.04em">
+                      </sc-if>
+                      <sc-if value="{{ p.isButton }}" hint-placeholder-val="{{ false }}">
+                         <button onClick="{{ p.onClick }}" style="width:100%;padding:9px;border-radius:7px;border:1px solid #2a2a30;background:#17171b;color:#cdcdd3;font:500 12px 'JetBrains Mono';cursor:pointer;letter-spacing:.04em" style-hover="background:#1f1f25">{{ p.btn }}</button>
+                      </sc-if>
+                      <sc-if value="{{ p.lfoOn }}" hint-placeholder-val="{{ false }}">
+                         <div style="margin-top:11px;padding:11px 12px;background:#0c0c0f;border:1px solid #20202a;border-radius:9px">
+                            <div style="display:flex;align-items:center;gap:7px;margin-bottom:11px">
+                               <span style="font:500 9px 'JetBrains Mono';color:#65656d;letter-spacing:.12em">LFO</span>
+                               <div style="display:flex;gap:4px;flex:1">
+                                  <sc-for list="{{ p.waveOptions }}" as="w" hint-placeholder-count="5">
+                                     <button onClick="{{ w.onClick }}" style="{{ w.style }}">{{ w.label }}</button>
+                                  </sc-for>
+                               </div>
+                               <button onClick="{{ p.onToggleSlow }}" style="{{ p.slowStyle }}">slow</button>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:7px">
+                               <span style="font:500 10px 'JetBrains Mono';color:#8a8a90">Rate</span>
+                               <span style="font:500 10px 'JetBrains Mono';color:#7a7a82">{{ p.rateLabel }}</span>
+                            </div>
+                            <input type="range" min="{{ p.rateMin }}" max="{{ p.rateMax }}" step="{{ p.rateStep }}" value="{{ p.rateValue }}" onInput="{{ p.onRate }}">
+                            <div style="display:flex;justify-content:space-between;margin:11px 0 7px">
+                               <span style="font:500 10px 'JetBrains Mono';color:#8a8a90">Depth</span>
+                               <span style="font:500 10px 'JetBrains Mono';color:#7a7a82">{{ p.depthLabel }}</span>
+                            </div>
+                            <input type="range" min="0" max="1" step="0.01" value="{{ p.depthValue }}" onInput="{{ p.onDepth }}">
+                            <div style="display:flex;align-items:center;gap:7px;margin-top:11px">
+                               <span style="font:500 10px 'JetBrains Mono';color:#8a8a90;flex:1">Polarity</span>
+                               <button onClick="{{ p.onBi }}" style="{{ p.biStyle }}">Bipolar</button>
+                               <button onClick="{{ p.onUni }}" style="{{ p.uniStyle }}">Unipolar</button>
+                            </div>
+                         </div>
+                      </sc-if>
+                   </div>
+                 </sc-for>
+              </div>
+           </sc-if>
+           <sc-if value="{{ emptyHint }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:22px 18px;font:400 11.5px 'JetBrains Mono';color:#55555d;line-height:1.6">This slot is empty. Pick a generator or processor above to add it to the chain.</div>
+           </sc-if>
+        </div>
+     </div>
+  </div>
+
+  <sc-if value="{{ exportOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeExport }}" style="position:fixed;inset:0;background:rgba(5,5,7,.66);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;z-index:50">
+      <div onClick="{{ stop }}" style="width:460px;max-width:92vw;background:#141417;border:1px solid #2a2a30;border-radius:14px;padding:22px 22px 20px;box-shadow:0 30px 70px rgba(0,0,0,.55)">
+         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <span style="font:600 16px Helvetica">Export</span>
+            <button onClick="{{ closeExport }}" style="background:none;border:none;color:#7a7a82;font-size:16px;cursor:pointer;line-height:1">✕</button>
+         </div>
+         <div style="font:500 10px 'JetBrains Mono';color:#65656d;letter-spacing:.14em;margin-bottom:9px">RESOLUTION</div>
+         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+            <sc-for list="{{ resPresets }}" as="r" hint-placeholder-count="5">
+               <button onClick="{{ r.onClick }}" style="{{ r.style }}">{{ r.label }}</button>
+            </sc-for>
+         </div>
+         <div style="display:flex;gap:10px;margin-bottom:18px">
+            <div style="flex:1">
+               <div style="font:400 10px 'JetBrains Mono';color:#5a5a62;margin-bottom:5px">WIDTH</div>
+               <input type="number" value="{{ exp.width }}" onInput="{{ onW }}" style="width:100%;background:#0e0e11;border:1px solid #2a2a30;border-radius:7px;color:#e8e8ec;padding:9px 11px;font:500 13px 'JetBrains Mono';outline:none">
+            </div>
+            <div style="flex:1">
+               <div style="font:400 10px 'JetBrains Mono';color:#5a5a62;margin-bottom:5px">HEIGHT</div>
+               <input type="number" value="{{ exp.height }}" onInput="{{ onH }}" style="width:100%;background:#0e0e11;border:1px solid #2a2a30;border-radius:7px;color:#e8e8ec;padding:9px 11px;font:500 13px 'JetBrains Mono';outline:none">
+            </div>
+         </div>
+         <div style="font:500 10px 'JetBrains Mono';color:#65656d;letter-spacing:.14em;margin-bottom:9px">FRAME RATE</div>
+         <div style="display:flex;gap:6px;margin-bottom:18px">
+            <sc-for list="{{ fpsList }}" as="f" hint-placeholder-count="4">
+               <button onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}</button>
+            </sc-for>
+         </div>
+         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
+            <span style="font:500 10px 'JetBrains Mono';color:#65656d;letter-spacing:.14em">DURATION</span>
+            <div style="display:flex;gap:5px">
+               <sc-for list="{{ durUnitTabs }}" as="u" hint-placeholder-count="2">
+                  <button onClick="{{ u.onClick }}" style="{{ u.style }}">{{ u.label }}</button>
+               </sc-for>
+            </div>
+         </div>
+         <sc-if value="{{ durIsSec }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><span style="font:500 11px 'JetBrains Mono';color:#9a9aa2">{{ durLabel }}</span></div>
+            <input type="range" min="1" max="30" step="1" value="{{ exp.duration }}" onInput="{{ onDur }}">
+         </sc-if>
+         <sc-if value="{{ durIsBars }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:11px;align-items:center;margin-bottom:12px">
+               <span style="font:500 10px 'JetBrains Mono';color:#5a5a62;letter-spacing:.1em">BPM</span>
+               <input type="number" value="{{ exp.bpm }}" onInput="{{ onBpm }}" style="width:72px;background:#0e0e11;border:1px solid #2a2a30;border-radius:7px;color:#e8e8ec;padding:7px 9px;font:500 12.5px 'JetBrains Mono';outline:none">
+               <span style="flex:1"></span>
+               <span style="font:500 11px 'JetBrains Mono';color:#9a9aa2">{{ barsLabel }}</span>
+            </div>
+            <input type="range" min="1" max="32" step="1" value="{{ exp.bars }}" onInput="{{ onBars }}">
+         </sc-if>
+         <div style="height:14px"></div>
+         <div style="font:500 10px 'JetBrains Mono';color:#65656d;letter-spacing:.14em;margin-bottom:9px">FORMAT</div>
+         <div style="display:flex;gap:6px;margin-bottom:20px">
+            <sc-for list="{{ formatList }}" as="ft" hint-placeholder-count="3">
+               <button onClick="{{ ft.onClick }}" style="{{ ft.style }}">{{ ft.label }}</button>
+            </sc-for>
+         </div>
+         <button onClick="{{ runExport }}" style="width:100%;padding:12px;border-radius:9px;border:none;background:#e8e8ec;color:#0b0b0d;font:600 13.5px Helvetica;cursor:pointer" style-hover="background:#fff">Render &amp; Download</button>
+         <sc-if value="{{ exporting }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:16px">
+               <div style="height:5px;background:#26262b;border-radius:3px;overflow:hidden"><div style="{{ progressStyle }}"></div></div>
+               <div style="font:400 11px 'JetBrains Mono';color:#8a8a90;margin-top:8px;text-align:center">{{ exportMsg }}</div>
+            </div>
+         </sc-if>
+         <div style="font:400 10.5px 'JetBrains Mono';color:#4f4f57;margin-top:14px;line-height:1.5;text-align:center">{{ exportNote }}</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <input type="file" ref="{{ fileRef }}" onChange="{{ onFile }}" accept="video/*,image/*" style="display:none">
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  t = 0;
+  srcW = 1280;
+  srcH = 720;
+  raf = null;
+  lastNow = 0;
+  _rs = 12345;
+  TAU = Math.PI * 2;
+  N = 5;
+
+  GCO = { normal:'source-over', screen:'screen', multiply:'multiply', overlay:'overlay', lighten:'lighten', darken:'darken', difference:'difference', dodge:'color-dodge', exclusion:'exclusion' };
+
+  state = {
+    source: 'blank',
+    fileName: 'Test pattern',
+    playing: true,
+    bypass: false,
+    selSlot: 0,
+    fs: false,
+    slots: this.defaultSlots(),
+    exportOpen: false,
+    exporting: false,
+    progress: 0,
+    exportMsg: '',
+    exp: { preset: '720p', width: 1280, height: 720, fps: 30, duration: 5, format: 'webm', durUnit: 'sec', bpm: 120, bars: 8 }
+  };
+
+  // ---------- effect registry ----------
+  registry() {
+    if (this._reg) return this._reg;
+    const list = [
+      { id:'wireframe', name:'Wireframe', sub:'Geometric 3D', cat:'gen', params:[
+        { k:'type', type:'enum', label:'Shape', options:[['grid','Grid'],['cube','Cube'],['sphere','Sphere'],['tunnel','Tunnel']], d:'cube' },
+        { k:'density', label:'Density', min:3, max:40, step:1, d:14 },
+        { k:'speed', label:'Rotation', min:0, max:3, step:0.01, d:1 },
+        { k:'scale', label:'Scale', min:0.1, max:1, step:0.01, d:0.6 },
+        { k:'line', label:'Line weight', min:0.5, max:4, step:0.1, unit:'px', d:1.4 } ] },
+      { id:'oscillo', name:'Oscillograph', sub:'Scope trace', cat:'gen', params:[
+        { k:'mode', type:'enum', label:'Mode', options:[['lissajous','Cartesian'],['polar','Polar'],['waveform','Wave']], d:'lissajous' },
+        { k:'freqA', label:'Frequency A', min:1, max:20, step:1, d:3 },
+        { k:'freqB', label:'Frequency B', min:1, max:20, step:1, d:2 },
+        { k:'phase', label:'Phase', min:0, max:1, step:0.005, d:0 },
+        { k:'amp', label:'Amplitude', min:0.1, max:1, step:0.01, d:0.8 },
+        { k:'line', label:'Line weight', min:0.5, max:4, step:0.1, unit:'px', d:1.6 } ] },
+      { id:'text', name:'Text', sub:'Glitching type', cat:'gen', params:[
+        { k:'text', type:'text', label:'Text', d:'NO SIGNAL' },
+        { k:'font', type:'enum', label:'Font', options:[['mono','Mono'],['terminal','Term'],['display','Mod'],['sans','Sans'],['serif','Serif'],['cond','Cond']], d:'mono' },
+        { k:'layout', type:'enum', label:'Layout', options:[['single','Single'],['wrap','Wrap'],['fill','Fill'],['ticker','Ticker']], d:'single' },
+        { k:'lines', label:'Rows', min:1, max:14, step:1, d:4, show:(v) => v.layout === 'fill' || v.layout === 'ticker' },
+        { k:'tickerDir', type:'enum', label:'Ticker dir', options:[['same','Same'],['alt','Counter']], d:'same', show:(v) => v.layout === 'ticker' },
+        { k:'mode', type:'enum', label:'Motion', options:[['jitter','Jitter'],['slide','Slide'],['blocks','Blocks']], d:'jitter' },
+        { k:'angle', label:'Motion angle', min:0, max:360, step:1, unit:'°', d:0 },
+        { k:'size', label:'Size', min:0.04, max:0.45, step:0.005, d:0.18 },
+        { k:'glitch', label:'Glitch', min:0, max:1, step:0.01, d:0.5 },
+        { k:'speed', label:'Speed', min:0, max:3, step:0.01, d:1 },
+        { k:'posX', label:'Position X', min:-1, max:1, step:0.005, d:0 },
+        { k:'posY', label:'Position Y', min:-1, max:1, step:0.005, d:0 },
+        { k:'center', type:'button', label:'Position', btn:'⌖ Center' } ] },
+      { id:'noise', name:'Noise Gen', sub:'Procedural noise', cat:'gen', params:[
+        { k:'type', type:'enum', label:'Type', options:[['static','Static'],['clouds','Clouds'],['rgb','RGB']], d:'static' },
+        { k:'scale', label:'Scale', min:1, max:40, step:1, unit:'px', d:3 },
+        { k:'speed', label:'Speed', min:0, max:3, step:0.01, d:1 },
+        { k:'contrast', label:'Contrast', min:0.2, max:2.5, step:0.01, d:1 } ] },
+      { id:'flow', name:'Flow Lines', sub:'Morphing waves / contours', cat:'gen', params:[
+        { k:'mode', type:'enum', label:'Style', options:[['lines','Lines'],['topo','Topo']], d:'lines' },
+        { k:'density', label:'Line count', min:6, max:80, step:1, d:38 },
+        { k:'scale', label:'Field scale', min:0.2, max:4, step:0.01, d:1 },
+        { k:'amp', label:'Amplitude', min:0, max:1, step:0.01, d:0.45 },
+        { k:'detail', label:'Detail', min:1, max:5, step:1, d:3 },
+        { k:'speed', label:'Morph speed', min:0, max:3, step:0.01, d:1 },
+        { k:'line', label:'Line weight', min:0.5, max:4, step:0.1, unit:'px', d:1.4 } ] },
+      { id:'rgb', name:'RGB Split', sub:'Chromatic aberration', cat:'proc', params:[
+        { k:'offset', label:'Offset', min:0, max:40, step:1, unit:'px', d:7 },
+        { k:'angle', label:'Angle', min:0, max:360, step:1, unit:'°', d:0 },
+        { k:'bleed', label:'Color bleed', min:0, max:1, step:0.01, d:0.3 } ] },
+      { id:'sort', name:'Pixel Sort', sub:'Brightness sort', cat:'proc', params:[
+        { k:'direction', type:'enum', label:'Direction', options:[['h','Horizontal'],['v','Vertical']], d:'h' },
+        { k:'low', label:'Threshold low', min:0, max:1, step:0.01, d:0.25 },
+        { k:'high', label:'Threshold high', min:0, max:1, step:0.01, d:0.62 },
+        { k:'intensity', label:'Amount', min:0, max:1, step:0.01, d:0.6 } ] },
+      { id:'datamosh', name:'Datamosh', sub:'Compression melt', cat:'proc', params:[
+        { k:'intensity', label:'Intensity', min:0, max:1, step:0.01, d:0.5 },
+        { k:'decay', label:'Melt', min:0, max:0.96, step:0.01, d:0.84 },
+        { k:'displace', label:'Block displace', min:0, max:80, step:1, unit:'px', d:24 },
+        { k:'blockSize', label:'Block size', min:4, max:64, step:2, unit:'px', d:24 } ] },
+      { id:'echo', name:'Echo Trail', sub:'Ghosting feedback', cat:'proc', canvas:true, params:[
+        { k:'trail', label:'Trail', min:0, max:0.95, step:0.01, d:0.6 },
+        { k:'scale', label:'Feedback zoom', min:0.9, max:1.1, step:0.001, d:1 },
+        { k:'offsetX', label:'Drift X', min:-30, max:30, step:1, unit:'px', d:0 },
+        { k:'offsetY', label:'Drift Y', min:-30, max:30, step:1, unit:'px', d:0 } ] },
+      { id:'vhs', name:'VHS / Static', sub:'Noise·snow·tear·lines', cat:'proc', params:[
+        { k:'noise', label:'Static noise', min:0, max:1, step:0.01, d:0.16 },
+        { k:'snow', label:'Snow', min:0, max:1, step:0.01, d:0.05 },
+        { k:'tear', label:'Line tear', min:0, max:1, step:0.01, d:0.14 },
+        { k:'bleed', label:'Chroma bleed', min:0, max:1, step:0.01, d:0.22 },
+        { k:'scanlines', label:'Scanlines', min:0, max:1, step:0.01, d:0.38 } ] },
+      { id:'radial', name:'Radial Blur', sub:'Zoom / spin blur', cat:'proc', canvas:true, params:[
+        { k:'mode', type:'enum', label:'Mode', options:[['zoom','Zoom'],['spin','Spin']], d:'zoom' },
+        { k:'amount', label:'Amount', min:0, max:1, step:0.01, d:0.4 },
+        { k:'centerX', label:'Center X', min:0, max:1, step:0.01, d:0.5 },
+        { k:'centerY', label:'Center Y', min:0, max:1, step:0.01, d:0.5 },
+        { k:'samples', label:'Samples', min:3, max:24, step:1, d:12 } ] },
+      { id:'tilt', name:'Tilt-Shift', sub:'Focus band blur', cat:'proc', canvas:true, params:[
+        { k:'focusY', label:'Focus Y', min:0, max:1, step:0.01, d:0.5 },
+        { k:'band', label:'Band height', min:0.05, max:0.9, step:0.01, d:0.32 },
+        { k:'blur', label:'Blur', min:0, max:24, step:0.5, unit:'px', d:9 },
+        { k:'softness', label:'Falloff', min:0, max:1, step:0.01, d:0.5 } ] },
+      { id:'posterize', name:'Posterize Time', sub:'Frame hold·color steps', cat:'proc', params:[
+        { k:'fps', label:'Frame rate', min:1, max:30, step:1, unit:'fps', d:12 },
+        { k:'levels', label:'Color steps', min:2, max:32, step:1, d:8 } ] },
+      { id:'thermal', name:'Thermal', sub:'Heatmap grade', cat:'proc', params:[
+        { k:'intensity', label:'Intensity', min:0, max:1, step:0.01, d:0.7 },
+        { k:'contrast', label:'Contrast', min:0.2, max:2, step:0.01, d:1.05 } ] },
+      { id:'dither', name:'Dither', sub:'Retro low-bit crush', cat:'proc', params:[
+        { k:'method', type:'enum', label:'Method', options:[['bayer','Ordered'],['fs','Floyd-Steinberg'],['noise','Noise']], d:'bayer' },
+        { k:'palette', type:'enum', label:'Palette', options:[['mono','1-bit'],['gray','Gray'],['rgb','Color']], d:'mono' },
+        { k:'pixel', label:'Pixel size', min:1, max:16, step:1, unit:'px', d:3 },
+        { k:'levels', label:'Color steps', min:2, max:8, step:1, d:2 },
+        { k:'spread', label:'Spread', min:0, max:1.5, step:0.01, d:0.8 },
+        { k:'contrast', label:'Contrast', min:0.3, max:2.5, step:0.01, d:1.15 } ] }
+    ];
+    const map = {}; list.forEach(e => map[e.id] = e);
+    map['none'] = { id:'none', name:'— Empty —', sub:'', cat:'none', params:[] };
+    this._reg = { list, map };
+    return this._reg;
+  }
+  def(id) { return this.registry().map[id] || this.registry().map['none']; }
+  defaultParams(id) { const o = {}; this.def(id).params.forEach(p => o[p.k] = p.d); return o; }
+  mkSlot(id, on, blend, op) { return { fx:id, enabled: on !== undefined ? on : id !== 'none', blend: blend || 'normal', opacity: op !== undefined ? op : 1, params: this.defaultParams(id), lfo: {} }; }
+  defaultSlots() { return [ this.mkSlot('rgb'), this.mkSlot('vhs'), this.mkSlot('none', false), this.mkSlot('none', false), this.mkSlot('none', false) ]; }
+
+  componentDidMount() { this.buildThermalLUT(); this.preloadFonts(); }
+  preloadFonts() {
+    if (!document.fonts || !document.fonts.load) return;
+    const specs = ["32px 'VT323'", "32px 'Major Mono Display'", "700 32px 'Oswald'", "600 32px 'JetBrains Mono'"];
+    Promise.all(specs.map(s => document.fonts.load(s).catch(() => {}))).then(() => { this._fontsReady = true; }).catch(() => {});
+  }
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    if (this.video) { try { this.video.pause(); } catch (e) {} }
+  }
+
+  // ---------- source ----------
+  loadVideo(file) {
+    const v = document.createElement('video');
+    v.muted = true; v.loop = true; v.playsInline = true;
+    v.src = URL.createObjectURL(file);
+    v.addEventListener('loadedmetadata', () => {
+      this.video = v; this.image = null;
+      this.srcW = v.videoWidth || 1280; this.srcH = v.videoHeight || 720;
+      v.play().catch(() => {});
+      this.setState({ source: 'video', fileName: file.name, playing: true }, () => this.applySource());
+    });
+  }
+  loadImage(file) {
+    const img = new Image();
+    img.onload = () => {
+      this.image = img; if (this.video) { try { this.video.pause(); } catch (e) {} } this.video = null;
+      this.srcW = img.naturalWidth || 1280; this.srcH = img.naturalHeight || 720;
+      this.setState({ source: 'image', fileName: file.name }, () => this.applySource());
+    };
+    img.src = URL.createObjectURL(file);
+  }
+  setBlank() {
+    if (this.video) { try { this.video.pause(); } catch (e) {} } this.video = null; this.image = null;
+    this.srcW = 1280; this.srcH = 720;
+    this.setState({ source: 'blank', fileName: 'Test pattern' }, () => this.applySource());
+  }
+  openFile(kind) {
+    if (!this.fileInput) return;
+    this.fileInput.accept = kind === 'video' ? 'video/*' : 'image/*';
+    this.fileInput.click();
+  }
+  onFile = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (f.type.indexOf('video') === 0) this.loadVideo(f); else this.loadImage(f);
+    e.target.value = '';
+  };
+  onDrop = (e) => {
+    e.preventDefault();
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!f) return;
+    if (f.type.indexOf('video') === 0) this.loadVideo(f);
+    else if (f.type.indexOf('image') === 0) this.loadImage(f);
+  };
+
+  applySource() {
+    if (!this.canvas) return;
+    const max = 800;
+    const w = this.srcW || 1280, h = this.srcH || 720;
+    const sc = Math.min(1, max / Math.max(w, h));
+    const W = Math.max(2, Math.round(w * sc)), H = Math.max(2, Math.round(h * sc));
+    this.canvas.width = W; this.canvas.height = H;
+    this.octx = this.canvas.getContext('2d', { willReadFrequently: true });
+    this.pv = this.makeSet(W, H);
+    this.setState({});
+  }
+
+  c(W, H) { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; }
+  makeSet(W, H) {
+    const layer = this.c(W, H), work = this.c(W, H);
+    return { layer, lctx: layer.getContext('2d'), work, wctx: work.getContext('2d', { willReadFrequently: true }), slot: [] };
+  }
+
+  // ---------- loop ----------
+  loop = (now) => {
+    this.raf = requestAnimationFrame(this.loop);
+    const dt = this.lastNow ? Math.min(80, now - this.lastNow) : 16;
+    this.lastNow = now;
+    if (this.state.playing) this.t += dt;
+    if (this.fpsEl) {
+      const f = 1000 / (dt || 16);
+      this._fps = this._fps ? this._fps * 0.9 + f * 0.1 : f;
+      if (!this._fpsT || now - this._fpsT > 300) { this.fpsEl.textContent = Math.round(this._fps) + ' fps'; this._fpsT = now; }
+    }
+    if (this.canvas && this.octx && this.pv) {
+      try { this.renderFrame(this.pv, this.octx, this.canvas.width, this.canvas.height, this.t, this.state.slots, this.state.bypass); } catch (e) {}
+    }
+  };
+
+  rand() { this._rs = (this._rs * 1664525 + 1013904223) >>> 0; return this._rs / 4294967296; }
+  hashF(n) { const s = Math.sin(n * 12.9898) * 43758.5453; return s - Math.floor(s); }
+  hash3(a, b, c) { const s = Math.sin(a * 127.1 + b * 311.7 + c * 74.7) * 43758.5453; return s - Math.floor(s); }
+  vnoise(x, y, z) {
+    const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+    const xf = x - xi, yf = y - yi, zf = z - zi;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf), w = zf * zf * (3 - 2 * zf);
+    const L = (a, b, t) => a + (b - a) * t, h = this.hash3.bind(this);
+    const x00 = L(h(xi, yi, zi), h(xi + 1, yi, zi), u), x10 = L(h(xi, yi + 1, zi), h(xi + 1, yi + 1, zi), u);
+    const x01 = L(h(xi, yi, zi + 1), h(xi + 1, yi, zi + 1), u), x11 = L(h(xi, yi + 1, zi + 1), h(xi + 1, yi + 1, zi + 1), u);
+    return L(L(x00, x10, v), L(x01, x11, v), w);
+  }
+  fbm(x, y, z, oct) { let a = 0.5, f = 1, s = 0, n = 0; for (let i = 0; i < (oct || 3); i++) { s += a * this.vnoise(x * f, y * f, z); n += a; a *= 0.5; f *= 2; } return s / n; }
+
+  // ---------- source draw ----------
+  drawCover(ctx, img, W, H) {
+    const iw = img.videoWidth || img.naturalWidth || img.width || 0;
+    const ih = img.videoHeight || img.naturalHeight || img.height || 0;
+    if (!iw || !ih) { this.drawBlank(ctx, W, H, this.t); return; }
+    const s = Math.max(W / iw, H / ih);
+    const dw = iw * s, dh = ih * s;
+    ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  }
+  drawBlank(ctx, W, H, t) {
+    const cols = ['#d2d2d2', '#cfcf45', '#45cfcf', '#45cf52', '#cf45c4', '#cf4545', '#4548cf'];
+    const bh = Math.floor(H * 0.72), bw = W / cols.length;
+    for (let i = 0; i < cols.length; i++) { ctx.fillStyle = cols[i]; ctx.fillRect(Math.floor(i * bw), 0, Math.ceil(bw), bh); }
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, bh, W, H - bh);
+    const sx = ((t * 0.00012) % 1) * W;
+    ctx.fillStyle = '#e8e8e8'; ctx.fillRect(sx - W * 0.05, bh + (H - bh) * 0.28, W * 0.1, (H - bh) * 0.44);
+    ctx.fillStyle = '#e8e8e8'; ctx.font = '600 ' + Math.floor(H * 0.05) + "px 'JetBrains Mono', monospace"; ctx.textBaseline = 'middle';
+    ctx.fillText('\u25cf REC  ' + this.fmtTC(t), W * 0.04, bh + (H - bh) * 0.5);
+  }
+  fmtTC(ms) {
+    const total = Math.floor(ms / 1000), m = String(Math.floor(total / 60) % 60).padStart(2, '0'),
+      s = String(total % 60).padStart(2, '0'), f = String(Math.floor((ms % 1000) / 33)).padStart(2, '0');
+    return m + ':' + s + ':' + f;
+  }
+  drawSourceTo(ctx, W, H, t) {
+    const src = this.state.source;
+    if (src === 'video' && this.video) this.drawCover(ctx, this.video, W, H);
+    else if (src === 'image' && this.image) this.drawCover(ctx, this.image, W, H);
+    else this.drawBlank(ctx, W, H, t);
+  }
+
+  // ---------- LFO ----------
+  wave(type, ph, seed) {
+    const x = ph - Math.floor(ph);
+    switch (type) {
+      case 'sine': return Math.sin(ph * this.TAU);
+      case 'tri': return 1 - 4 * Math.abs(x - 0.5);
+      case 'saw': return 2 * x - 1;
+      case 'square': return x < 0.5 ? 1 : -1;
+      case 'snh': return this.hashF(Math.floor(ph) + seed * 0.137) * 2 - 1;
+    }
+    return 0;
+  }
+  effParams(slot, def, t, slotIdx) {
+    const out = Object.assign({}, slot.params);
+    const lfo = slot.lfo || {};
+    for (let i = 0; i < def.params.length; i++) {
+      const pr = def.params[i];
+      if (pr.type) continue;
+      const l = lfo[pr.k];
+      if (l && l.on) {
+        const range = pr.max - pr.min;
+        const ph = (t / 1000) * l.rate + (l.phase || 0);
+        const w = this.wave(l.wave, ph, slotIdx * 13 + i * 7 + 1);
+        let v;
+        if (l.uni) v = slot.params[pr.k] + ((w + 1) * 0.5) * l.depth * range;
+        else v = slot.params[pr.k] + w * l.depth * range * 0.5;
+        if (v < pr.min) v = pr.min; if (v > pr.max) v = pr.max;
+        if (pr.step >= 1) v = Math.round(v);
+        out[pr.k] = v;
+      }
+    }
+    return out;
+  }
+
+  // ---------- render pipeline ----------
+  composite(rctx, layer, blend, op) {
+    rctx.save();
+    rctx.globalAlpha = op;
+    rctx.globalCompositeOperation = this.GCO[blend] || 'source-over';
+    rctx.drawImage(layer, 0, 0);
+    rctx.restore();
+  }
+  renderFrame(set, rctx, W, H, t, slots, bypass) {
+    this._rs = (((t / 16.6667) | 0) * 2654435761 + 12347) >>> 0;
+    rctx.globalAlpha = 1; rctx.globalCompositeOperation = 'source-over';
+    this.drawSourceTo(rctx, W, H, t);
+    if (bypass) return;
+    for (let i = 0; i < slots.length; i++) {
+      const s = slots[i];
+      if (!s.enabled || s.fx === 'none') continue;
+      const def = this.def(s.fx);
+      const p = this.effParams(s, def, t, i);
+      const st = set.slot[i] || (set.slot[i] = {});
+      set.lctx.clearRect(0, 0, W, H);
+      set.lctx.globalAlpha = 1; set.lctx.globalCompositeOperation = 'source-over';
+      if (def.cat === 'gen') {
+        if (s.fx === 'wireframe') this.genWireframe(set.lctx, W, H, t, p);
+        else if (s.fx === 'oscillo') this.genOscillo(set.lctx, W, H, t, p);
+        else if (s.fx === 'noise') this.genNoise(set.lctx, set, W, H, t, p);
+        else if (s.fx === 'text') this.genText(set.lctx, set, W, H, t, p);
+        else if (s.fx === 'flow') this.genFlow(set.lctx, W, H, t, p);
+      } else if (def.canvas) {
+        if (s.fx === 'echo') this.procEcho(set, rctx.canvas, W, H, p, st);
+        else if (s.fx === 'radial') this.procRadial(set, rctx.canvas, W, H, p);
+        else if (s.fx === 'tilt') this.procTilt(set, rctx.canvas, W, H, p);
+      } else {
+        const img = rctx.getImageData(0, 0, W, H);
+        const d = img.data;
+        if (s.fx === 'datamosh') this.fxDatamosh(d, W, H, p, st);
+        else if (s.fx === 'sort') this.fxSort(d, W, H, p);
+        else if (s.fx === 'rgb') this.fxRGB(d, W, H, p);
+        else if (s.fx === 'thermal') this.fxThermal(d, p);
+        else if (s.fx === 'dither') this.fxDither(d, W, H, p);
+        else if (s.fx === 'posterize') this.fxPosterize(d, W, H, p, st, t);
+        else if (s.fx === 'vhs') this.fxVHS(d, W, H, p);
+        set.lctx.putImageData(img, 0, 0);
+        if (s.fx === 'vhs' && p.scanlines > 0.001) this.drawScanlines(set.lctx, W, H, p.scanlines, t);
+      }
+      this.composite(rctx, set.layer, s.blend, s.opacity);
+    }
+    rctx.globalAlpha = 1; rctx.globalCompositeOperation = 'source-over';
+  }
+
+  // ---------- generators ----------
+  wirePolys(type, density) {
+    if (type === 'cube') {
+      const v = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
+      const e = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+      return e.map(p => [v[p[0]], v[p[1]]]);
+    }
+    if (type === 'sphere') {
+      const La = Math.max(3, Math.round(density / 2.4)), Lo = Math.max(6, Math.round(density));
+      const polys = [];
+      for (let i = 1; i < La; i++) { const phi = Math.PI * i / La - Math.PI / 2, r = Math.cos(phi), y = Math.sin(phi), ln = []; for (let j = 0; j <= Lo; j++) { const th = this.TAU * j / Lo; ln.push([r * Math.cos(th), y, r * Math.sin(th)]); } polys.push(ln); }
+      for (let j = 0; j < Lo; j++) { const th = this.TAU * j / Lo, ln = []; for (let i = 0; i <= La; i++) { const phi = Math.PI * i / La - Math.PI / 2, r = Math.cos(phi), y = Math.sin(phi); ln.push([r * Math.cos(th), y, r * Math.sin(th)]); } polys.push(ln); }
+      return polys;
+    }
+    if (type === 'tunnel') {
+      const rings = Math.max(4, Math.round(density)), polys = [];
+      for (let i = 0; i < rings; i++) { const z = -1 + (i / rings) * 4, ln = []; for (let j = 0; j <= 24; j++) { const th = this.TAU * j / 24; ln.push([Math.cos(th), Math.sin(th), z]); } polys.push(ln); }
+      for (let j = 0; j < 8; j++) { const th = this.TAU * j / 8, ln = []; for (let i = 0; i < rings; i++) { const z = -1 + (i / rings) * 4; ln.push([Math.cos(th), Math.sin(th), z]); } polys.push(ln); }
+      return polys;
+    }
+    const N = Math.max(2, Math.round(density)), polys = [];
+    for (let i = 0; i <= N; i++) { const a = -1 + 2 * i / N, ln = []; for (let j = 0; j <= N; j++) { const b = -1 + 2 * j / N; ln.push([b, 0.55, a]); } polys.push(ln); }
+    for (let j = 0; j <= N; j++) { const b = -1 + 2 * j / N, ln = []; for (let i = 0; i <= N; i++) { const a = -1 + 2 * i / N; ln.push([b, 0.55, a]); } polys.push(ln); }
+    return polys;
+  }
+  genWireframe(ctx, W, H, t, p) {
+    const cx = W / 2, cy = H / 2, S = Math.min(W, H) * 0.46 * p.scale;
+    const ax = t * 0.0006 * p.speed, ay = t * 0.0009 * p.speed;
+    const cosx = Math.cos(ax), sinx = Math.sin(ax), cosy = Math.cos(ay), siny = Math.sin(ay);
+    const proj = (P) => {
+      const x = P[0], y = P[1], z = P[2];
+      const x1 = x * cosy - z * siny, z1 = x * siny + z * cosy;
+      const y1 = y * cosx - z1 * sinx, z2 = y * sinx + z1 * cosx;
+      const persp = 2.8 / (2.8 + z2);
+      return [cx + x1 * S * persp, cy + y1 * S * persp];
+    };
+    const polys = this.wirePolys(p.type, p.density);
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = p.line; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.shadowColor = 'rgba(255,255,255,0.7)'; ctx.shadowBlur = p.line * 2.2;
+    for (const pl of polys) { ctx.beginPath(); for (let k = 0; k < pl.length; k++) { const q = proj(pl[k]); k ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); } ctx.stroke(); }
+    ctx.shadowBlur = 0;
+  }
+  genOscillo(ctx, W, H, t, p) {
+    const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.44 * p.amp;
+    const ph = t * 0.0012 + p.phase * this.TAU;
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = p.line; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.shadowColor = 'rgba(255,255,255,0.8)'; ctx.shadowBlur = p.line * 2.5;
+    ctx.beginPath();
+    if (p.mode === 'lissajous') {
+      const N = 1400; for (let i = 0; i <= N; i++) { const th = i / N * this.TAU; const x = cx + Math.sin(p.freqA * th + ph) * R; const y = cy + Math.sin(p.freqB * th) * R; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    } else if (p.mode === 'polar') {
+      const N = 1440; for (let i = 0; i <= N; i++) { const th = i / N * this.TAU * p.freqB; const r = R * Math.cos(p.freqA * th + ph); const x = cx + Math.cos(th) * r; const y = cy + Math.sin(th) * r; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    } else {
+      const N = Math.max(120, W); for (let i = 0; i <= N; i++) { const xx = i / N; const x = xx * W; const y = cy + R * 0.85 * (Math.sin(xx * p.freqA * this.TAU + ph) * 0.6 + Math.sin(xx * p.freqB * this.TAU + ph * 1.4) * 0.4); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    }
+    ctx.stroke(); ctx.shadowBlur = 0;
+  }
+  genNoise(ctx, set, W, H, t, p) {
+    const sc = Math.max(1, p.scale | 0);
+    const nw = Math.max(2, Math.ceil(W / sc)), nh = Math.max(2, Math.ceil(H / sc));
+    if (!this._nz || this._nz.width !== nw || this._nz.height !== nh) { this._nz = this.c(nw, nh); this._nzc = this._nz.getContext('2d'); }
+    const id = this._nzc.createImageData(nw, nh), dd = id.data;
+    const seed = Math.floor(t * 0.06 * p.speed);
+    const con = p.contrast;
+    const ct = (v) => { v = (v - 0.5) * con + 0.5; return v < 0 ? 0 : v > 1 ? 1 : v; };
+    for (let i = 0, px = 0; i < dd.length; i += 4, px++) {
+      if (p.type === 'rgb') {
+        dd[i] = ct(this.hashF(px * 1.13 + seed)) * 255;
+        dd[i + 1] = ct(this.hashF(px * 2.71 + seed + 19)) * 255;
+        dd[i + 2] = ct(this.hashF(px * 3.97 + seed + 41)) * 255;
+      } else {
+        const v = ct(this.hashF(px + seed * 1.7)) * 255;
+        dd[i] = dd[i + 1] = dd[i + 2] = v;
+      }
+      dd[i + 3] = 255;
+    }
+    this._nzc.putImageData(id, 0, 0);
+    ctx.imageSmoothingEnabled = (p.type === 'clouds');
+    ctx.drawImage(this._nz, 0, 0, nw, nh, 0, 0, W, H);
+    ctx.imageSmoothingEnabled = true;
+  }
+
+  fontFam(id) {
+    switch (id) {
+      case 'terminal': return "'VT323', monospace";
+      case 'display': return "'Major Mono Display', monospace";
+      case 'sans': return "Helvetica, Arial, sans-serif";
+      case 'serif': return "Georgia, 'Times New Roman', serif";
+      case 'cond': return "'Oswald', sans-serif";
+      default: return "'JetBrains Mono', monospace";
+    }
+  }
+  wrapText(ctx, text, maxW) {
+    const words = (text + '').split(/\s+/).filter(Boolean);
+    if (!words.length) return [''];
+    const lines = []; let cur = '';
+    for (const w of words) { const test = cur ? cur + ' ' + w : w; if (ctx.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; } else cur = test; }
+    if (cur) lines.push(cur);
+    return lines.length ? lines : [''];
+  }
+  genText(ctx, set, W, H, t, p) {
+    const txt = ((p.text == null ? '' : p.text) + '') || ' ';
+    const fs = Math.max(8, H * p.size), g = p.glitch, sp = 0.3 + p.speed;
+    const ang = (p.angle || 0) * Math.PI / 180, ca = Math.cos(ang), sa = Math.sin(ang);
+    const wc = set.wctx, wk = set.work;
+    const cx = W / 2 + (p.posX || 0) * W * 0.5, cy = H / 2 + (p.posY || 0) * H * 0.5;
+    wc.clearRect(0, 0, W, H);
+    wc.font = '700 ' + fs + 'px ' + this.fontFam(p.font);
+    wc.textBaseline = 'middle';
+    const off = g * fs * 0.16;
+    const draw = (s, x, y, align) => {
+      wc.textAlign = align || 'center';
+      if (g > 0.01) {
+        wc.globalCompositeOperation = 'lighter';
+        wc.fillStyle = '#ff2a48'; wc.fillText(s, x - ca * off, y - sa * off);
+        wc.fillStyle = '#27ff7a'; wc.fillText(s, x, y);
+        wc.fillStyle = '#2e74ff'; wc.fillText(s, x + ca * off, y + sa * off);
+        wc.globalCompositeOperation = 'source-over';
+      } else { wc.fillStyle = '#ffffff'; wc.fillText(s, x, y); }
+    };
+    const layout = p.layout || 'single';
+    if (layout === 'wrap') {
+      const lines = this.wrapText(wc, txt, W * 0.92);
+      const lh = fs * 1.16, total = lines.length * lh; let y = cy - total / 2 + lh / 2;
+      for (const ln of lines) { draw(ln, cx, y, 'center'); y += lh; }
+    } else if (layout === 'fill' || layout === 'ticker') {
+      const rows = Math.max(1, p.lines | 0), lh = H / rows;
+      const unit = txt + '   ', uw = Math.max(1, wc.measureText(unit).width);
+      const reps = Math.ceil(W / uw) + 2; let line = ''; for (let i = 0; i < reps; i++) line += unit;
+      const oy = (cy - H / 2);
+      for (let r = 0; r < rows; r++) {
+        const y = lh * (r + 0.5) + oy;
+        let shift;
+        if (layout === 'ticker') { const dir = (p.tickerDir === 'alt' && (r & 1)) ? -1 : 1; shift = (t * 0.09 * sp * dir) % uw; if (shift > 0) shift -= uw; }
+        else { shift = -(r & 1) * uw * 0.5; }
+        draw(line, shift + (p.posX || 0) * W * 0.5, y, 'left');
+      }
+    } else {
+      let bx = cx, by = cy;
+      if (p.mode === 'slide') { const tw = wc.measureText(txt).width; const span = Math.max(W, H) + tw + 40; const travel = ((t * 0.06 * sp) % span) - span * 0.5; bx = cx + ca * travel; by = cy + sa * travel; }
+      draw(txt, bx, by, 'center');
+    }
+    ctx.clearRect(0, 0, W, H);
+    if (p.mode === 'jitter' || p.mode === 'blocks') {
+      const slices = p.mode === 'blocks' ? 7 : 20, sh = Math.ceil(H / slices), span = Math.max(W, H);
+      const fr = Math.floor(t * 0.004 * sp);
+      for (let s = 0; s < slices; s++) {
+        const sy = s * sh;
+        const active = this.hashF(s * 3.31 + fr) < (0.18 + g * 0.7);
+        const mag = active ? (this.hashF(s * 1.7 + fr * 1.3) * 2 - 1) * g * span * 0.14 : 0;
+        ctx.drawImage(wk, 0, sy, W, sh, Math.round(ca * mag), sy + Math.round(sa * mag), W, sh);
+      }
+    } else {
+      ctx.drawImage(wk, 0, 0);
+    }
+  }
+
+  genFlow(ctx, W, H, t, p) {
+    const z = t * 0.00007 * (0.2 + p.speed);
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = p.line; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.shadowColor = 'rgba(255,255,255,0.35)'; ctx.shadowBlur = p.line * 1.4;
+    const oct = p.detail | 0, freq = p.scale * 0.0022;
+    if (p.mode === 'topo') {
+      const cell = Math.max(6, Math.round(Math.min(W, H) / 46));
+      const cols = Math.ceil(W / cell) + 1, rows = Math.ceil(H / cell) + 1;
+      const fld = new Float32Array(cols * rows);
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) fld[r * cols + c] = this.fbm(c * cell * freq, r * cell * freq, z, oct);
+      const levels = Math.max(2, p.density | 0);
+      const at = (c, r) => fld[r * cols + c];
+      for (let li = 0; li < levels; li++) {
+        const thr = (li + 0.5) / levels;
+        ctx.beginPath();
+        for (let r = 0; r < rows - 1; r++) for (let c = 0; c < cols - 1; c++) {
+          const tl = at(c, r), tr = at(c + 1, r), br = at(c + 1, r + 1), bl = at(c, r + 1);
+          let ci = 0; if (tl > thr) ci |= 8; if (tr > thr) ci |= 4; if (br > thr) ci |= 2; if (bl > thr) ci |= 1;
+          if (ci === 0 || ci === 15) continue;
+          const ip = (a, b) => (thr - a) / ((b - a) || 1e-6);
+          const top = [c + ip(tl, tr), r], rgt = [c + 1, r + ip(tr, br)], bot = [c + ip(bl, br), r + 1], lft = [c, r + ip(tl, bl)];
+          const seg = (a, b) => { ctx.moveTo(a[0] * cell, a[1] * cell); ctx.lineTo(b[0] * cell, b[1] * cell); };
+          switch (ci) {
+            case 1: case 14: seg(lft, bot); break;
+            case 2: case 13: seg(bot, rgt); break;
+            case 3: case 12: seg(lft, rgt); break;
+            case 4: case 11: seg(top, rgt); break;
+            case 6: case 9: seg(top, bot); break;
+            case 7: case 8: seg(lft, top); break;
+            case 5: seg(lft, top); seg(bot, rgt); break;
+            case 10: seg(lft, bot); seg(top, rgt); break;
+          }
+        }
+        ctx.stroke();
+      }
+    } else {
+      const rows = Math.max(2, p.density | 0), amp = p.amp * H * 0.46 / rows * 2.4;
+      const steps = Math.max(24, Math.round(W / 7));
+      for (let r = 0; r < rows; r++) {
+        const baseY = (r + 0.5) / rows * H;
+        const grad = 0.35 + 0.65 * (r / Math.max(1, rows - 1));
+        ctx.beginPath();
+        for (let i = 0; i <= steps; i++) {
+          const x = i / steps * W;
+          const n = this.fbm(x * freq * 1.6, baseY * freq * 1.6, z, oct) - 0.5;
+          const y = baseY + n * 2 * amp * grad;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  // ---------- canvas processors ----------
+  procEcho(set, running, W, H, p, st) {
+    if (!st.fb) { st.fb = this.c(W, H); st.fbx = st.fb.getContext('2d'); }
+    const L = set.lctx;
+    L.clearRect(0, 0, W, H);
+    L.drawImage(running, 0, 0);
+    const s = p.scale, dw = W * s, dh = H * s, dx = (W - dw) / 2 + p.offsetX, dy = (H - dh) / 2 + p.offsetY;
+    L.globalAlpha = p.trail; L.drawImage(st.fb, dx, dy, dw, dh); L.globalAlpha = 1;
+    st.fbx.clearRect(0, 0, W, H); st.fbx.drawImage(set.layer, 0, 0);
+  }
+  procRadial(set, running, W, H, p) {
+    const L = set.lctx, cx = p.centerX * W, cy = p.centerY * H, n = Math.max(2, p.samples | 0);
+    L.clearRect(0, 0, W, H);
+    for (let j = 0; j < n; j++) {
+      L.globalAlpha = 1 / (j + 1);
+      const f = n === 1 ? 0 : j / (n - 1);
+      L.save();
+      L.translate(cx, cy);
+      if (p.mode === 'spin') { L.rotate((f - 0.5) * p.amount * 0.5); }
+      else { const sc = 1 + p.amount * 0.28 * f; L.scale(sc, sc); }
+      L.translate(-cx, -cy);
+      L.drawImage(running, 0, 0);
+      L.restore();
+    }
+    L.globalAlpha = 1;
+  }
+  procTilt(set, running, W, H, p) {
+    const L = set.lctx, wk = set.work, wc = set.wctx;
+    L.clearRect(0, 0, W, H);
+    L.filter = 'blur(' + p.blur + 'px)';
+    L.drawImage(running, 0, 0);
+    L.filter = 'none';
+    wc.clearRect(0, 0, W, H);
+    wc.globalCompositeOperation = 'source-over';
+    wc.drawImage(running, 0, 0);
+    const c = p.focusY, h = p.band / 2, soft = 0.02 + p.softness * 0.35;
+    const g = wc.createLinearGradient(0, 0, 0, H);
+    const cl = (x) => x < 0 ? 0 : x > 1 ? 1 : x;
+    const stops = [[0, 0], [cl(c - h - soft), 0], [cl(c - h), 1], [cl(c + h), 1], [cl(c + h + soft), 0], [1, 0]];
+    let last = -1;
+    for (const sgv of stops) { let pos = sgv[0]; if (pos <= last) pos = last + 0.0001; last = pos; g.addColorStop(cl(pos), 'rgba(255,255,255,' + sgv[1] + ')'); }
+    wc.globalCompositeOperation = 'destination-in';
+    wc.fillStyle = g; wc.fillRect(0, 0, W, H);
+    wc.globalCompositeOperation = 'source-over';
+    L.drawImage(wk, 0, 0);
+  }
+
+  // ---------- pixel processors ----------
+  fxRGB(d, W, H, p) {
+    const src = d.slice(0);
+    const rad = p.angle * Math.PI / 180;
+    const ox = Math.round(Math.cos(rad) * p.offset), oy = Math.round(Math.sin(rad) * p.offset);
+    const gx = Math.round(ox * p.bleed * 0.6), gy = Math.round(oy * p.bleed * 0.6);
+    const cl = (v, m) => v < 0 ? 0 : (v > m ? m : v);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4;
+      d[i] = src[(cl(y - oy, H - 1) * W + cl(x - ox, W - 1)) * 4];
+      d[i + 1] = src[(cl(y + gy, H - 1) * W + cl(x + gx, W - 1)) * 4 + 1];
+      d[i + 2] = src[(cl(y + oy, H - 1) * W + cl(x + ox, W - 1)) * 4 + 2];
+    }
+  }
+  fxPosterize(d, W, H, p, st, t) {
+    const hold = 1000 / p.fps;
+    if (st.holdData == null || (t - (st.holdT || -1e9)) >= hold) { st.holdData = d.slice(0); st.holdT = t; }
+    else { const h = st.holdData; for (let i = 0; i < d.length; i++) d[i] = h[i]; }
+    if (p.levels < 32) { const step = 255 / (p.levels - 1); for (let i = 0; i < d.length; i += 4) { d[i] = Math.round(d[i] / step) * step; d[i + 1] = Math.round(d[i + 1] / step) * step; d[i + 2] = Math.round(d[i + 2] / step) * step; } }
+  }
+  buildThermalLUT() {
+    const stops = [[0,[3,0,6]],[0.18,[35,0,80]],[0.4,[170,0,55]],[0.6,[235,55,0]],[0.78,[255,150,10]],[0.9,[255,225,60]],[1,[255,255,255]]];
+    const lut = new Uint8Array(256 * 3);
+    for (let i = 0; i < 256; i++) { const l = i / 255; let a = stops[0], b = stops[stops.length - 1]; for (let s = 0; s < stops.length - 1; s++) { if (l >= stops[s][0] && l <= stops[s + 1][0]) { a = stops[s]; b = stops[s + 1]; break; } } const f = (l - a[0]) / ((b[0] - a[0]) || 1); lut[i*3] = a[1][0] + (b[1][0]-a[1][0])*f; lut[i*3+1] = a[1][1] + (b[1][1]-a[1][1])*f; lut[i*3+2] = a[1][2] + (b[1][2]-a[1][2])*f; }
+    this.thermLUT = lut;
+  }
+  fxThermal(d, p) {
+    if (!this.thermLUT) this.buildThermalLUT();
+    const lut = this.thermLUT, k = p.intensity, c = p.contrast;
+    for (let i = 0; i < d.length; i += 4) {
+      let l = (d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114) / 255;
+      l = (l - 0.5) * c + 0.5; l = l < 0 ? 0 : l > 1 ? 1 : l;
+      const idx = (l * 255) | 0;
+      d[i] += (lut[idx*3] - d[i]) * k; d[i+1] += (lut[idx*3+1] - d[i+1]) * k; d[i+2] += (lut[idx*3+2] - d[i+2]) * k;
+    }
+  }
+  bayer8() {
+    if (this._bayer) return this._bayer;
+    const m = [[0,32,8,40,2,34,10,42],[48,16,56,24,50,18,58,26],[12,44,4,36,14,46,6,38],[60,28,52,20,62,30,54,22],[3,35,11,43,1,33,9,41],[51,19,59,27,49,17,57,25],[15,47,7,39,13,45,5,37],[63,31,55,23,61,29,53,21]];
+    const t = new Float32Array(64);
+    for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) t[y * 8 + x] = (m[y][x] + 0.5) / 64 - 0.5;
+    this._bayer = t; return t;
+  }
+  fxDither(d, W, H, p) {
+    const px = Math.max(1, p.pixel | 0), L = Math.max(2, p.levels | 0), con = p.contrast, spread = p.spread;
+    const mono = p.palette === 'mono', gray = p.palette === 'gray';
+    const lev = L - 1, bayer = this.bayer8();
+    const lum = (i) => 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+    const adj = (v) => { v = ((v / 255 - 0.5) * con + 0.5) * 255; return v < 0 ? 0 : v > 255 ? 255 : v; };
+    const cols = (mono || gray) ? 1 : 3;
+    // downsample to pixel blocks (block-average top-left source)
+    if (px > 1) {
+      for (let by = 0; by < H; by += px) for (let bx = 0; bx < W; bx += px) {
+        let r = 0, g = 0, b = 0, n = 0;
+        for (let y = 0; y < px && by + y < H; y++) for (let x = 0; x < px && bx + x < W; x++) { const i = ((by + y) * W + bx + x) * 4; r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
+        r /= n; g /= n; b /= n;
+        for (let y = 0; y < px && by + y < H; y++) for (let x = 0; x < px && bx + x < W; x++) { const i = ((by + y) * W + bx + x) * 4; d[i] = r; d[i + 1] = g; d[i + 2] = b; }
+      }
+    }
+    if (p.method === 'fs') {
+      // Floyd-Steinberg on pixel grid
+      const gw = Math.ceil(W / px), gh = Math.ceil(H / px);
+      const buf = new Float32Array(gw * gh * cols);
+      for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++) {
+        const i = ((gy * px) * W + gx * px) * 4, bi = (gy * gw + gx) * cols;
+        if (cols === 1) buf[bi] = adj(lum(i));
+        else { buf[bi] = adj(d[i]); buf[bi + 1] = adj(d[i + 1]); buf[bi + 2] = adj(d[i + 2]); }
+      }
+      const push = (gx, gy, c, e, f) => { if (gx < 0 || gx >= gw || gy < 0 || gy >= gh) return; buf[(gy * gw + gx) * cols + c] += e * f; };
+      for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++) {
+        const bi = (gy * gw + gx) * cols;
+        for (let c = 0; c < cols; c++) {
+          const old = buf[bi + c], q = Math.round((old / 255) * lev) / lev * 255, err = (old - q) * spread;
+          buf[bi + c] = q;
+          push(gx + 1, gy, c, err, 7 / 16); push(gx - 1, gy + 1, c, err, 3 / 16); push(gx, gy + 1, c, err, 5 / 16); push(gx + 1, gy + 1, c, err, 1 / 16);
+        }
+      }
+      for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++) {
+        const bi = (gy * gw + gx) * cols;
+        let r, g, b;
+        if (cols === 1) { r = g = b = buf[bi]; } else { r = buf[bi]; g = buf[bi + 1]; b = buf[bi + 2]; }
+        for (let y = 0; y < px && gy * px + y < H; y++) for (let x = 0; x < px && gx * px + x < W; x++) { const i = ((gy * px + y) * W + gx * px + x) * 4; d[i] = r; d[i + 1] = g; d[i + 2] = b; }
+      }
+      return;
+    }
+    // Ordered (Bayer) or Noise threshold dithering
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4;
+      const thr = p.method === 'noise' ? (this.hashF(x * 0.731 + y * 1.119) - 0.5) : bayer[(y & 7) * 8 + (x & 7)];
+      const t = thr * spread * (255 / lev);
+      if (cols === 1) { const v = Math.round((adj(lum(i)) + t) / 255 * lev) / lev * 255; const vv = v < 0 ? 0 : v > 255 ? 255 : v; d[i] = d[i + 1] = d[i + 2] = vv; }
+      else { for (let c = 0; c < 3; c++) { const v = Math.round((adj(d[i + c]) + t) / 255 * lev) / lev * 255; d[i + c] = v < 0 ? 0 : v > 255 ? 255 : v; } }
+    }
+  }
+  fxSort(d, W, H, p) {
+    const lo = Math.min(p.low, p.high) * 765, hi = Math.max(p.low, p.high) * 765, prob = p.intensity;
+    if (p.direction === 'h') {
+      for (let y = 0; y < H; y++) { let x = 0; const row = y * W; while (x < W) { let i = (row + x) * 4, b = d[i] + d[i+1] + d[i+2]; if (b >= lo && b <= hi) { const start = x; while (x < W) { i = (row + x) * 4; b = d[i] + d[i+1] + d[i+2]; if (b < lo || b > hi) break; x++; } if (x - start > 2 && this.rand() < prob) this.sortSpan(d, row, start, x, 1); } else x++; } }
+    } else {
+      for (let x = 0; x < W; x++) { let y = 0; while (y < H) { let i = (y * W + x) * 4, b = d[i] + d[i+1] + d[i+2]; if (b >= lo && b <= hi) { const start = y; while (y < H) { i = (y * W + x) * 4; b = d[i] + d[i+1] + d[i+2]; if (b < lo || b > hi) break; y++; } if (y - start > 2 && this.rand() < prob) this.sortSpan(d, x, start, y, W); } else y++; } }
+    }
+  }
+  sortSpan(d, base, a, b, stride) {
+    const n = b - a, arr = new Array(n);
+    for (let k = 0; k < n; k++) { const i = (base + (a + k) * stride) * 4; arr[k] = [d[i] + d[i+1] + d[i+2], d[i], d[i+1], d[i+2], d[i+3]]; }
+    arr.sort((u, v) => u[0] - v[0]);
+    for (let k = 0; k < n; k++) { const i = (base + (a + k) * stride) * 4; d[i] = arr[k][1]; d[i+1] = arr[k][2]; d[i+2] = arr[k][3]; d[i+3] = arr[k][4]; }
+  }
+  fxDatamosh(d, W, H, p, st) {
+    const prev = st.prev;
+    if (prev) {
+      const block = Math.max(2, p.blockSize | 0), disp = p.displace, inten = p.intensity, decay = p.decay;
+      for (let by = 0; by < H; by += block) for (let bx = 0; bx < W; bx += block) {
+        if (this.rand() < inten * 0.6) {
+          const ox = ((this.rand() * 2 - 1) * disp) | 0, oy = ((this.rand() * 2 - 1) * disp * 0.35) | 0;
+          for (let y = 0; y < block && by + y < H; y++) { const sy = by + y + oy; if (sy < 0 || sy >= H) continue; for (let x = 0; x < block && bx + x < W; x++) { const sx = bx + x + ox; if (sx < 0 || sx >= W) continue; const di = ((by + y) * W + bx + x) * 4, si = (sy * W + sx) * 4; d[di] = prev[si]; d[di+1] = prev[si+1]; d[di+2] = prev[si+2]; } }
+        }
+      }
+      if (decay > 0) for (let i = 0; i < d.length; i += 4) { d[i] = d[i]*(1-decay) + prev[i]*decay; d[i+1] = d[i+1]*(1-decay) + prev[i+1]*decay; d[i+2] = d[i+2]*(1-decay) + prev[i+2]*decay; }
+    }
+    st.prev = d.slice(0);
+  }
+  fxVHS(d, W, H, p) {
+    const cl = (v, m) => v < 0 ? 0 : (v > m ? m : v);
+    if (p.tear > 0) {
+      const rows = (p.tear * H * 0.12) | 0;
+      for (let r = 0; r < rows; r++) { const y = (this.rand() * H) | 0, sh = ((this.rand() * 2 - 1) * p.tear * W * 0.25) | 0; if (!sh) continue; const row = y * W * 4, tmp = d.slice(row, row + W * 4); for (let x = 0; x < W; x++) { const sx = cl(x - sh, W - 1), di = row + x * 4, si = sx * 4; d[di] = tmp[si]; d[di+1] = tmp[si+1]; d[di+2] = tmp[si+2]; } }
+    }
+    if (p.bleed > 0) {
+      const rad = 1 + ((p.bleed * 6) | 0), src = d.slice(0);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4, rx = cl(x - rad, W - 1), bx = cl(x + rad, W - 1); d[i] = d[i]*(1-p.bleed) + src[(y*W+rx)*4]*p.bleed; d[i+2] = d[i+2]*(1-p.bleed) + src[(y*W+bx)*4+2]*p.bleed; }
+    }
+    if (p.noise > 0) { const amp = p.noise * 130; for (let i = 0; i < d.length; i += 4) { const n = (this.rand() - 0.5) * amp; d[i] += n; d[i+1] += n; d[i+2] += n; } }
+    if (p.snow > 0) { const cnt = (p.snow * W * H * 0.02) | 0; for (let s = 0; s < cnt; s++) { const i = ((this.rand() * W * H) | 0) * 4, v = this.rand() > 0.5 ? 255 : 20; d[i] = v; d[i+1] = v; d[i+2] = v; } }
+  }
+  drawScanlines(ctx, W, H, k, t) {
+    ctx.save();
+    ctx.globalAlpha = Math.min(0.6, k * 0.6); ctx.fillStyle = '#000';
+    const gap = Math.max(2, Math.round(H / 360) + 1);
+    for (let y = 0; y < H; y += gap) ctx.fillRect(0, y, W, 1);
+    ctx.globalAlpha = 1;
+    const bandH = H * 0.12, by = ((t * 0.05) % (H + bandH)) - bandH;
+    const g = ctx.createLinearGradient(0, by, 0, by + bandH);
+    g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,' + (0.1 * k) + ')'); g.addColorStop(0.52, 'rgba(0,0,0,' + (0.18 * k) + ')'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, by, W, bandH);
+    ctx.restore();
+  }
+
+  // ---------- slot / param control ----------
+  updSlot(i, patch) { this.setState(s => { const ns = s.slots.slice(); ns[i] = Object.assign({}, ns[i], patch); return { slots: ns }; }); }
+  setSlotFx(i, fx) {
+    if (this.pv) this.pv.slot[i] = {};
+    this.updSlot(i, { fx, params: this.defaultParams(fx), lfo: {}, enabled: fx !== 'none' });
+  }
+  toggleSlot(i) { this.setState(s => { const ns = s.slots.slice(); ns[i] = Object.assign({}, ns[i], { enabled: !ns[i].enabled }); return { slots: ns, selSlot: i }; }); }
+  setParam(i, k, v) { this.setState(s => { const ns = s.slots.slice(); ns[i] = Object.assign({}, ns[i], { params: Object.assign({}, ns[i].params, { [k]: v }) }); return { slots: ns }; }); }
+  setLfo(i, k, patch) { this.setState(s => { const ns = s.slots.slice(); const lf = Object.assign({}, ns[i].lfo); lf[k] = Object.assign({}, lf[k], patch); ns[i] = Object.assign({}, ns[i], { lfo: lf }); return { slots: ns }; }); }
+  toggleLfo(i, k) { this.setState(s => { const ns = s.slots.slice(); const lf = Object.assign({}, ns[i].lfo); const cur = lf[k]; lf[k] = (cur && cur.on) ? Object.assign({}, cur, { on: false }) : Object.assign({ wave: 'sine', rate: 0.5, depth: 0.5, phase: 0, slow: false }, cur, { on: true }); ns[i] = Object.assign({}, ns[i], { lfo: lf }); return { slots: ns }; }); }
+  toggleSlow(i, k) { this.setState(s => { const ns = s.slots.slice(); const lf = Object.assign({}, ns[i].lfo); const cur = Object.assign({}, lf[k]); const slow = !cur.slow; cur.slow = slow; const mx = slow ? 1 : 8, mn = slow ? 0.01 : 0.05; if (cur.rate > mx) cur.rate = mx; if (cur.rate < mn) cur.rate = mn; lf[k] = cur; ns[i] = Object.assign({}, ns[i], { lfo: lf }); return { slots: ns }; }); }
+  resetSlot(i) { if (this.pv) this.pv.slot[i] = {}; this.updSlot(i, { params: this.defaultParams(this.state.slots[i].fx), lfo: {} }); }
+  centerText(i) { this.setState(s => { const ns = s.slots.slice(); ns[i] = Object.assign({}, ns[i], { params: Object.assign({}, ns[i].params, { posX: 0, posY: 0 }) }); return { slots: ns }; }); }
+  resetAll() { if (this.pv) this.pv.slot = []; this.setState({ slots: this.defaultSlots(), selSlot: 0 }); }
+  randomize() {
+    const reg = this.registry(), gens = ['wireframe','oscillo','noise','text','flow'], procs = reg.list.filter(e => e.cat === 'proc').map(e => e.id);
+    const words = ['NO SIGNAL','GLITCH','SIGNAL LOST','ERR0R','VHS','REC ●','CORRUPT','01001','データ','SYSTEM'];
+    const blends = Object.keys(this.GCO);
+    const rr = (a, b) => a + Math.random() * (b - a);
+    const slots = Array.from({ length: this.N }, (_, idx) => {
+      const on = idx >= 2 ? Math.random() < 0.5 : true;
+      const pool = (idx === 0 && Math.random() < 0.5) ? gens : (Math.random() < 0.25 ? gens : procs);
+      const fx = pool[Math.floor(Math.random() * pool.length)];
+      const def = this.def(fx), params = {};
+      def.params.forEach(pr => { if (pr.type === 'button') return; if (pr.type === 'text') params[pr.k] = words[Math.floor(Math.random() * words.length)]; else if (pr.type === 'enum') params[pr.k] = pr.options[Math.floor(Math.random() * pr.options.length)][0]; else { let v = rr(pr.min, pr.max); if (pr.step >= 1) v = Math.round(v); else v = Math.round(v * 100) / 100; params[pr.k] = v; } });
+      const lfo = {};
+      const numeric = def.params.filter(pr => !pr.type);
+      if (numeric.length && Math.random() < 0.5) { const pr = numeric[Math.floor(Math.random() * numeric.length)]; lfo[pr.k] = { on: true, wave: ['sine','tri','saw','square','snh'][Math.floor(Math.random() * 5)], rate: Math.round(rr(0.1, 3) * 100) / 100, depth: Math.round(rr(0.3, 0.9) * 100) / 100, phase: 0 }; }
+      const gen = def.cat === 'gen';
+      return { fx, enabled: on, blend: gen ? ['screen','add','lighten','normal','difference'][Math.floor(Math.random() * 4)] || 'screen' : (Math.random() < 0.5 ? 'normal' : blends[Math.floor(Math.random() * blends.length)]), opacity: Math.round(rr(gen ? 0.5 : 0.7, 1) * 100) / 100, params, lfo };
+    });
+    if (this.pv) this.pv.slot = [];
+    this.setState({ slots });
+  }
+
+  setExp(patch) { this.setState(s => ({ exp: Object.assign({}, s.exp, patch) })); }
+  effDur() { const e = this.state.exp; if (e.durUnit === 'bars') { const bpm = Math.max(20, Math.min(300, e.bpm || 120)); return Math.max(0.5, (e.bars || 1) * 4 * 60 / bpm); } return e.duration; }
+  setPreset(id) {
+    const map = { '480p':[854,480], '720p':[1280,720], '1080p':[1920,1080] };
+    if (map[id]) this.setExp({ preset: id, width: map[id][0], height: map[id][1] });
+    else if (id === 'source') this.setExp({ preset: 'source', width: this.srcW || 1280, height: this.srcH || 720 });
+    else this.setExp({ preset: 'custom' });
+  }
+
+  // ---------- export ----------
+  delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+  stamp() { return new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15); }
+  download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+  pickWebm() { for (const m of ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']) if (window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m; return 'video/webm'; }
+
+  async runExport() {
+    if (this.state.exporting) return;
+    const e = this.state.exp;
+    let W = e.width | 0, H = e.height | 0;
+    if (e.preset === 'source') { W = this.srcW; H = this.srcH; }
+    W = Math.max(16, Math.min(3840, W & ~1)); H = Math.max(16, Math.min(2160, H & ~1));
+    this.setState({ exporting: true, progress: 0, exportMsg: 'Preparing…' });
+    const out = this.c(W, H); const octx = out.getContext('2d', { willReadFrequently: true });
+    const set = this.makeSet(W, H);
+    if (this.state.source === 'video' && this.video) { try { this.video.currentTime = 0; await this.video.play(); } catch (_) {} }
+    const dur = this.effDur();
+    try {
+      if (e.format === 'gif') await this.exportGIF(out, octx, set, W, H, e.fps, dur);
+      else await this.exportVideo(out, octx, set, W, H, e.fps, dur, e.format);
+    } catch (err) { this.setState({ exportMsg: 'Export failed: ' + (err.message || err) }); console.error(err); await this.delay(1800); }
+    if (this.state.source === 'video' && this.video && !this.state.playing) { try { this.video.pause(); } catch (_) {} }
+    this.setState({ exporting: false, progress: 0, exportMsg: '' });
+  }
+  exportVideo(out, octx, set, W, H, fps, dur, fmt) {
+    return new Promise((resolve, reject) => {
+      let mime;
+      if (fmt === 'mp4') { mime = ['video/mp4;codecs=avc1','video/mp4'].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m)); if (!mime) { mime = this.pickWebm(); this.setState({ exportMsg: 'MP4 unsupported here — exporting WebM' }); } }
+      else mime = this.pickWebm();
+      const stream = out.captureStream(fps); let rec;
+      try { rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12000000 }); } catch (err) { return reject(err); }
+      const chunks = [];
+      rec.ondataavailable = ev => { if (ev.data && ev.data.size) chunks.push(ev.data); };
+      rec.onstop = () => { const mp4 = mime.indexOf('mp4') >= 0; const blob = new Blob(chunks, { type: mp4 ? 'video/mp4' : 'video/webm' }); this.download(blob, 'glitch_' + this.stamp() + (mp4 ? '.mp4' : '.webm')); resolve(); };
+      rec.start();
+      const start = performance.now(), total = dur * 1000; let lastP = 0;
+      const tick = (now) => { const el = now - start; this.renderFrame(set, octx, W, H, el, this.state.slots, false); const pr = Math.min(1, el / total); if (pr - lastP > 0.02 || pr >= 1) { lastP = pr; this.setState({ progress: pr, exportMsg: 'Recording… ' + Math.round(pr * 100) + '%' }); } if (el < total) requestAnimationFrame(tick); else rec.stop(); };
+      requestAnimationFrame(tick);
+    });
+  }
+  seekVideo(time) {
+    return new Promise(res => { const v = this.video; if (!v) return res(); const done = () => { v.removeEventListener('seeked', done); res(); }; v.addEventListener('seeked', done); try { v.currentTime = time; } catch (_) { v.removeEventListener('seeked', done); res(); } setTimeout(() => { try { v.removeEventListener('seeked', done); } catch (_) {} res(); }, 500); });
+  }
+  async exportGIF(out, octx, set, W, H, fps, dur) {
+    let g = window.gifenc;
+    if (!g) { this.setState({ exportMsg: 'Loading GIF encoder…' }); try { g = await import('https://unpkg.com/gifenc@1.0.3/dist/gifenc.esm.js'); if (g && g.default && !g.GIFEncoder) g = g.default; } catch (err) { g = null; } }
+    if (!g || !g.GIFEncoder) { this.setState({ exportMsg: 'GIF encoder unavailable — exporting WebM' }); await this.delay(900); return this.exportVideo(out, octx, set, W, H, fps, dur, 'webm'); }
+    const { GIFEncoder, quantize, applyPalette } = g;
+    const enc = GIFEncoder(), frames = Math.max(1, Math.round(fps * dur)), delay = Math.round(1000 / fps);
+    for (let f = 0; f < frames; f++) {
+      const t = f * delay;
+      if (this.state.source === 'video' && this.video && this.video.duration) await this.seekVideo((t / 1000) % this.video.duration);
+      this.renderFrame(set, octx, W, H, t, this.state.slots, false);
+      const data = octx.getImageData(0, 0, W, H).data;
+      const pal = quantize(data, 256); const idx = applyPalette(data, pal, 'rgb565');
+      enc.writeFrame(idx, W, H, { palette: pal, delay });
+      this.setState({ progress: (f + 1) / frames, exportMsg: 'Encoding GIF ' + Math.round((f + 1) / frames * 100) + '%' });
+      await this.delay(0);
+    }
+    enc.finish();
+    this.download(new Blob([enc.bytes()], { type: 'image/gif' }), 'glitch_' + this.stamp() + '.gif');
+  }
+
+  // ---------- style helpers ----------
+  segStyle(active) { return { flex: 1, minWidth: 'fit-content', padding: '8px 12px', textAlign: 'center', cursor: 'pointer', borderRadius: '7px', font: "500 12px 'JetBrains Mono'", border: '1px solid ' + (active ? '#4a4a54' : '#2a2a30'), background: active ? '#e8e8ec' : 'transparent', color: active ? '#0b0b0d' : '#9a9aa2' }; }
+  srcSeg(active) { return { padding: '7px 14px', cursor: 'pointer', font: '500 12px Helvetica', border: 'none', background: active ? '#e8e8ec' : 'transparent', color: active ? '#0b0b0d' : '#9a9aa2' }; }
+  fmtVal(p, v) { if (p.unit) return Math.round(v * 10) / 10 + (p.unit === '°' ? '°' : ' ' + p.unit); if (p.max <= 1) return Math.round(v * 100) + '%'; return '' + (Math.round(v * 100) / 100); }
+
+  renderVals() {
+    const st = this.state, slots = st.slots, reg = this.registry(), sel = st.selSlot, slot = slots[sel], def = this.def(slot.fx);
+    const blendLabel = { normal:'Normal', screen:'Screen', multiply:'Multiply', overlay:'Overlay', lighten:'Lighten', darken:'Darken', difference:'Difference', dodge:'Dodge', exclusion:'Exclusion' };
+
+    const slotCards = slots.map((s, i) => {
+      const on = s.enabled && s.fx !== 'none', isSel = i === sel, d = this.def(s.fx);
+      return {
+        index: i + 1, name: d.name, tag: d.cat === 'gen' ? 'GEN' : (d.cat === 'proc' ? 'FX' : ''),
+        meta: s.fx === 'none' ? 'empty slot' : (blendLabel[s.blend] + ' · ' + Math.round(s.opacity * 100) + '%'),
+        onSelect: () => this.setState({ selSlot: i }),
+        onToggle: (e) => { e.stopPropagation(); if (s.fx !== 'none') this.toggleSlot(i); },
+        cardStyle: { display: 'flex', alignItems: 'center', gap: '11px', padding: '9px 11px', borderRadius: '10px', cursor: 'pointer', border: '1px solid ' + (isSel ? '#3a3a44' : '#1a1a1f'), background: isSel ? '#1c1c21' : '#131316' },
+        numStyle: { font: "600 10px 'JetBrains Mono'", color: isSel ? '#cdcdd3' : '#65656d' },
+        dotStyle: { width: '9px', height: '9px', borderRadius: '50%', cursor: 'pointer', background: on ? '#e8e8ec' : 'transparent', border: '1.5px solid ' + (on ? '#e8e8ec' : '#4a4a52'), boxShadow: on ? '0 0 8px rgba(232,232,236,0.5)' : 'none' },
+        nameStyle: { font: '600 12.5px Helvetica, Arial', color: on ? '#e8e8ec' : '#7a7a82', marginBottom: '1px' }
+      };
+    });
+
+    const chip = (id, name, active) => ({ label: name, onClick: () => this.setSlotFx(sel, id), style: { padding: '7px 11px', cursor: 'pointer', borderRadius: '7px', font: '500 11px Helvetica', border: '1px solid ' + (active ? '#4a4a54' : '#26262b'), background: active ? '#e8e8ec' : '#161619', color: active ? '#0b0b0d' : '#b4b4ba' } });
+    const pickerGroups = [
+      { title: 'SLOT', chips: [chip('none', 'Empty', slot.fx === 'none')] },
+      { title: 'GENERATORS', chips: reg.list.filter(e => e.cat === 'gen').map(e => chip(e.id, e.name, slot.fx === e.id)) },
+      { title: 'PROCESSORS', chips: reg.list.filter(e => e.cat === 'proc').map(e => chip(e.id, e.name, slot.fx === e.id)) }
+    ];
+
+    const waveDefs = [['sine','Sin'],['tri','Tri'],['saw','Saw'],['square','Sqr'],['snh','S/H']];
+    const activeParams = def.params.filter(pr => !pr.show || pr.show(slot.params)).map(pr => {
+      if (pr.type === 'button') {
+        return { label: pr.label, isEnum: false, isSlider: false, isText: false, isButton: true, canLfo: false, lfoOn: false, valueLabel: '', btn: pr.btn || 'Apply', onClick: () => this.centerText(sel) };
+      }
+      if (pr.type === 'enum') {
+        return { label: pr.label, isEnum: true, isSlider: false, isText: false, isButton: false, canLfo: false, lfoOn: false, valueLabel: '',
+          options: pr.options.map(([val, lbl]) => { const act = slot.params[pr.k] === val; return { label: lbl, onClick: () => this.setParam(sel, pr.k, val), style: { flex: 1, padding: '7px 0', textAlign: 'center', cursor: 'pointer', borderRadius: '7px', font: "500 11px 'JetBrains Mono'", border: '1px solid ' + (act ? '#4a4a54' : '#26262b'), background: act ? '#e8e8ec' : 'transparent', color: act ? '#0b0b0d' : '#9a9aa2' } }; }) };
+      }
+      if (pr.type === 'text') {
+        return { label: pr.label, isEnum: false, isSlider: false, isText: true, isButton: false, canLfo: false, lfoOn: false, valueLabel: '',
+          value: slot.params[pr.k] == null ? '' : slot.params[pr.k], onChange: (e) => this.setParam(sel, pr.k, e.target.value) };
+      }
+      const v = slot.params[pr.k], lfo = (slot.lfo || {})[pr.k] || {}, lfoOn = !!lfo.on, slow = !!lfo.slow;
+      return {
+        label: pr.label, isEnum: false, isSlider: true, isText: false, isButton: false, canLfo: true, min: pr.min, max: pr.max, step: pr.step, value: v,
+        valueLabel: (lfoOn ? '∿ ' : '') + this.fmtVal(pr, v),
+        onChange: (e) => this.setParam(sel, pr.k, parseFloat(e.target.value)),
+        sliderStyle: lfoOn ? { opacity: 0.45 } : {},
+        lfoOn, onToggleLfo: () => this.toggleLfo(sel, pr.k),
+        lfoBtnStyle: { width: '24px', height: '20px', borderRadius: '6px', cursor: 'pointer', font: '600 12px Helvetica', lineHeight: 1, border: '1px solid ' + (lfoOn ? '#e8e8ec' : '#2a2a30'), background: lfoOn ? '#e8e8ec' : 'transparent', color: lfoOn ? '#0b0b0d' : '#7a7a82' },
+        waveOptions: waveDefs.map(([id, lbl]) => { const act = (lfo.wave || 'sine') === id; return { label: lbl, onClick: () => this.setLfo(sel, pr.k, { wave: id }), style: { flex: 1, padding: '5px 0', textAlign: 'center', cursor: 'pointer', borderRadius: '5px', font: "500 9.5px 'JetBrains Mono'", border: '1px solid ' + (act ? '#4a4a54' : '#26262b'), background: act ? '#cdcdd3' : 'transparent', color: act ? '#0b0b0d' : '#8a8a90' } }; }),
+        onToggleSlow: () => this.toggleSlow(sel, pr.k),
+        slowStyle: { padding: '5px 9px', borderRadius: '5px', cursor: 'pointer', font: "500 9.5px 'JetBrains Mono'", letterSpacing: '.04em', border: '1px solid ' + (slow ? '#4a4a54' : '#26262b'), background: slow ? '#cdcdd3' : 'transparent', color: slow ? '#0b0b0d' : '#8a8a90' },
+        rateMin: slow ? 0.01 : 0.05, rateMax: slow ? 1 : 8, rateStep: slow ? 0.005 : 0.05,
+        rateValue: lfo.rate || 0.5, rateLabel: (slow ? (Math.round((lfo.rate || 0.5) * 1000) / 1000) : (Math.round((lfo.rate || 0.5) * 100) / 100)) + ' Hz', onRate: (e) => this.setLfo(sel, pr.k, { rate: parseFloat(e.target.value) }),
+        depthValue: lfo.depth || 0.5, depthLabel: Math.round((lfo.depth || 0.5) * 100) + '%', onDepth: (e) => this.setLfo(sel, pr.k, { depth: parseFloat(e.target.value) }),
+        onBi: () => this.setLfo(sel, pr.k, { uni: false }), onUni: () => this.setLfo(sel, pr.k, { uni: true }),
+        biStyle: { padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', font: "500 9.5px 'JetBrains Mono'", border: '1px solid ' + (lfo.uni ? '#26262b' : '#4a4a54'), background: lfo.uni ? 'transparent' : '#cdcdd3', color: lfo.uni ? '#8a8a90' : '#0b0b0d' },
+        uniStyle: { padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', font: "500 9.5px 'JetBrains Mono'", border: '1px solid ' + (lfo.uni ? '#4a4a54' : '#26262b'), background: lfo.uni ? '#cdcdd3' : 'transparent', color: lfo.uni ? '#0b0b0d' : '#8a8a90' }
+      };
+    });
+
+    const exp = st.exp;
+    const resPresets = [['480p','480p'],['720p','720p'],['1080p','1080p'],['source','Source'],['custom','Custom']].map(([id, lbl]) => ({ label: lbl, onClick: () => this.setPreset(id), style: this.segStyle(exp.preset === id) }));
+    const fpsList = [12, 24, 30, 60].map(f => ({ label: '' + f, onClick: () => this.setExp({ fps: f }), style: this.segStyle(exp.fps === f) }));
+    const formatList = [['webm','WebM'],['mp4','MP4'],['gif','GIF']].map(([id, lbl]) => ({ label: lbl, onClick: () => this.setExp({ format: id }), style: this.segStyle(exp.format === id) }));
+    const blendOptions = Object.keys(this.GCO).map(id => ({ id, label: blendLabel[id] }));
+
+    return {
+      canvasRef: (el) => { if (el && el !== this.canvas) { this.canvas = el; this.applySource(); if (!this.raf) { this.lastNow = 0; this.raf = requestAnimationFrame(this.loop); } } },
+      fpsRef: (el) => { this.fpsEl = el; },
+      slotCount: this.N,
+      stageColStyle: st.fs
+        ? { display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, background: '#000', position: 'fixed', inset: 0, zIndex: 45 }
+        : { display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, background: '#0a0a0c' },
+      stageInnerStyle: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: st.fs ? '0' : '26px', position: 'relative', minHeight: 0, overflow: 'hidden', background: st.fs ? '#000' : 'radial-gradient(circle at 50% 38%, #141417, #0a0a0c 72%)' },
+      canvasStyle: { width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: '#000', boxShadow: 'none', borderRadius: '0' },
+      fsExitStyle: { position: 'absolute', top: '16px', right: '16px', display: st.fs ? 'block' : 'none', padding: '8px 14px', borderRadius: '8px', border: '1px solid #2a2a30', background: 'rgba(20,20,23,0.72)', backdropFilter: 'blur(4px)', color: '#e8e8ec', font: '500 12.5px Helvetica', cursor: 'pointer', zIndex: 2 },
+      fsLabel: st.fs ? '⤡ Exit FS' : '⤢ Fullscreen',
+      onFs: () => this.setState({ fs: !st.fs }),
+      fileRef: (el) => { this.fileInput = el; },
+      onFile: this.onFile, onDrop: this.onDrop, onDragOver: (e) => e.preventDefault(),
+      openVideo: () => this.openFile('video'), openImage: () => this.openFile('image'), setBlank: () => this.setBlank(),
+      srcStyleVideo: this.srcSeg(st.source === 'video'), srcStyleImage: this.srcSeg(st.source === 'image'), srcStyleBlank: this.srcSeg(st.source === 'blank'),
+      fileName: st.fileName, dimsLabel: (this.srcW || 1280) + '×' + (this.srcH || 720),
+      playLabel: st.playing ? '❚❚ Pause' : '▶ Play',
+      onPlay: () => { const np = !st.playing; this.setState({ playing: np }); if (this.video) { np ? this.video.play().catch(() => {}) : this.video.pause(); } },
+      onRandom: () => this.randomize(), onReset: () => this.resetAll(),
+      bypassLabel: st.bypass ? 'Bypassed' : 'Bypass', onBypass: () => this.setState({ bypass: !st.bypass }),
+      bypassStyle: { display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 13px', borderRadius: '8px', cursor: 'pointer', font: '500 12.5px Helvetica', border: '1px solid ' + (st.bypass ? '#4a4a54' : '#2a2a30'), background: st.bypass ? '#e8e8ec' : '#17171b', color: st.bypass ? '#0b0b0d' : '#cdcdd3' },
+      slotCards, selSlotNum: sel + 1,
+      onResetSlot: () => this.resetSlot(sel),
+      pickerGroups, hasFx: slot.fx !== 'none', emptyHint: slot.fx === 'none',
+      blendVal: slot.blend, onBlend: (e) => this.updSlot(sel, { blend: e.target.value }), blendOptions,
+      opacityVal: slot.opacity, opacityLabel: Math.round(slot.opacity * 100) + '%', onOpacity: (e) => this.updSlot(sel, { opacity: parseFloat(e.target.value) }),
+      activeParams,
+      exportOpen: st.exportOpen, openExport: () => this.setState({ exportOpen: true }),
+      closeExport: () => { if (!st.exporting) this.setState({ exportOpen: false }); }, stop: (e) => e.stopPropagation(),
+      exp, resPresets, fpsList, formatList,
+      onW: (e) => this.setExp({ width: parseInt(e.target.value) || 0, preset: 'custom' }),
+      onH: (e) => this.setExp({ height: parseInt(e.target.value) || 0, preset: 'custom' }),
+      onDur: (e) => this.setExp({ duration: parseFloat(e.target.value) }), durLabel: exp.duration + 's',
+      durUnitTabs: [['sec','Seconds'],['bars','Bars']].map(([id, lbl]) => ({ label: lbl, onClick: () => this.setExp({ durUnit: id }), style: this.segStyle(exp.durUnit === id) })),
+      durIsSec: exp.durUnit !== 'bars', durIsBars: exp.durUnit === 'bars',
+      onBpm: (e) => this.setExp({ bpm: parseInt(e.target.value) || 0 }),
+      onBars: (e) => this.setExp({ bars: parseInt(e.target.value) || 1 }),
+      barsLabel: exp.bars + ' bars · ' + (Math.round(this.effDur() * 10) / 10) + 's',
+      runExport: () => this.runExport(), exporting: st.exporting, exportMsg: st.exportMsg,
+      progressStyle: { width: Math.round((st.progress || 0) * 100) + '%', height: '100%', background: '#e8e8ec', transition: 'width .15s' },
+      exportNote: 'WebM works everywhere. MP4 depends on browser support; GIF is best kept short & low-res.'
+    };
+  }
+}
+</script>
+</body>
+</html>

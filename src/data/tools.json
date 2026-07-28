@@ -27,6 +27,15 @@
       "status": "coming-soon",
       "waitlistSubject": "Mandoline Waitlist",
       "cover": "/covers/tool-mandoline.webp"
+    },
+    {
+      "id": "glitchworks",
+      "name": "Glitchworks",
+      "tagline": "VHS & glitch VFX for your visuals — in the browser.",
+      "sub": "",
+      "status": "free",
+      "url": "/glitchworks/",
+      "cover": "/covers/tool-glitchworks.webp"
     }
   ]
 }

@@ -320,7 +320,7 @@ a { color: inherit; text-decoration: none; }
 .footer h5 {
   font-family: var(--font-mono);
   font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(228,226,221,0.5);
+  color: color-mix(in oklab, var(--bone) 55%, transparent);
   margin: 0 0 8px; font-weight: 500;
 }
 .footer ul { list-style: none; padding: 0; margin: 0; }

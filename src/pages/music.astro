@@ -58,7 +58,7 @@ const musicLd = {
           <p class="mono" style="color:var(--ink-mute);">COMING SOON.</p>
         )}
         {section.items.map((r, i) => (
-          <a href={r.url} rel="noopener" class="release-row" style="display:grid; grid-template-columns:40px 100px 1fr 160px 100px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+          <a href={r.url} target="_blank" rel="noopener" class="release-row" style="display:grid; grid-template-columns:40px 100px 1fr 160px 100px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
             <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
             <div class="imgbox" style="position:relative;">
               {r.cover
