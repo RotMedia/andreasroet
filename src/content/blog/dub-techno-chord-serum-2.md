@@ -1,4 +1,4 @@
-\---
+---
 
 title: "Building a Dub Techno Chord in Serum 2, From Scratch"
 description: "One saw oscillator, two delay buses and a light touch of compression — how to build a dub techno chord patch in Serum 2 that works as both a stab and a slow swell."
@@ -24,21 +24,13 @@ duration: "16:30"
 ## Starting Simple: One Oscillator and a Filter Envelope
 
 Start with one of the analog wavetables — Model D for example — and use the "saw" wave from the wavetable.
-
 Serum is polyphonic, so you can play a simple minor chord right away.
-
 Hit the E-G-B for E minor or program a pattern that keeps playing.
-
-
 
 Doesn't have to be complex, just a few hits to keep running in the Background as you tweak the patch.
 
-
-
 Next, add some filtering. Drag ENV2 over the filter cut-off to shape it, make it snappy - but not too much!
-
 Drop it an octave for some low-end weight, and layer in a touch of basic noise underneath.
-
 At this stage it's not spectacular, and it shouldn't be — this is the foundation, not the finished sound.
 
 ## Serum 2 Buses: What They Are and Why They Matter
