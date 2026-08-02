@@ -1,17 +1,30 @@
 # Andreas Roet — andreasroet.de
 
-> Dub techno producer and sound designer. Hardware live sets (Elektron Octatrack MK2, Analog Rytm MK1), records, and producer tools under the TechnoSupps brand.
+> Dub techno producer and sound designer. Hardware live sets (Elektron Octatrack MK2, Analog Rytm MK1, Analog Four MK2, Syntakt), records, producer tools and free browser apps under the TechnoSupps brand.
 
 ## What this site offers
-- Sample packs and preset packs for dub techno production, sold via Gumroad: https://technosupps.gumroad.com
-- Production tutorials (sound design, mixing, hardware workflow): https://andreasroet.de/blog
-- Music: label releases, self-published records (Bandcamp), live sets (SoundCloud): https://andreasroet.de/music
+- Sample packs and preset packs for dub techno and techno production, sold via Gumroad: https://technosupps.gumroad.com
+- Free browser-based producer apps (no install): https://andreasroet.de/apps
+- Production tutorials (sound design, mixing, hardware and software workflow): https://andreasroet.de/blog
+- Music: label releases (Dreiton, Deeptakt), self-published records (Bandcamp), live sets (SoundCloud): https://andreasroet.de/music
+- A free community for dub techno producers (Discord): https://andreasroet.de/community
 
 ## Key pages
-- Shop: https://andreasroet.de/shop
+- Shop (sample & preset packs): https://andreasroet.de/shop
+- Apps (free producer tools): https://andreasroet.de/apps
 - Tutorials & Blog: https://andreasroet.de/blog
 - Music: https://andreasroet.de/music
 - About: https://andreasroet.de/about
+- Socials & links: https://andreasroet.de/socials
+
+## Free browser apps
+- GeoSonic — geometric MIDI generator: turns mathematical patterns (Euclidean, Fibonacci, Lorenz, L-systems and more) into MIDI. https://andreasroet.de/apps/geosonic
+- The Live Set Planner — plan and structure hardware live sets on one sheet. https://andreasroet.de/apps/live-set-planner
+- Mandoline — auto-slice long audio takes into curated sample packs (coming soon). https://andreasroet.de/apps/mandoline
+- Glitchworks — VHS and glitch VFX for visuals, in the browser. https://andreasroet.de/apps/glitchworks
+
+## Topics covered in tutorials
+Dub techno chord design, call and response arrangement, Elektron hardware (Syntakt, Analog Four, Octatrack) workflow, Serum 2 sound design, hardware live sets, sampling, mixing for dub techno.
 
 ## Style
-Producer-to-producer, direct, no hype. English.
+Producer-to-producer, direct, no hype. Sounds and tools are built from real hardware used in the artist's own productions. English.

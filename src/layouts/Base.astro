@@ -13,10 +13,12 @@ interface Props {
   activeNav?: string;
   mode?: 'light' | 'dark';
   jsonLd?: object | object[];
+  ogImage?: string;
 }
 
-const { title, description, activeNav = '', jsonLd, mode = 'light' } = Astro.props;
+const { title, description, activeNav = '', jsonLd, mode = 'light', ogImage } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImageUrl = new URL(ogImage || '/og-default.jpg', Astro.site);
 
 const NAV = [
   { href: '/', id: 'home', label: 'Index' },
@@ -70,6 +72,13 @@ const pageLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <meta property="og:site_name" content="Andreas Roet" />
     <meta name="theme-color" content="#e4e2dd" />
     <script type="application/ld+json" set:html={JSON.stringify(siteLd)} />

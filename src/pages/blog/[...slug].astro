@@ -41,7 +41,7 @@ if (d.youtube) {
   };
 }
 ---
-<Base title={`${d.title} | Andreas Roet`} description={d.description} activeNav="blog" jsonLd={articleLd}>
+<Base title={`${d.title} | Andreas Roet`} description={d.description} activeNav="blog" jsonLd={articleLd} ogImage={d.youtube ? `https://i.ytimg.com/vi/${d.youtube}/maxresdefault.jpg` : undefined}>
   <div class="page app">
     <article style="max-width: 860px; margin: 0 auto; padding: 48px 0 72px;">
       <div class="eyebrow" style="margin-bottom: 16px;">
@@ -105,7 +105,7 @@ if (d.youtube) {
 
   <style>
     .post-nav {
-      max-width: 860px;
+      max-width: 860px; margin-left:auto; margin-right:auto;
       display:grid; grid-template-columns:1fr 1fr; gap:16px;
       margin:48px 0 8px; border-top:1px solid var(--rule); padding-top:24px;
     }
