@@ -23,11 +23,11 @@ duration: "16:30"
 
 ## Starting Simple: One Oscillator and a Filter Envelope
 
-Start with one of the analog wavetables — Model D for example — and use the "saw" wave from the wavetable.
+Start with one of the analog wave-tables — Model D for example — and use the "saw" wave from the wave-table.
 Serum is polyphonic, so you can play a simple minor chord right away.
 Hit the E-G-B for E minor or program a pattern that keeps playing.
 
-Doesn't have to be complex, just a few hits to keep running in the Background as you tweak the patch.
+Doesn't have to be complex, just a few hits to keep running in the background as you tweak the patch.
 
 Next, add some filtering. Drag ENV2 over the filter cut-off to shape it, make it snappy - but not too much!
 Drop it an octave for some low-end weight, and layer in a touch of basic noise underneath.
