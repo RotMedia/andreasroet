@@ -5,7 +5,7 @@ description: "One saw oscillator, two delay buses and a light touch of compressi
 date: 2025-10-26
 category: tutorial
 topic: Sound Design
-tags: \["dub-techno", "sound-design", "software"]
+tags: ["dub-techno", "sound-design", "software"]
 youtube: "vVNZ4VsDb\_s"
 duration: "16:30"
 ---
