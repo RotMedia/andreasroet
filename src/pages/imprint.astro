@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 ---
 <Base title="Imprint | Andreas Roet" description="Legal notice (Impressum) for andreasroet.de.">
   <div class="page app">
-    <section style="padding: 40px 0 72px; max-width: 720px;">
+    <section style="padding: 40px 0 72px; max-width: 860px; margin: 0 auto;">
       <div class="eyebrow" style="margin-bottom: 16px;">Legal</div>
       <h1 style="font-size: clamp(36px, 5vw, 64px); margin-bottom: 32px;">Imprint.</h1>
       <div class="prose-legal">
@@ -18,9 +18,17 @@ import Base from '../layouts/Base.astro';
 
         <h2>Kontakt</h2>
         <p>
-          E-Mail: [deine@email.de]<br />
+          E-Mail: <span id="imp-mail" class="mono">[wird geladen …]</span><br />
           [Telefon: optional]
         </p>
+        <script>
+          (() => {
+            const p = ['in','fo',String.fromCharCode(64),'andreas','roet','.','de'];
+            const addr = p.join('');
+            const el = document.getElementById('imp-mail');
+            if (el) { el.innerHTML = '<a href="mail'+'to:'+addr+'">'+addr+'</a>'; }
+          })();
+        </script>
 
         <h2>Umsatzsteuer-ID</h2>
         <p>

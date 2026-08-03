@@ -9,7 +9,8 @@ const blog = defineCollection({
     date: z.coerce.date(),
     category: z.enum(['tutorial', 'article']).default('article'),
     topic: z.string().optional(),
-    tags: z.array(z.string()).default([]),       // e.g. Sound Design, Mixing, Workflow
+    tags: z.array(z.string()).default([]),
+    relatedProduct: z.string().optional(),  // product id from products.json       // e.g. Sound Design, Mixing, Workflow
     youtube: z.string().optional(),     // YouTube video ID for tutorials
     duration: z.string().optional(),    // e.g. "24:18"
     draft: z.boolean().default(false),

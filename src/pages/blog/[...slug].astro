@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import YouTube from '../../components/YouTube.astro';
 import { getCollection, render } from 'astro:content';
+import productsData from '../../data/products.json';
 
 export async function getStaticPaths() {
   const posts = (await getCollection('blog', ({ data }) => !data.draft))
@@ -19,6 +20,9 @@ export async function getStaticPaths() {
 const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 const d = post.data;
+const relProduct = d.relatedProduct
+  ? productsData.products.find((p) => p.id === d.relatedProduct)
+  : null;
 
 const articleLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
@@ -64,6 +68,20 @@ if (d.youtube) {
       </div>
     </article>
 
+    {relProduct && (
+      <aside class="post-product">
+        <a href={relProduct.url} class="pp-link">
+          {relProduct.cover && <img src={relProduct.cover} alt={relProduct.title} class="pp-thumb" loading="lazy" />}
+          <div class="pp-body">
+            <div class="mono pp-eyebrow">From the shop</div>
+            <div class="pp-title">{relProduct.title}</div>
+            <div class="pp-sub">{relProduct.sub}</div>
+          </div>
+          <div class="pp-cta mono">{relProduct.price} <span class="arrow">→</span></div>
+        </a>
+      </aside>
+    )}
+
     <nav class="post-nav" aria-label="More posts">
       {older ? (
         <a class="pn pn-prev" href={`/blog/${older.id}`}>
@@ -104,6 +122,19 @@ if (d.youtube) {
   </style>
 
   <style>
+    .post-product { max-width:860px; margin:40px auto 0; }
+    .pp-link {
+      display:grid; grid-template-columns:96px 1fr auto; gap:20px; align-items:center;
+      border:1px solid var(--rule); padding:16px; text-decoration:none; color:inherit;
+      transition:border-color .15s, background .15s;
+    }
+    .pp-link:hover { border-color:var(--accent); background:color-mix(in oklab, var(--accent) 6%, transparent); }
+    .pp-thumb { width:96px; height:96px; object-fit:cover; display:block; }
+    .pp-eyebrow { color:var(--accent); font-size:11px; margin-bottom:6px; }
+    .pp-title { font-family:var(--font-heading); text-transform:uppercase; font-size:17px; line-height:1.1; margin-bottom:4px; }
+    .pp-sub { font-size:13px; color:var(--ink-soft); }
+    .pp-cta { color:var(--ink); white-space:nowrap; font-size:14px; }
+    @media (max-width:600px){ .pp-link{ grid-template-columns:64px 1fr; } .pp-thumb{width:64px;height:64px;} .pp-cta{grid-column:2;} }
     .post-nav {
       max-width: 860px; margin-left:auto; margin-right:auto;
       display:grid; grid-template-columns:1fr 1fr; gap:16px;

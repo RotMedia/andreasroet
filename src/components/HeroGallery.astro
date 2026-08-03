@@ -1,22 +1,22 @@
 ---
-export interface Props { images?: { src: string; alt?: string }[] }
+export interface Props { images?: { src?: string; video?: string; poster?: string; alt?: string }[] }
 const { images = [] } = Astro.props;
-const items = images.length ? images : [
-  { src: '', alt: 'Studio 1' }, { src: '', alt: 'Studio 2' }, { src: '', alt: 'Studio 3' },
-];
+const items = images.length ? images : [{ alt: 'Studio' }];
 ---
 {items.length > 0 && (
   <div class="hero-gal" data-count={items.length}>
     <div class="hero-gal-track">
       {items.map((im, i) => (
-        im.src
-          ? <img src={im.src} alt={im.alt || ''} class="hero-gal-slide" data-i={i} loading={i === 0 ? 'eager' : 'lazy'} />
-          : <div class="hero-gal-slide placeholder" data-i={i}><span class="mono">{im.alt}</span></div>
+        im.video
+          ? <video class="hero-gal-slide" data-i={i} src={im.video} poster={im.poster} autoplay muted loop playsinline preload="metadata"></video>
+          : im.src
+            ? <img src={im.src} alt={im.alt || ''} class="hero-gal-slide" data-i={i} loading={i === 0 ? 'eager' : 'lazy'} />
+            : <div class="hero-gal-slide placeholder" data-i={i}><span class="mono">{im.alt}</span></div>
       ))}
     </div>
     {items.length > 1 && (
       <div class="hero-gal-dots">
-        {items.map((_, i) => <button type="button" class="hero-dot" data-go={i} aria-label={`Image ${i + 1}`}></button>)}
+        {items.map((_, i) => <button type="button" class="hero-dot" data-go={i} aria-label={`Slide ${i + 1}`}></button>)}
       </div>
     )}
   </div>
@@ -52,12 +52,26 @@ const items = images.length ? images : [
     const dots = gal.querySelectorAll('.hero-dot');
     if (!slides.length) return;
     let idx = 0, timer;
+    const isVideo = (el) => el.tagName === 'VIDEO';
     const show = (n) => {
       idx = (n + slides.length) % slides.length;
-      slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+      slides.forEach((s, i) => {
+        const active = i === idx;
+        s.classList.toggle('is-active', active);
+        if (isVideo(s)) { if (active) { s.currentTime = 0; s.play().catch(()=>{}); } else { s.pause(); } }
+      });
       dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
     };
-    const auto = () => { clearInterval(timer); timer = setInterval(() => show(idx + 1), 6000); };
+    const advance = () => {
+      const cur = slides[idx];
+      if (isVideo(cur)) return; // video advances via its 'ended'/timer below
+      show(idx + 1);
+    };
+    const auto = () => { clearInterval(timer); timer = setInterval(advance, 6000); };
+    // video slides advance when the clip ends
+    slides.forEach((s) => {
+      if (isVideo(s)) s.addEventListener('ended', () => { show(idx + 1); });
+    });
     dots.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.go)); auto(); }));
     show(0); if (slides.length > 1) auto();
   });

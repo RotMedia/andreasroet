@@ -1,36 +1,30 @@
 ---
-
 title: "Building a Dub Techno Chord in Serum 2, From Scratch"
 description: "One saw oscillator, two delay buses and a light touch of compression — how to build a dub techno chord patch in Serum 2 that works as both a stab and a slow swell."
 date: 2025-10-26
 category: tutorial
 topic: Sound Design
 tags: ["dub-techno", "sound-design", "software"]
-youtube: "vVNZ4VsDb\_s"
+relatedProduct: "Dub-Techno-Kits-1"
+youtube: "vVNZ4VsDb_s"
 duration: "16:30"
 ---
 
 ## TL;DR
 
-* **Starting simple: one oscillator and a filter envelope** — a basic saw wave, shaped, is all you need to begin
-* **Serum 2 buses: what they are and why they matter** — containers for effects that let you build parallel processing chains
-* **Bus one: delay as a send effect** — the setup details that actually make a send bus work
-* **Reverb, mono width, and a slow-moving filter** — building density and a subtle phaser-like movement
-* **Bus two: a second delay, deliberately different** — why matching your two delays' timing kills the effect
-* **Compression: gluing it all together** — a light touch, not a crush
-* **Shaping the envelope: from stab to swell** — one patch, two completely different roles in a track
-* **The full signal chain, recapped**
+- **Starting simple: one oscillator and a filter envelope** — a basic saw wave, shaped, is all you need to begin
+- **Serum 2 buses: what they are and why they matter** — containers for effects that let you build parallel processing chains
+- **Bus one: delay as a send effect** — the setup details that actually make a send bus work
+- **Reverb, mono width, and a slow-moving filter** — building density and a subtle phaser-like movement
+- **Bus two: a second delay, deliberately different** — why matching your two delays' timing kills the effect
+- **Compression: gluing it all together** — a light touch, not a crush
+- **Shaping the envelope: from stab to swell** — one patch, two completely different roles in a track
+- **The full signal chain, recapped**
 
 ## Starting Simple: One Oscillator and a Filter Envelope
 
-Start with one of the analog wave-tables — Model D for example — and use the "saw" wave from the wave-table.
-Serum is polyphonic, so you can play a simple minor chord right away.
-Hit the E-G-B for E minor or program a pattern that keeps playing.
+Playing E minor chords in off the Keystep, and building the patch from nothing. Start with one of the analog wavetables — Model D — and just a saw. Nothing clever yet. Add some filtering, bring the envelope in to shape it, drop it an octave for some low-end weight, and layer in a touch of basic noise underneath.
 
-Doesn't have to be complex, just a few hits to keep running in the background as you tweak the patch.
-
-Next, add some filtering. Drag ENV2 over the filter cut-off to shape it, make it snappy - but not too much!
-Drop it an octave for some low-end weight, and layer in a touch of basic noise underneath.
 At this stage it's not spectacular, and it shouldn't be — this is the foundation, not the finished sound.
 
 ## Serum 2 Buses: What They Are and Why They Matter
@@ -76,4 +70,3 @@ That's one automatable parameter giving you a stab for the groove and a pad-like
 Start to finish: a simple saw oscillator, shaped with a filter envelope that creates either a transient stab or, with a longer attack, a swell. That signal feeds two buses — bus one runs delay with chorus, bus two runs delay with distortion in ping pong mode, deliberately set to a different rhythmic timing than bus one. Both buses return to the main channel, where a slowly-drifting, free-running filter LFO adds a phaser-style movement across the combined signal. From there it hits reverb — narrow width, kept centered, low end tamed with an optional high-pass filter — and finally light compression to glue the whole thing into one sound.
 
 This patch — "Dub Techno Kids, Basic Chords #5" — along with the rest of the process behind it, is part of the bonus content in [Dub Techno Kits Vol. 01](/shop), which also includes the accompanying MIDI files if you want to load it up and pull it apart yourself.
-
