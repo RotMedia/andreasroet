@@ -8,29 +8,57 @@ const freePacksUrl = productsData.freePacksUrl;
 const featured = testimonialsData.reviews.filter((r) => r.featured).slice(0, 6);
 const stars = (n) => '\u2605'.repeat(n) + '\u2606'.repeat(5 - n);
 
+// map reviews to products by title (with light normalisation)
+const norm = (s) => s.toLowerCase().replace(/\s+/g, ' ').replace(/[.\u2014-]/g, '').trim();
+const reviewsFor = (title) =>
+  testimonialsData.reviews.filter((r) => norm(r.product).includes(norm(title)) || norm(title).includes(norm(r.product)));
+
+const priceNum = (p) => {
+  const n = typeof p.priceValue === 'number' ? p.priceValue : Number(String(p.price).replace(/[^0-9.]/g, ''));
+  return Number.isFinite(n) ? n : 0;
+};
+
+const nextYear = new Date();
+nextYear.setFullYear(nextYear.getFullYear() + 1);
+const priceValidUntil = nextYear.toISOString().slice(0, 10);
+
 const shopLd = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: 'Andreas Roet — Sample Packs & Presets',
-  itemListElement: products.map((p, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    item: {
+  itemListElement: products.map((p, i) => {
+    const revs = reviewsFor(p.title);
+    const item = {
       '@type': 'Product',
       name: p.title,
       description: p.sub,
       url: p.url,
-      ...(p.cover ? { image: p.cover } : {}),
+      ...(p.cover ? { image: new URL(p.cover, 'https://andreasroet.de').href } : {}),
+      brand: { '@type': 'Brand', name: 'TechnoSupps' },
       offers: {
         '@type': 'Offer',
-        price: String(p.price).replace(/[^0-9.,]/g, ''),
+        price: priceNum(p),
         priceCurrency: 'EUR',
         availability: 'https://schema.org/InStock',
-        url: p.checkoutUrl,
+        url: p.checkoutUrl || p.url,
+        priceValidUntil,
       },
-      brand: { '@type': 'Brand', name: 'TechnoSupps' },
-    },
-  })),
+    };
+    if (revs.length) {
+      item.aggregateRating = {
+        '@type': 'AggregateRating',
+        ratingValue: (revs.reduce((s, r) => s + (r.rating || 5), 0) / revs.length).toFixed(1),
+        reviewCount: revs.length,
+      };
+      item.review = revs.map((r) => ({
+        '@type': 'Review',
+        reviewRating: { '@type': 'Rating', ratingValue: r.rating || 5, bestRating: 5 },
+        author: { '@type': 'Person', name: r.name },
+        reviewBody: r.quote,
+      }));
+    }
+    return { '@type': 'ListItem', position: i + 1, item };
+  }),
 };
 ---
 <Base

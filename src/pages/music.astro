@@ -58,7 +58,7 @@ const musicLd = {
           <p class="mono" style="color:var(--ink-mute);">COMING SOON.</p>
         )}
         {section.items.map((r, i) => (
-          <a href={r.url} target="_blank" rel="noopener" class="release-row" style="display:grid; grid-template-columns:40px 100px 1fr 160px 100px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+          <a href={r.url} target="_blank" rel="noopener" class="release-row" style="display:grid; grid-template-columns:40px 100px 1fr 160px 100px; align-items:center; gap:24px; padding:18px 0; text-decoration:none; color:inherit;">
             <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
             <div class="imgbox" style="position:relative;">
               {r.cover
@@ -79,7 +79,8 @@ const musicLd = {
 
   <style>
     .section:last-of-type { border-bottom: 0; }
-    .rel-row:last-child { border-bottom: 0; }
+    .release-row { border-bottom: 1px solid var(--rule); }
+    .release-row:last-of-type { border-bottom: 0; }
     @media (max-width: 800px) {
       .release-row { grid-template-columns: 60px 1fr !important; gap: 12px !important; }
       .release-row > :first-child, .release-row > :nth-child(4), .release-row > :nth-child(5) { display: none; }

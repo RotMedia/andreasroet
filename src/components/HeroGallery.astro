@@ -8,7 +8,7 @@ const items = images.length ? images : [{ alt: 'Studio' }];
     <div class="hero-gal-track">
       {items.map((im, i) => (
         im.video
-          ? <video class="hero-gal-slide" data-i={i} src={im.video} poster={im.poster} autoplay muted loop playsinline preload="metadata"></video>
+          ? <video class="hero-gal-slide" data-i={i} src={im.video} poster={im.poster} autoplay muted loop={items.length === 1} playsinline preload="auto"></video>
           : im.src
             ? <img src={im.src} alt={im.alt || ''} class="hero-gal-slide" data-i={i} loading={i === 0 ? 'eager' : 'lazy'} />
             : <div class="hero-gal-slide placeholder" data-i={i}><span class="mono">{im.alt}</span></div>
@@ -58,7 +58,10 @@ const items = images.length ? images : [{ alt: 'Studio' }];
       slides.forEach((s, i) => {
         const active = i === idx;
         s.classList.toggle('is-active', active);
-        if (isVideo(s)) { if (active) { s.currentTime = 0; s.play().catch(()=>{}); } else { s.pause(); } }
+        if (isVideo(s)) {
+          if (active) { s.currentTime = 0; const p = s.play(); if (p) p.catch(()=>{}); }
+          else { s.pause(); }
+        }
       });
       dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
     };

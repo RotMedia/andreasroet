@@ -90,9 +90,9 @@ const products = productsData.products.slice(0, 3);
         <p class="mono" style="color:var(--ink-mute);">FIRST POSTS INCOMING.</p>
       )}
       {posts.map((post, i) => (
-        <a href={`/blog/${post.id}`} class="post-row" style="display:grid; grid-template-columns:40px 1fr 160px 120px; align-items:center; gap:24px; padding:18px 0; border-bottom:1px solid var(--rule); text-decoration:none; color:inherit;">
+        <a href={`/blog/${post.id}`} class="post-row">
           <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
-          <span style="font-family:var(--font-heading); font-weight:400; text-transform:uppercase; font-size:20px; letter-spacing:0; line-height:1.1;">{post.data.title}</span>
+          <span class="post-row-title">{post.data.title}</span>
           <span class="mono">{post.data.topic ?? post.data.category.toUpperCase()}</span>
           <span class="mono" style="text-align:right;">{post.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })} →</span>
         </a>
@@ -105,6 +105,19 @@ const products = productsData.products.slice(0, 3);
     .hero-content { position: relative; z-index: 1; }
     .teaser-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px 24px; }
     @media (max-width: 900px) { .teaser-grid { grid-template-columns: 1fr; } }
+    .post-row {
+      display: grid; grid-template-columns: 40px 1fr 160px 120px; align-items: center;
+      gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--rule);
+      text-decoration: none; color: inherit;
+      transition: padding-left .15s, background .15s;
+    }
+    .post-row:last-of-type { border-bottom: 0; }
+    .post-row:hover { padding-left: 10px; background: color-mix(in oklab, var(--accent) 7%, transparent); }
+    .post-row-title {
+      font-family: var(--font-heading); font-weight: 400; text-transform: uppercase;
+      font-size: 20px; letter-spacing: 0; line-height: 1.1; transition: color .15s;
+    }
+    .post-row:hover .post-row-title { color: var(--accent); }
     @media (max-width: 700px) {
       .post-row { grid-template-columns: 1fr !important; gap: 6px !important; }
     }
