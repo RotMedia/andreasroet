@@ -8,7 +8,7 @@ const items = images.length ? images : [{ alt: 'Studio' }];
     <div class="hero-gal-track">
       {items.map((im, i) => (
         im.video
-          ? <video class="hero-gal-slide" data-i={i} src={im.video} poster={im.poster} autoplay muted loop={items.length === 1} playsinline preload="auto"></video>
+          ? <video class="hero-gal-slide" data-i={i} poster={im.poster} autoplay muted loop={items.length === 1} playsinline preload="auto"><source src={im.video} type="video/mp4" /></video>
           : im.src
             ? <img src={im.src} alt={im.alt || ''} class="hero-gal-slide" data-i={i} loading={i === 0 ? 'eager' : 'lazy'} />
             : <div class="hero-gal-slide placeholder" data-i={i}><span class="mono">{im.alt}</span></div>

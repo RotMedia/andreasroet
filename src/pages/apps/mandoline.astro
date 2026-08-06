@@ -1,11 +1,17 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Gallery from '../../components/Gallery.astro';
 const APP = {
   name: 'MANDOLINE', badge: 'Coming soon',
   tagline: 'Auto-Slice Long Takes into curated Sample Packs',
-  cover: '/covers/tool-mandoline.webp',
-  video: null,
+  cover: '/covers/mandoline-demo-poster.webp',
+  video: '/covers/mandoline-demo.mp4',
 };
+const shots = [
+  { src: '/covers/mandoline-01-drop.webp', alt: 'MANDOLINE — drop audio to start a session' },
+  { src: '/covers/mandoline-02-slicer.webp', alt: 'MANDOLINE — slice curation and category tagging' },
+  { src: '/covers/mandoline-03-export.webp', alt: 'MANDOLINE — export with filename tags and folder structure' },
+];
 const benefits = [
   ['Curation is kept at the speed of hearing.', 'Every slice is previewed the instant it\u2019s reached — no waiting, no re-clicking. Walk a take with the arrow keys and judge it in the time it takes to listen.'],
   ['Precision is never lost to convenience.', 'Automatic detection is a first draft, not a verdict. A marker can be pulled into a sample-accurate zoom and nudged against the visible zero-crossings.'],
@@ -42,6 +48,14 @@ const flow = [
           <p class="app-p">Mandoline does the slicing for you, by detecting transients the moment a file loads. Cuts snap to the nearest zero-crossing, and a full tree of slices is waiting before a single key is pressed.</p>
           <p class="app-p">What's left is the part that actually matters — cherry-picking what's good, grouped and ready for export.</p>
           <a class="btn accent" id="wl-link" href="#" style="align-self:flex-start;">Join the waitlist <span class="arrow">→</span></a>
+          <p class="app-devlog"><a href="/blog/mandoline-dev-log">Follow the build — Dev log <span class="arrow">→</span></a></p>
+          <script>
+            (() => {
+              const p = ['in','fo',String.fromCharCode(64),'andreas','roet','.','de'];
+              const link = document.getElementById('wl-link');
+              if (link) link.setAttribute('href','mail'+'to:'+p.join('')+'?subject='+encodeURIComponent('Mandoline Waitlist')+'&body='+encodeURIComponent("I'd like to be notified when Mandoline is released."));
+            })();
+          </script>
         </div>
       </div>
     </section>
@@ -69,6 +83,11 @@ const flow = [
       ))}
     </section>
 
+    <section class="section">
+      <div class="eyebrow" style="margin-bottom:24px;">Inside the app</div>
+      <Gallery images={shots} ratio="1194/766" />
+    </section>
+
     <section class="section" style="text-align:center; padding:40px 0;">
       <p style="color:var(--ink-soft); max-width:520px; margin:0 auto 20px; font-size:15px;">
         MANDOLINE is currently in the making. What's described here is running and being played with daily — the full public
@@ -79,7 +98,7 @@ const flow = [
         (() => {
           const p = ['in','fo',String.fromCharCode(64),'andreas','roet','.','de'];
           const link = document.getElementById('wl-link2');
-          if (link) link.setAttribute('href','mail'+'to:'+p.join('')+'?subject='+encodeURIComponent('Mandoline Waitlist'));
+          if (link) link.setAttribute('href','mail'+'to:'+p.join('')+'?subject='+encodeURIComponent('Mandoline Waitlist')+'&body='+encodeURIComponent("I'd like to be notified when Mandoline is released."));
         })();
       </script>
     </section>
@@ -91,6 +110,9 @@ const flow = [
     .app-copy { display:flex; flex-direction:column; }
     .app-p { font-size:15px; line-height:1.6; color:var(--ink-soft); margin:0 0 14px; }
     .app-note { border-left:3px solid var(--accent); padding:12px 16px; margin:4px 0 18px; }
+    .app-devlog { margin:12px 0 0; font-size:14px; }
+    .app-devlog a { color:var(--ink-mute); text-decoration-color:var(--rule); }
+    .app-devlog a:hover { color:var(--accent); }
     .app-note p { font-size:14px; line-height:1.55; margin:0; color:var(--ink-soft); }
     @media (max-width:900px){ .app-intro{ grid-template-columns:1fr; gap:20px; } }
     .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
