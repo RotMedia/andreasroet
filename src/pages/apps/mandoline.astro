@@ -14,9 +14,9 @@ const shots = [
   { src: '/covers/mandoline-03-export.webp', alt: 'MANDOLINE — export with filename tags and folder structure' },
 ];
 const flow = [
-  ['Load your jam', 'Mandoline finds every hit and slices it automatically.'],
-  ['Listen & fine-tune', 'The quality check no AI can do — quickly pick and select what\u2019s dope.'],
-  ['Export', 'Sorted, named, and ready to use.'],
+  ['1. Load your jam', 'Mandoline finds every hit and slices it automatically.'],
+  ['2. Listen & fine-tune', 'The quality check no AI can do — quickly pick and select what\u2019s dope.'],
+  ['3. Export', 'Sorted, named, and ready to use.'],
 ];
 ---
 <Base title="MANDOLINE — Browser Sample Slicer (Coming Soon) | Andreas Roet"
@@ -55,15 +55,12 @@ const flow = [
       ))}
     </section>
 
-    <section class="section">
-      <div class="eyebrow" style="margin-bottom:24px;">Inside the app</div>
-      <Gallery images={shots} video={APP.video} videoPoster={APP.cover} ratio="1194/766" />
-    </section>
+    
 
     <section class="section" style="text-align:center; padding:40px 0;">
       <p style="color:var(--ink-soft); max-width:520px; margin:0 auto 20px; font-size:15px;">
-        MANDOLINE is currently in the making. What's described here is running and being played with daily — the full public
-        release is still ahead.
+        Mandoline is currently in the making.
+        Join the waitlist to get early access before the public release — and be among the first to actually enjoy making packs again.
       </p>
       <a class="btn accent" href={WAITLIST} target="_blank" rel="noopener" style="display:inline-flex;">Join the waitlist <span class="arrow">→</span></a>
     </section>
