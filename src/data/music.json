@@ -7,7 +7,7 @@
       "year": "2025",
       "label": "Dreiton",
       "url": "https://dreiton.bandcamp.com/album/andreas-roet-feedback-dn67",
-      "cover": null
+      "cover": "/covers/cover-feedback-dn67.webp"
     },
     {
       "title": "Terratones",
@@ -15,7 +15,7 @@
       "year": "2024",
       "label": "Deeptakt Records",
       "url": "https://deeptakt.bandcamp.com/album/terratones",
-      "cover": null
+      "cover": "/covers/cover-terratones.webp"
     },
     {
       "title": "Dawn Vibes",
@@ -23,7 +23,7 @@
       "year": "2024",
       "label": "Deeptakt Records",
       "url": "https://deeptakt.bandcamp.com/track/dawn-vibes",
-      "cover": null
+      "cover": "/covers/cover-hall-of-dub-3.webp"
     }
   ],
   "self": [],
