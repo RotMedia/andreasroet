@@ -57,7 +57,8 @@ Mandoline is an automatic slicer and curation tool that frees up time and cuts o
 
 More is already taking shape. This log will grow alongside the app, wins and frustrations included.
 
-If Mandoline sounds like something you'd want once it's ready, join the free waitlist here: https://technosupps.gumroad.com/l/mandoline-waitlist
+If Mandoline sounds like something you'd want once it's ready, join the free waitlist here:
+https://technosupps.gumroad.com/l/mandoline-waitlist
 
 These are exciting times.
 Andreas
