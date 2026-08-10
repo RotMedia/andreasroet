@@ -7,23 +7,16 @@ const APP = {
   cover: '/covers/mandoline-demo-poster.webp',
   video: '/covers/mandoline-demo.mp4',
 };
+const WAITLIST = 'https://technosupps.gumroad.com/l/mandoline-waitlist';
 const shots = [
   { src: '/covers/mandoline-01-drop.webp', alt: 'MANDOLINE — drop audio to start a session' },
   { src: '/covers/mandoline-02-slicer.webp', alt: 'MANDOLINE — slice curation and category tagging' },
   { src: '/covers/mandoline-03-export.webp', alt: 'MANDOLINE — export with filename tags and folder structure' },
 ];
-const benefits = [
-  ['Curation is kept at the speed of hearing.', 'Every slice is previewed the instant it\u2019s reached — no waiting, no re-clicking. Walk a take with the arrow keys and judge it in the time it takes to listen.'],
-  ['Precision is never lost to convenience.', 'Automatic detection is a first draft, not a verdict. A marker can be pulled into a sample-accurate zoom and nudged against the visible zero-crossings.'],
-  ['A pack organizes itself as it\u2019s built.', 'Slices are sorted into categories with a single key press, and that tag doubles as the export decision — no separate step to remember.'],
-  ['Every export can be trusted.', 'Root notes are detected from the actual audio, not guessed. Producer, pack name and BPM are written into each file as real metadata.'],
-  ['Nothing leaves without being asked.', 'Original recordings are never touched. A full session — every marker, every tag — can be saved and picked up exactly where it was left.'],
-];
 const flow = [
-  ['Import', 'A folder, a handful of files, or a straight drag-and-drop. WAV, AIFF, FLAC and MP3 are read directly in the browser.'],
-  ['Detect', 'Transients found automatically, with sensitivity and minimum length as the only two dials. Every cut snaps to a zero-crossing, so nothing clicks.'],
-  ['Curate', 'Slices played, tagged, split and fine-tuned entirely from the keyboard. A category is a judgment call and an export flag in one motion.'],
-  ['Export', 'Filenames built from swappable tags, not typed by hand. Folders structured by category, root notes detected on request, metadata written into the file.'],
+  ['Load your jam', 'Mandoline finds every hit and slices it automatically.'],
+  ['Listen & fine-tune', 'The quality check no AI can do — quickly pick and select what\u2019s dope.'],
+  ['Export', 'Sorted, named, and ready to use.'],
 ];
 ---
 <Base title="MANDOLINE — Browser Sample Slicer (Coming Soon) | Andreas Roet"
@@ -39,37 +32,16 @@ const flow = [
     <section class="section" style="border-top:0; padding-top:0;">
       <div class="app-intro">
         <div class="app-shot">
-          {APP.video
-            ? <video src={APP.video} poster={APP.cover} autoplay muted loop playsinline></video>
-            : <img src={APP.cover} alt="MANDOLINE interface" loading="lazy" />}
+          <video src={APP.video} poster={APP.cover} autoplay muted loop playsinline></video>
         </div>
         <div class="app-copy">
-          <p class="app-p">Sample chopping is traditionally built around a waveform and a mouse, every start point placed by hand. Then you'd replay each slice and decide what to keep and what to discard. Again, by hand.</p>
-          <p class="app-p">Mandoline does the slicing for you, by detecting transients the moment a file loads. Cuts snap to the nearest zero-crossing, and a full tree of slices is waiting before a single key is pressed.</p>
-          <p class="app-p">What's left is the part that actually matters — cherry-picking what's good, grouped and ready for export.</p>
-          <a class="btn accent" id="wl-link" href="#" style="align-self:flex-start;">Join the waitlist <span class="arrow">→</span></a>
+          <p class="app-p">You know the drill: waveform up, mouse in hand, clicking in every start point. One. By. One. Then playing each slice back just to figure out what's actually usable. Takes forever.</p>
+          <p class="app-p">Mandoline skips all that — drop the file, and it finds the hits and slices them the moment it loads, cuts snapped clean to the zero-crossing so nothing pops.</p>
+          <p class="app-p">What's left is the part that actually matters — cherry-picking what's good, grouped and ready for export. By the time you'd normally still be scrubbing, your pack is already perfectly organized in the sampler.</p>
+          <p class="app-p">Mandoline is currently in the making. Join the waitlist to get early access before the public release — and be among the first to actually enjoy making packs again.</p>
+          <a class="btn accent" href={WAITLIST} target="_blank" rel="noopener" style="align-self:flex-start;">Join the waitlist <span class="arrow">→</span></a>
           <p class="app-devlog"><a href="/blog/mandoline-dev-log">Follow the build — Dev log <span class="arrow">→</span></a></p>
-          <script>
-            (() => {
-              const p = ['in','fo',String.fromCharCode(64),'andreas','roet','.','de'];
-              const link = document.getElementById('wl-link');
-              if (link) link.setAttribute('href','mail'+'to:'+p.join('')+'?subject='+encodeURIComponent('Mandoline Waitlist')+'&body='+encodeURIComponent("I'd like to be notified when Mandoline is released."));
-            })();
-          </script>
         </div>
-      </div>
-    </section>
-
-
-    <section class="section">
-      <div class="eyebrow" style="margin-bottom:24px;">What it's good for</div>
-      <div class="feat-grid">
-        {benefits.map(([h, t]) => (
-          <div class="feat">
-            <h3 style="font-size:18px; margin:0 0 8px;">{h}</h3>
-            <p style="font-size:14px; color:var(--ink-soft); margin:0; line-height:1.55;">{t}</p>
-          </div>
-        ))}
       </div>
     </section>
 
@@ -85,7 +57,7 @@ const flow = [
 
     <section class="section">
       <div class="eyebrow" style="margin-bottom:24px;">Inside the app</div>
-      <Gallery images={shots} ratio="1194/766" />
+      <Gallery images={shots} video={APP.video} videoPoster={APP.cover} ratio="1194/766" />
     </section>
 
     <section class="section" style="text-align:center; padding:40px 0;">
@@ -93,14 +65,7 @@ const flow = [
         MANDOLINE is currently in the making. What's described here is running and being played with daily — the full public
         release is still ahead.
       </p>
-      <a class="btn accent" id="wl-link2" href="#" style="display:inline-flex;">Join the waitlist <span class="arrow">→</span></a>
-      <script>
-        (() => {
-          const p = ['in','fo',String.fromCharCode(64),'andreas','roet','.','de'];
-          const link = document.getElementById('wl-link2');
-          if (link) link.setAttribute('href','mail'+'to:'+p.join('')+'?subject='+encodeURIComponent('Mandoline Waitlist')+'&body='+encodeURIComponent("I'd like to be notified when Mandoline is released."));
-        })();
-      </script>
+      <a class="btn accent" href={WAITLIST} target="_blank" rel="noopener" style="display:inline-flex;">Join the waitlist <span class="arrow">→</span></a>
     </section>
   </div>
 
@@ -115,12 +80,10 @@ const flow = [
     .app-devlog a:hover { color:var(--accent); }
     .app-note p { font-size:14px; line-height:1.55; margin:0; color:var(--ink-soft); }
     @media (max-width:900px){ .app-intro{ grid-template-columns:1fr; gap:20px; } }
-    .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
-    .feat { border:1px solid var(--rule); padding:20px; }
     .algo-row { display:grid; grid-template-columns:160px 1fr; gap:24px; padding:16px 0; border-bottom:1px solid var(--rule); }
     .algo-row:last-child { border-bottom:0; }
     .algo-name { color:var(--accent); font-size:13px; padding-top:2px; }
     .algo-desc { font-size:15px; color:var(--ink-soft); line-height:1.55; }
-    @media (max-width:900px){ .feat-grid{grid-template-columns:1fr;} .algo-row{grid-template-columns:1fr; gap:6px;} }
+    @media (max-width:900px){ .algo-row{grid-template-columns:1fr; gap:6px;} }
   </style>
 </Base>

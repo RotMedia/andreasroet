@@ -19,6 +19,33 @@ const tools = toolsData.tools;
       </p>
     </section>
 
+    <!-- Spotlight: Mandoline -->
+    <section style="padding: 24px 0 56px;">
+      <div class="spotlight">
+        <div class="spotlight-video imgbox" style="aspect-ratio:16/9; position:relative; overflow:hidden;">
+          <video autoplay muted loop playsinline poster="/covers/mandoline-demo-poster.webp"
+            style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+            <source src="/covers/mandoline-demo.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="spotlight-copy">
+          <div class="eyebrow" style="margin-bottom:14px;">In the making</div>
+          <h2 style="margin-bottom:6px; font-size: clamp(28px, 3vw, 38px); line-height:1;">Mandoline</h2>
+          <p class="mono" style="color:var(--ink-mute); font-size:13px; margin-bottom:20px;">
+            — Automatic Sample Slicer and Curator
+          </p>
+          <p style="color:var(--ink-soft); font-size:15px; line-height:1.55; margin-bottom:28px;">
+            You've got hours of studio jams sitting on your drive. Stop scrubbing
+            through them by hand — drop the file, get tagged, export-ready slices
+            in minutes.
+          </p>
+          <a class="btn accent" href="/apps/mandoline" style="align-self:flex-start;">
+            Learn more <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <section class="tools-grid" style="padding: 24px 0 56px;">
       {tools.map((t) => (
         <article class="tool-card">
@@ -67,5 +94,26 @@ const tools = toolsData.tools;
       border:1px solid #fff;
     }
     .btn { display:inline-flex; }
+  </style>
+
+  <style>
+    .spotlight {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+      align-items: stretch;
+    }
+    .spotlight-video { background: var(--bone-2); }
+    .spotlight-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border: 1px solid var(--rule);
+      padding: 32px;
+    }
+    @media (max-width: 900px) {
+      .spotlight { grid-template-columns: 1fr; }
+      .spotlight-copy { border: none; padding: 24px 0 0; }
+    }
   </style>
 </Base>

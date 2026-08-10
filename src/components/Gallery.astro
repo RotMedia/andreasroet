@@ -1,6 +1,11 @@
 ---
-export interface Props { images?: { src: string; alt?: string }[]; ratio?: string }
-const { images = [], ratio = '4/3' } = Astro.props;
+export interface Props {
+  images?: { src: string; alt?: string }[];
+  ratio?: string;
+  video?: string;
+  videoPoster?: string;
+}
+const { images = [], ratio = '4/3', video, videoPoster } = Astro.props;
 const items = images.length ? images : [
   { src: '', alt: 'STUDIO' }, { src: '', alt: 'RIG' }, { src: '', alt: 'DESK' },
 ];
@@ -9,19 +14,24 @@ const id = 'g' + Math.random().toString(36).slice(2, 8);
 <div class="gal" data-gal={id}>
   <div class="gal-viewport">
     <div class="gal-track">
+      {video && (
+        <div class="gal-item" style={`aspect-ratio:${ratio}`}>
+          <video class="gal-video" src={video} poster={videoPoster} autoplay muted loop playsinline data-i="0"></video>
+        </div>
+      )}
       {items.map((im, i) => (
         <div class="gal-item" style={`aspect-ratio:${ratio}`}>
           {im.src
-            ? <img src={im.src} alt={im.alt || ''} loading="lazy" data-full={im.src} data-i={i} />
-            : <div class="placeholder gal-ph" data-i={i}><span class="mono">{im.alt}</span></div>}
+            ? <img src={im.src} alt={im.alt || ''} loading="lazy" data-full={im.src} data-i={i + (video ? 1 : 0)} />
+            : <div class="placeholder gal-ph" data-i={i + (video ? 1 : 0)}><span class="mono">{im.alt}</span></div>}
         </div>
       ))}
     </div>
   </div>
-  {items.length > 1 && (
+  {(items.length + (video ? 1 : 0)) > 1 && (
     <div class="gal-controls">
       <button type="button" class="gal-btn" data-dir="-1" aria-label="Previous">←</button>
-      <span class="mono gal-count"><span class="gal-cur">1</span> / {items.length}</span>
+      <span class="mono gal-count"><span class="gal-cur">1</span> / {items.length + (video ? 1 : 0)}</span>
       <button type="button" class="gal-btn" data-dir="1" aria-label="Next">→</button>
     </div>
   )}
@@ -39,6 +49,7 @@ const id = 'g' + Math.random().toString(36).slice(2, 8);
   .gal-track { display: flex; transition: transform .35s ease; }
   .gal-item { flex: 0 0 100%; position: relative; }
   .gal-item img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+  .gal-video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .gal-ph { position: absolute; inset: 0; }
   .gal-controls {
     display: flex; align-items: center; gap: 16px;
@@ -78,10 +89,15 @@ const id = 'g' + Math.random().toString(36).slice(2, 8);
     const items = gal.querySelectorAll('.gal-item');
     const cur = gal.querySelector('.gal-cur');
     let i = 0;
+    const vid = gal.querySelector('.gal-video');
     const go = (n) => {
       i = (n + items.length) % items.length;
       track.style.transform = `translateX(-${i * 100}%)`;
       if (cur) cur.textContent = String(i + 1);
+      if (vid) {
+        if (i === 0) { vid.currentTime = 0; vid.play(); }
+        else { vid.pause(); }
+      }
     };
     gal.querySelectorAll('.gal-btn').forEach((b) =>
       b.addEventListener('click', () => go(i + Number(b.dataset.dir)))
