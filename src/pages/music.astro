@@ -58,7 +58,7 @@ const musicLd = {
           <p class="mono" style="color:var(--ink-mute);">COMING SOON.</p>
         )}
         {section.items.map((r, i) => (
-          <a href={r.url} target="_blank" rel="noopener" class="release-row" style="display:grid; grid-template-columns:40px 100px 1fr 160px 100px; align-items:center; gap:24px; padding:18px 0; text-decoration:none; color:inherit;">
+          <a href={r.url} target="_blank" rel="noopener" class="release-row no-ext-icon" style="display:grid; grid-template-columns:40px 100px 1fr 160px 100px; align-items:center; gap:24px; padding:18px 0; text-decoration:none; color:inherit;">
             <span class="mono" style="color:var(--ink-mute);">{String(i + 1).padStart(2, '0')}</span>
             <div class="imgbox" style="position:relative;">
               {r.cover
@@ -70,7 +70,7 @@ const musicLd = {
               <div style="font-family:var(--font-heading); font-weight:400; text-transform:uppercase; font-size:28px; letter-spacing:0; line-height:1;">{r.title}</div>
             </div>
             <span class="mono">{r.label}</span>
-            <span class="mono" style="text-align:right;">LISTEN →</span>
+            <span class="mono ext-listen" style="text-align:right; display:inline-flex; justify-content:flex-end; align-items:center; gap:6px;">LISTEN <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
           </a>
         ))}
       </section>
