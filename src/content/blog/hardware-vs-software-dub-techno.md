@@ -52,17 +52,17 @@ Luckily, there are plenty of ways to emulate what worked in the past.
 
 <div class="callout">
   <p class="co-text"><strong>Watch the tutorial</strong> A Serum 2 walkthrough showing some of the tricks used to build warm, fuzzy chord stabs.</p>
-  <a class="co-btn" target="_blank" rel="noopener noreferrer" href="https://youtu.be/vVNZ4VsDb_s?si">Watch it →</a>
+  <a class="co-btn" target="_blank" rel="noopener noreferrer" href="https://youtu.be/vVNZ4VsDb_s?si">Watch it</a>
 </div>
 
 <div class="callout">
   <p class="co-text"><strong>Grab a sample pack</strong> No need to spend money on hardware — get samples that already carry the DNA of the sound in them, then arrange, twist, and manipulate them into your own thing.</p>
-  <a class="co-btn" target="_blank" rel="noopener noreferrer" href="https://technosupps.gumroad.com/l/Dub-Techno-Kits-1">Get it →</a>
+  <a class="co-btn" target="_blank" rel="noopener noreferrer" href="https://technosupps.gumroad.com/l/Dub-Techno-Kits-1">Get it</a>
 </div>
 
 <div class="callout">
   <p class="co-text"><strong>Want more control? Grab the Serum 2 preset pack</strong> Every sound uses the same principles for building signature, noisy dub techno tones — with full control over everything, since it's a synth with genuinely excellent FX built in.</p>
-  <a class="co-btn" target="_blank" rel="noopener noreferrer" href="https://technosupps.gumroad.com/l/dub-techno-1-serum2">Get it →</a>
+  <a class="co-btn" target="_blank" rel="noopener noreferrer" href="https://technosupps.gumroad.com/l/dub-techno-1-serum2">Get it</a>
 </div>
 
 ## FAQ
